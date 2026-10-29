@@ -48,7 +48,13 @@ function anchors(text) {
   const ids = new Set();
   for (const match of prose(text).matchAll(/^#{1,6}\s+(.+?)\s*#*$/gm)) {
     // Strip tag-like spans, including an unfinished trailing tag, for heading IDs.
-    const slug = match[1].toLowerCase().replace(/<[^>]*>?/g, '').replace(/[^\p{L}\p{N}_\-\s]/gu, '').replace(/\s/g, '-');
+    let heading = match[1].toLowerCase();
+    let previous;
+    do {
+      previous = heading;
+      heading = heading.replace(/<[^>]*>?/g, '');
+    } while (heading !== previous);
+    const slug = heading.replace(/[^\p{L}\p{N}_\-\s]/gu, '').replace(/\s/g, '-');
     const count = seen.get(slug) ?? 0;
     seen.set(slug, count + 1); ids.add(count ? `${slug}-${count}` : slug);
   }
