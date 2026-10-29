@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuites name="Commerce Reliability Kit" tests="0" failures="0" skipped="0"><testsuite name="scenario-or-external-assertions" tests="0" failures="0" skipped="0"><properties><property name="mode" value="analyze"/><property name="exitCode" value="0"/><property name="required" value="0"/><property name="testcaseSelection" value="none: diagnostic capture has no workflow assertions"/><property name="diagnostics.total" value="3"/><property name="diagnostics.required" value="3"/><property name="diagnostics.PASS" value="3"/><property name="diagnostics.FAIL" value="0"/><property name="diagnostics.INCONCLUSIVE" value="0"/><property name="diagnostics.NOT APPLICABLE" value="0"/><property name="assertions.total" value="0"/><property name="assertions.required" value="0"/><property name="assertions.PASS" value="0"/><property name="assertions.FAIL" value="0"/><property name="assertions.INCONCLUSIVE" value="0"/><property name="assertions.NOT APPLICABLE" value="0"/><property name="integrationAssertions.total" value="0"/><property name="integrationAssertions.required" value="0"/><property name="integrationAssertions.PASS" value="0"/><property name="integrationAssertions.FAIL" value="0"/><property name="integrationAssertions.INCONCLUSIVE" value="0"/><property name="integrationAssertions.NOT APPLICABLE" value="0"/><property name="coverage.total" value="4"/><property name="coverage.complete" value="4"/><property name="coverage.declared" value="4"/></properties><system-out>{
+  &quot;checks&quot;: [
+    {
+      &quot;id&quot;: &quot;inventory.available:inventory-map&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;within_tolerance&quot;,
+      &quot;evidence&quot;: [
+        &quot;position-shop-1&quot;,
+        &quot;position-warehouse-1&quot;,
+        &quot;shop-1&quot;,
+        &quot;warehouse-1&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;within_tolerance&quot;,
+      &quot;details&quot;: {
+        &quot;expectedQuantity&quot;: 10,
+        &quot;observedQuantity&quot;: 10,
+        &quot;difference&quot;: 0,
+        &quot;buffer&quot;: 2,
+        &quot;factor&quot;: 1
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observation.freshness:shop/inventory/main/all&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;fresh&quot;,
+      &quot;evidence&quot;: [
+        &quot;shop-1&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;fresh&quot;,
+      &quot;details&quot;: {
+        &quot;ageMs&quot;: 0,
+        &quot;scope&quot;: &quot;{\&quot;account\&quot;:\&quot;merchant-demo\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;main\&quot;]}&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observation.freshness:warehouse/inventory/main/all&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;fresh&quot;,
+      &quot;evidence&quot;: [
+        &quot;warehouse-1&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;fresh&quot;,
+      &quot;details&quot;: {
+        &quot;ageMs&quot;: 0,
+        &quot;scope&quot;: &quot;{\&quot;account\&quot;:\&quot;warehouse-demo\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;main\&quot;]}&quot;
+      }
+    }
+  ],
+  &quot;integrationAssertions&quot;: [],
+  &quot;findings&quot;: [],
+  &quot;summary&quot;: {
+    &quot;diagnostics&quot;: {
+      &quot;total&quot;: 3,
+      &quot;required&quot;: 3,
+      &quot;PASS&quot;: 3,
+      &quot;FAIL&quot;: 0,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;assertions&quot;: {
+      &quot;total&quot;: 0,
+      &quot;required&quot;: 0,
+      &quot;PASS&quot;: 0,
+      &quot;FAIL&quot;: 0,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;integrationAssertions&quot;: {
+      &quot;total&quot;: 0,
+      &quot;required&quot;: 0,
+      &quot;PASS&quot;: 0,
+      &quot;FAIL&quot;: 0,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;coverage&quot;: {
+      &quot;total&quot;: 4,
+      &quot;complete&quot;: 4,
+      &quot;declared&quot;: 4
+    },
+    &quot;exitCode&quot;: 0
+  },
+  &quot;coverage&quot;: [
+    {
+      &quot;id&quot;: &quot;shop-0&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;inventory&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;merchant-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;shop-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:06:00Z&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;shop-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;inventory&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;merchant-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;shop-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;warehouse-0&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;resource&quot;: &quot;inventory&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;warehouse-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;warehouse-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:06:00Z&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;warehouse-1&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;resource&quot;: &quot;inventory&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;warehouse-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;warehouse-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      }
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;id&quot;: &quot;position-shop-0&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-shop-0&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;shop-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-shop-0&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P2&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 10,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;available_to_sell&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-shop-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-shop-1&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;shop-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-shop-1&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P2&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 10,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;available_to_sell&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-warehouse-0&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-warehouse-0&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;warehouse-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-warehouse-0&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P1&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 12,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;net_available&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-warehouse-1&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-warehouse-1&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;warehouse-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-warehouse-1&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P1&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 12,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;net_available&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    }
+  ],
+  &quot;manifest&quot;: {
+    &quot;toolVersion&quot;: &quot;0.1.0&quot;,
+    &quot;schemaVersion&quot;: &quot;1.1.0&quot;,
+    &quot;scenarioId&quot;: &quot;capture&quot;,
+    &quot;scenarioVersion&quot;: &quot;1.0.0&quot;,
+    &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+    &quot;importerVersion&quot;: &quot;normalized-1.1.0&quot;,
+    &quot;profileVersion&quot;: &quot;1.0.0&quot;,
+    &quot;mappingVersions&quot;: [
+      &quot;1.0.0&quot;
+    ],
+    &quot;inputHash&quot;: &quot;721a85a41054c21d6edac7edfe87fe1f22d4bac19f02a53b7333d7899ab5ed29&quot;,
+    &quot;policyHash&quot;: &quot;f75bbd1f24a10f0e5bc7becea5090bf4eda3a8c1835b9ddf92704c1366b33eef&quot;,
+    &quot;evaluationTime&quot;: &quot;2026-10-28T10:12:00.000Z&quot;,
+    &quot;mode&quot;: &quot;analyze&quot;,
+    &quot;reproductionCommand&quot;: &quot;node --experimental-strip-types packages/cli/index.ts analyze examples/capture.json --at 2026-10-28T10:12:00Z&quot;
+  }
+}</system-out></testsuite></testsuites>

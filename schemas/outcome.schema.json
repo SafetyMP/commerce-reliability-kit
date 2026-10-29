@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "outcome-1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "orderId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "completed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "sourceId",
+    "orderId",
+    "completed"
+  ],
+  "additionalProperties": false
+}

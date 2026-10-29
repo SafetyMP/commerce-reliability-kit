@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.1.0",
+  "id": "order-delivery",
+  "version": "1.0.0",
+  "purpose": "Require an eligible mapped order to reach the destination after the synchronization allowance.",
+  "initialConditions": "Eligible A released at 10:00; two complete destination point captures at 10:06 and 10:12.",
+  "inputOrder": "unordered",
+  "requiredCapabilities": [
+    "order.presence",
+    "observation.freshness"
+  ],
+  "assumptions": [
+    "Mappings version 1.0.0 are explicit and synthetic.",
+    "No provider compatibility is implied."
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "license": "Apache-2.0",
+    "references": [
+      "docs/DESIGN-GATE.md",
+      "docs/ORACLE-REVIEW.md",
+      "docs/SOURCES.md"
+    ]
+  },
+  "doesNotEstablish": [
+    "Production correctness, physical stock, eventual delivery, or vendor compatibility.",
+    "Positive delivery contract for computed synthetic external captures; no provider or production validation."
+  ],
+  "evaluationTime": "2026-10-28T10:12:00Z",
+  "evidence": {
+    "schemaVersion": "1.1.0",
+    "sources": [
+      {
+        "id": "shop",
+        "account": "merchant-demo",
+        "provider": "synthetic-store",
+        "apiVersion": "synthetic-1"
+      },
+      {
+        "id": "warehouse",
+        "account": "warehouse-demo",
+        "provider": "synthetic-warehouse",
+        "apiVersion": "synthetic-1"
+      }
+    ],
+    "coverage": [
+      {
+        "id": "source-order",
+        "sourceId": "shop",
+        "resource": "orders",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "source-order",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      },
+      {
+        "id": "destination-0",
+        "sourceId": "warehouse",
+        "resource": "orders",
+        "scope": {
+          "account": "warehouse-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "destination-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:06:00Z",
+          "end": "2026-10-28T10:06:00Z"
+        }
+      },
+      {
+        "id": "destination-1",
+        "sourceId": "warehouse",
+        "resource": "orders",
+        "scope": {
+          "account": "warehouse-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "destination-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "id": "order-A",
+        "sourceId": "shop",
+        "sourceRecordId": "order-A",
+        "entityType": "order",
+        "snapshotId": "source-order",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:order-A",
+        "fields": {
+          "orderId": "A",
+          "lineId": "L1",
+          "productId": "P1",
+          "ordered": 10,
+          "canceled": 0,
+          "eligible": true,
+          "releasedAt": "2026-10-28T10:00:00Z"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:00:00Z"
+      },
+      {
+        "id": "delivered-destination-0",
+        "sourceId": "warehouse",
+        "sourceRecordId": "A2",
+        "snapshotId": "destination-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "entityType": "presence",
+        "fields": {
+          "orderId": "A2"
+        },
+        "evidenceRef": "synthetic:positive-delivery",
+        "unmappedFields": []
+      },
+      {
+        "id": "delivered-destination-1",
+        "sourceId": "warehouse",
+        "sourceRecordId": "A2",
+        "snapshotId": "destination-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "entityType": "presence",
+        "fields": {
+          "orderId": "A2"
+        },
+        "evidenceRef": "synthetic:positive-delivery",
+        "unmappedFields": []
+      }
+    ],
+    "mappings": [
+      {
+        "id": "order-map",
+        "version": "1.0.0",
+        "kind": "order",
+        "validFrom": "2026-10-28T00:00:00Z",
+        "ambiguous": false,
+        "fromRef": {
+          "sourceId": "shop",
+          "account": "merchant-demo",
+          "entityId": "A"
+        },
+        "toRef": {
+          "sourceId": "warehouse",
+          "account": "warehouse-demo",
+          "entityId": "A2",
+          "locationId": "main"
+        }
+      }
+    ],
+    "outcomes": [],
+    "policy": {
+      "version": "1.0.0",
+      "checks": [
+        "observation.freshness",
+        "order.presence"
+      ],
+      "synchronizationAllowanceMs": 300000,
+      "persistenceMs": 300000,
+      "freshness": [
+        {
+          "sourceId": "shop",
+          "resource": "orders",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        },
+        {
+          "sourceId": "warehouse",
+          "resource": "orders",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        }
+      ]
+    }
+  },
+  "assertions": [
+    {
+      "id": "delivered-order",
+      "kind": "diagnostic",
+      "required": true,
+      "checkId": "order.presence:shop/A",
+      "expectedStatus": "PASS",
+      "expectedReason": "destination_present"
+    },
+    {
+      "id": "no-missing-order",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "order.missing",
+      "present": false
+    },
+    {
+      "id": "fresh-resources",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "observation.stale",
+      "present": false
+    }
+  ]
+}

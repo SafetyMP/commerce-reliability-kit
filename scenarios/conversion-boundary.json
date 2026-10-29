@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "1.1.0",
+  "id": "conversion-boundary",
+  "version": "1.0.0",
+  "purpose": "MAX_SAFE_INTEGER source units multiplied by two cannot yield an exact JavaScript integer.",
+  "initialConditions": "MAX_SAFE_INTEGER source units multiplied by two cannot yield an exact JavaScript integer.",
+  "inputOrder": "unordered",
+  "requiredCapabilities": [
+    "inventory.available",
+    "observation.freshness"
+  ],
+  "assumptions": [
+    "Mappings version 1.0.0 are explicit and synthetic.",
+    "No provider compatibility is implied.",
+    "Inputs are individually safe integers; derived arithmetic must also be safe."
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "license": "Apache-2.0",
+    "references": [
+      "docs/DESIGN-GATE.md",
+      "docs/ORACLE-REVIEW.md",
+      "docs/SOURCES.md",
+      "docs/EXPANDED-ORACLES.md"
+    ]
+  },
+  "doesNotEstablish": [
+    "Production correctness, physical stock, eventual delivery, or vendor compatibility.",
+    "Does not approximate, round, or certify an unsafe converted quantity."
+  ],
+  "evaluationTime": "2026-10-28T10:12:00Z",
+  "evidence": {
+    "schemaVersion": "1.1.0",
+    "sources": [
+      {
+        "id": "shop",
+        "account": "merchant-demo",
+        "provider": "synthetic-store",
+        "apiVersion": "synthetic-1"
+      },
+      {
+        "id": "warehouse",
+        "account": "warehouse-demo",
+        "provider": "synthetic-warehouse",
+        "apiVersion": "synthetic-1"
+      }
+    ],
+    "coverage": [
+      {
+        "id": "warehouse-0",
+        "sourceId": "warehouse",
+        "resource": "inventory",
+        "scope": {
+          "account": "warehouse-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "warehouse-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:06:00Z",
+          "end": "2026-10-28T10:06:00Z"
+        }
+      },
+      {
+        "id": "shop-0",
+        "sourceId": "shop",
+        "resource": "inventory",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "shop-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:06:00Z",
+          "end": "2026-10-28T10:06:00Z"
+        }
+      },
+      {
+        "id": "warehouse-1",
+        "sourceId": "warehouse",
+        "resource": "inventory",
+        "scope": {
+          "account": "warehouse-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "warehouse-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      },
+      {
+        "id": "shop-1",
+        "sourceId": "shop",
+        "resource": "inventory",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "shop-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "id": "position-warehouse-0",
+        "sourceId": "warehouse",
+        "sourceRecordId": "position-warehouse-0",
+        "entityType": "inventory",
+        "snapshotId": "warehouse-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "evidenceRef": "synthetic:position-warehouse-0",
+        "fields": {
+          "itemId": "P1",
+          "locationId": "main",
+          "quantity": 9007199254740991,
+          "unit": "each",
+          "semantics": "net_available",
+          "stockScope": "sellable-main"
+        },
+        "unmappedFields": []
+      },
+      {
+        "id": "position-shop-0",
+        "sourceId": "shop",
+        "sourceRecordId": "position-shop-0",
+        "entityType": "inventory",
+        "snapshotId": "shop-0",
+        "observedAt": "2026-10-28T10:06:00Z",
+        "evidenceRef": "synthetic:position-shop-0",
+        "fields": {
+          "itemId": "P2",
+          "locationId": "main",
+          "quantity": 10,
+          "unit": "each",
+          "semantics": "available_to_sell",
+          "stockScope": "sellable-main"
+        },
+        "unmappedFields": []
+      },
+      {
+        "id": "position-warehouse-1",
+        "sourceId": "warehouse",
+        "sourceRecordId": "position-warehouse-1",
+        "entityType": "inventory",
+        "snapshotId": "warehouse-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:position-warehouse-1",
+        "fields": {
+          "itemId": "P1",
+          "locationId": "main",
+          "quantity": 9007199254740991,
+          "unit": "each",
+          "semantics": "net_available",
+          "stockScope": "sellable-main"
+        },
+        "unmappedFields": []
+      },
+      {
+        "id": "position-shop-1",
+        "sourceId": "shop",
+        "sourceRecordId": "position-shop-1",
+        "entityType": "inventory",
+        "snapshotId": "shop-1",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:position-shop-1",
+        "fields": {
+          "itemId": "P2",
+          "locationId": "main",
+          "quantity": 10,
+          "unit": "each",
+          "semantics": "available_to_sell",
+          "stockScope": "sellable-main"
+        },
+        "unmappedFields": []
+      }
+    ],
+    "mappings": [
+      {
+        "id": "inventory-map",
+        "version": "1.0.0",
+        "kind": "inventory",
+        "validFrom": "2026-10-28T00:00:00Z",
+        "ambiguous": false,
+        "fromRef": {
+          "sourceId": "warehouse",
+          "account": "warehouse-demo",
+          "entityId": "P1",
+          "locationId": "main"
+        },
+        "toRef": {
+          "sourceId": "shop",
+          "account": "merchant-demo",
+          "entityId": "P2",
+          "locationId": "main"
+        },
+        "factor": 2,
+        "fromUnit": "each",
+        "toUnit": "each",
+        "stockScope": "sellable-main"
+      }
+    ],
+    "outcomes": [],
+    "policy": {
+      "version": "1.0.0",
+      "checks": [
+        "observation.freshness",
+        "inventory.available"
+      ],
+      "synchronizationAllowanceMs": 300000,
+      "persistenceMs": 300000,
+      "freshness": [
+        {
+          "sourceId": "warehouse",
+          "resource": "inventory",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        },
+        {
+          "sourceId": "shop",
+          "resource": "inventory",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        }
+      ],
+      "inventory": {
+        "mode": "fixed-buffer",
+        "buffer": 2,
+        "tolerance": 0,
+        "maxAlignmentMs": 60000,
+        "floorAtZero": true
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "literal-0",
+      "kind": "diagnostic",
+      "required": true,
+      "checkId": "inventory.available:inventory-map",
+      "expectedStatus": "INCONCLUSIVE",
+      "expectedReason": "unsafe_arithmetic"
+    },
+    {
+      "id": "finding-1",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "inventory.mismatch",
+      "present": false
+    },
+    {
+      "id": "finding-2",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "observation.stale",
+      "present": false
+    }
+  ]
+}

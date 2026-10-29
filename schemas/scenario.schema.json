@@ -1,0 +1,296 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scenario-1.1.0",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "1.1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:/-]+$",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    },
+    "initialConditions": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    },
+    "inputOrder": {
+      "enum": [
+        "ordered",
+        "unordered"
+      ]
+    },
+    "requiredCapabilities": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "order.presence",
+          "fulfillment.quantities",
+          "inventory.available",
+          "observation.freshness"
+        ]
+      },
+      "maxItems": 1000000
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2048
+      },
+      "maxItems": 1000000
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "synthetic"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "maxItems": 1000000
+        }
+      },
+      "required": [
+        "kind",
+        "license",
+        "references"
+      ],
+      "additionalProperties": false
+    },
+    "doesNotEstablish": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2048
+      },
+      "maxItems": 1000000
+    },
+    "evaluationTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d{1,3})?Z$"
+    },
+    "evidence": {
+      "$ref": "evidence-1.1.0"
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "kind": {
+                "const": "diagnostic"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "checkId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "expectedStatus": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "INCONCLUSIVE",
+                  "NOT APPLICABLE"
+                ]
+              },
+              "expectedReason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "expectedDetails": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "required",
+              "checkId",
+              "expectedStatus"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "kind": {
+                "const": "finding"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "ruleId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "present": {
+                "type": "boolean"
+              },
+              "expectedEntities": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "required",
+              "ruleId",
+              "present"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "kind": {
+                "const": "integration-status"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "target": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:-]+/[A-Za-z0-9_.:-]+$",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "expectedStatus": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "INCONCLUSIVE",
+                  "NOT APPLICABLE"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "required",
+              "target",
+              "expectedStatus"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "maxItems": 1000000,
+      "minItems": 1
+    },
+    "integrationAssertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:-]+/[A-Za-z0-9_.:-]+$",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "expectedCompleted": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "target",
+          "expectedCompleted",
+          "required"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 1000000
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "version",
+    "purpose",
+    "initialConditions",
+    "inputOrder",
+    "requiredCapabilities",
+    "assumptions",
+    "provenance",
+    "doesNotEstablish",
+    "evaluationTime",
+    "evidence",
+    "assertions"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+name: Scenario or semantic proposal
+description: Propose a synthetic scenario, mapping, or evidence-contract correction.
+title: "[Scenario] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and scope
+      description: Audience, scenario/version, and what the proposed check does not establish.
+    validations:
+      required: true
+  - type: textarea
+    id: oracle
+    attributes:
+      label: Independently reasoned expectations
+      description: Numerical or temporal worked example, expected and unexpected findings, assertion verdicts, and competing semantic interpretations.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Synthetic evidence and uncertainty
+      description: Invented records, coverage, mappings, policy, boundary and insufficient-evidence cases. No raw customer exports or credentials.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Provenance and provider assumptions
+      description: Versioned source URLs, retrieval dates, licenses, normalization losses, mapping assumptions, and unresolved uncertainty. Do not imply provider endorsement.
+    validations:
+      required: true

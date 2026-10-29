@@ -1,0 +1,412 @@
+{
+  "schemaVersion": "1.1.0",
+  "manifest": {
+    "toolVersion": "0.1.0",
+    "schemaVersion": "1.1.0",
+    "scenarioId": "partial-shipment",
+    "scenarioVersion": "1.0.0",
+    "ruleVersion": "1.1.1",
+    "importerVersion": "normalized-1.1.0",
+    "profileVersion": "1.0.0",
+    "mappingVersions": [],
+    "inputHash": "87c57568db5b4beb8f8c91fa1741a21c4647d27fcba189ad3f6308341252de69",
+    "policyHash": "e34d5069b0a13b8ea554ceede0e33c267b95d5d5c7afac73e555bd2ade8ed057",
+    "evaluationTime": "2026-10-28T10:12:00.000Z",
+    "mode": "demo",
+    "reproductionCommand": "node --experimental-strip-types packages/cli/index.ts demo partial-shipment"
+  },
+  "findings": [
+    {
+      "ruleId": "fulfillment.partial",
+      "ruleVersion": "1.1.1",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "entities": [
+        "shop/A"
+      ],
+      "severity": "info",
+      "interpretation": "4 units handed off; 6 units remain outstanding.",
+      "uncertainty": [
+        "Coverage completeness and mappings are supplied declarations, not independently established."
+      ],
+      "blockingPrerequisites": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "fulfillment.line:shop/A/L1",
+      "status": "PASS",
+      "required": true,
+      "reason": "partial_fulfillment",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "Sufficient evidence for the declared check",
+      "observed": "partial_fulfillment",
+      "details": {
+        "obligation": 10,
+        "shipped": 4,
+        "remaining": 6,
+        "overShipped": 0,
+        "completed": false
+      }
+    },
+    {
+      "id": "fulfillment.quantities:shop/A",
+      "status": "PASS",
+      "required": true,
+      "reason": "partial_fulfillment",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "Sufficient evidence for the declared check",
+      "observed": "partial_fulfillment",
+      "details": {
+        "obligation": 10,
+        "shipped": 4,
+        "remaining": 6,
+        "overShipped": 0,
+        "completed": false
+      }
+    },
+    {
+      "id": "observation.freshness:shop/orders/main/all",
+      "status": "PASS",
+      "required": true,
+      "reason": "fresh",
+      "evidence": [
+        "order-snapshot"
+      ],
+      "expected": "Sufficient evidence for the declared check",
+      "observed": "fresh",
+      "details": {
+        "ageMs": 0,
+        "scope": "{\"account\":\"merchant-demo\",\"filter\":\"all\",\"locations\":[\"main\"]}"
+      }
+    },
+    {
+      "id": "observation.freshness:shop/shipments/main/all",
+      "status": "PASS",
+      "required": true,
+      "reason": "fresh",
+      "evidence": [
+        "shipment-snapshot"
+      ],
+      "expected": "Sufficient evidence for the declared check",
+      "observed": "fresh",
+      "details": {
+        "ageMs": 0,
+        "scope": "{\"account\":\"merchant-demo\",\"filter\":\"all\",\"locations\":[\"main\"]}"
+      }
+    }
+  ],
+  "assertions": [
+    {
+      "id": "partial-diagnostic",
+      "status": "PASS",
+      "required": true,
+      "reason": "expected_diagnostic_or_integration_result",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "{\"status\":\"PASS\"}",
+      "observed": "{\"details\":{\"completed\":false,\"obligation\":10,\"overShipped\":0,\"remaining\":6,\"shipped\":4},\"reason\":\"partial_fulfillment\",\"status\":\"PASS\"}",
+      "details": {}
+    },
+    {
+      "id": "partial-detected",
+      "status": "PASS",
+      "required": true,
+      "reason": "expected_finding_presence_and_entities",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "{\"present\":true,\"ruleId\":\"fulfillment.partial\"}",
+      "observed": "{\"entities\":[\"shop/A\"],\"present\":true,\"ruleId\":\"fulfillment.partial\"}",
+      "details": {}
+    },
+    {
+      "id": "faulty-outcome-detected",
+      "status": "PASS",
+      "required": true,
+      "reason": "expected_diagnostic_or_integration_result",
+      "evidence": [
+        "faulty-completion",
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "{\"status\":\"FAIL\"}",
+      "observed": "{\"details\":{\"target\":\"shop/A\"},\"reason\":\"completion_contradicts_obligation_or_expectation\",\"status\":\"FAIL\"}",
+      "details": {}
+    },
+    {
+      "id": "partial-line-quantities",
+      "status": "PASS",
+      "required": true,
+      "reason": "expected_diagnostic_or_integration_result",
+      "evidence": [
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "{\"details\":{\"completed\":false,\"obligation\":10,\"remaining\":6,\"shipped\":4},\"status\":\"PASS\"}",
+      "observed": "{\"details\":{\"completed\":false,\"obligation\":10,\"overShipped\":0,\"remaining\":6,\"shipped\":4},\"reason\":\"partial_fulfillment\",\"status\":\"PASS\"}",
+      "details": {}
+    },
+    {
+      "id": "no-stale-resources",
+      "status": "PASS",
+      "required": true,
+      "reason": "expected_finding_presence_and_entities",
+      "evidence": [],
+      "expected": "{\"present\":false,\"ruleId\":\"observation.stale\"}",
+      "observed": "{\"entities\":[],\"present\":false,\"ruleId\":\"observation.stale\"}",
+      "details": {}
+    }
+  ],
+  "integrationAssertions": [
+    {
+      "id": "completion-obligation",
+      "status": "FAIL",
+      "required": true,
+      "reason": "completion_contradicts_obligation_or_expectation",
+      "evidence": [
+        "faulty-completion",
+        "order-line",
+        "order-snapshot",
+        "shipment-delivery-1",
+        "shipment-delivery-duplicate",
+        "shipment-snapshot"
+      ],
+      "expected": "completed=false",
+      "observed": "completed=true",
+      "details": {
+        "target": "shop/A"
+      }
+    }
+  ],
+  "summary": {
+    "diagnostics": {
+      "total": 4,
+      "required": 4,
+      "PASS": 4,
+      "FAIL": 0,
+      "INCONCLUSIVE": 0,
+      "NOT APPLICABLE": 0
+    },
+    "assertions": {
+      "total": 5,
+      "required": 5,
+      "PASS": 5,
+      "FAIL": 0,
+      "INCONCLUSIVE": 0,
+      "NOT APPLICABLE": 0
+    },
+    "integrationAssertions": {
+      "total": 1,
+      "required": 1,
+      "PASS": 0,
+      "FAIL": 1,
+      "INCONCLUSIVE": 0,
+      "NOT APPLICABLE": 0
+    },
+    "coverage": {
+      "total": 2,
+      "complete": 2,
+      "declared": 2
+    },
+    "exitCode": 0
+  },
+  "sources": [
+    {
+      "id": "shop",
+      "account": "merchant-demo",
+      "provider": "synthetic-store",
+      "apiVersion": "synthetic-1"
+    },
+    {
+      "id": "warehouse",
+      "account": "warehouse-demo",
+      "provider": "synthetic-warehouse",
+      "apiVersion": "synthetic-1"
+    }
+  ],
+  "policy": {
+    "version": "1.0.0",
+    "checks": [
+      "observation.freshness",
+      "fulfillment.quantities"
+    ],
+    "synchronizationAllowanceMs": 300000,
+    "persistenceMs": 300000,
+    "freshness": [
+      {
+        "sourceId": "shop",
+        "resource": "orders",
+        "cadenceMs": 600000,
+        "freshnessLimitMs": 600000
+      },
+      {
+        "sourceId": "shop",
+        "resource": "shipments",
+        "cadenceMs": 600000,
+        "freshnessLimitMs": 600000
+      }
+    ]
+  },
+  "outcomes": [
+    {
+      "id": "faulty-completion",
+      "sourceId": "shop",
+      "orderId": "A",
+      "completed": true
+    }
+  ],
+  "coverage": [
+    {
+      "id": "order-snapshot",
+      "sourceId": "shop",
+      "resource": "orders",
+      "scope": {
+        "account": "merchant-demo",
+        "locations": [
+          "main"
+        ],
+        "filter": "all"
+      },
+      "snapshotId": "order-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "status": "complete",
+      "pagination": "exhausted",
+      "completenessBasis": "importer-declared",
+      "limitations": [
+        "Synthetic completeness declaration; not independently established."
+      ],
+      "captureInterval": {
+        "version": "1.0.0",
+        "start": "2026-10-28T10:12:00Z",
+        "end": "2026-10-28T10:12:00Z"
+      }
+    },
+    {
+      "id": "shipment-snapshot",
+      "sourceId": "shop",
+      "resource": "shipments",
+      "scope": {
+        "account": "merchant-demo",
+        "locations": [
+          "main"
+        ],
+        "filter": "all"
+      },
+      "snapshotId": "shipment-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "status": "complete",
+      "pagination": "exhausted",
+      "completenessBasis": "importer-declared",
+      "limitations": [
+        "Synthetic completeness declaration; not independently established."
+      ],
+      "captureInterval": {
+        "version": "1.0.0",
+        "start": "2026-10-28T10:12:00Z",
+        "end": "2026-10-28T10:12:00Z"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "id": "order-line",
+      "sourceId": "shop",
+      "sourceRecordId": "order-line",
+      "entityType": "order",
+      "snapshotId": "order-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "evidenceRef": "synthetic:order-line",
+      "fields": {
+        "orderId": "A",
+        "lineId": "L1",
+        "productId": "P1",
+        "ordered": 10,
+        "canceled": 0,
+        "eligible": true,
+        "releasedAt": "2026-10-28T10:00:00Z"
+      },
+      "unmappedFields": [],
+      "eventTime": "2026-10-28T10:00:00Z"
+    },
+    {
+      "id": "shipment-delivery-1",
+      "sourceId": "shop",
+      "sourceRecordId": "shipment-delivery-1",
+      "entityType": "shipment",
+      "snapshotId": "shipment-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "evidenceRef": "synthetic:shipment-delivery-1",
+      "fields": {
+        "shipmentId": "S1",
+        "orderId": "A",
+        "lineId": "L1",
+        "quantity": 4,
+        "milestone": "handed_off"
+      },
+      "unmappedFields": [],
+      "eventTime": "2026-10-28T10:06:00Z"
+    },
+    {
+      "id": "shipment-delivery-duplicate",
+      "sourceId": "shop",
+      "sourceRecordId": "shipment-delivery-duplicate",
+      "entityType": "shipment",
+      "snapshotId": "shipment-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "evidenceRef": "synthetic:shipment-delivery-duplicate",
+      "fields": {
+        "shipmentId": "S1",
+        "orderId": "A",
+        "lineId": "L1",
+        "quantity": 4,
+        "milestone": "handed_off"
+      },
+      "unmappedFields": [],
+      "eventTime": "2026-10-28T10:06:00Z"
+    }
+  ],
+  "transformations": [],
+  "assumptions": [
+    "Order A / line L1 and shipment S1 / line L1 share the same normalized shop source and merchant-demo account namespace; no cross-source mapping is required.",
+    "No provider compatibility is implied."
+  ],
+  "limitations": [
+    "Production correctness, physical stock, eventual delivery, or vendor compatibility.",
+    "No provider validation, physical-stock conclusion, or general reliability certification.",
+    "V0.1 requires declared point captures (captureInterval start=end=observedAt) for freshness, absence and quantity conclusions. Missing, unknown or non-atomic intervals remain INCONCLUSIVE; completion/ingestion times cannot refresh earlier evidence.",
+    "Facility aggregation depends on declared nonoverlap; deadlines require explicit milestone times. No business calendar, bundles, live collectors or automatic corrections."
+  ]
+}

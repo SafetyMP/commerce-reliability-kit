@@ -1,0 +1,11 @@
+Commerce Reliability Kit
+Copyright 2026 Commerce Reliability Kit contributors.
+Original project code, documentation and synthetic fixtures are licensed under Apache License 2.0.
+
+No upstream commerce code or fixtures were copied. Third-party packages retain their own notices:
+Ajv 8.17.1 and ajv-formats 3.0.1: MIT.
+Their transitive runtime packages retain the licenses included by npm.
+TypeScript 5.9.3: Apache-2.0 (development/build only).
+@types/node 22.19.0: MIT (development only).
+Consult installed package LICENSE files and the pinned lockfile for exact distributions.
+Source documentation references do not imply endorsement or compatibility.

@@ -1,0 +1,5 @@
+id,sourceId,sourceRecordId,snapshotId,observedAt,evidenceRef,entityType,itemId,locationId,quantity,unit,semantics,stockScope
+position-warehouse-0,warehouse,position-warehouse-0,warehouse-0,2026-10-28T10:06:00Z,synthetic:position-warehouse-0,inventory,P1,main,12,each,net_available,sellable-main
+position-shop-0,shop,position-shop-0,shop-0,2026-10-28T10:06:00Z,synthetic:position-shop-0,inventory,P2,main,10,each,available_to_sell,sellable-main
+position-warehouse-1,warehouse,position-warehouse-1,warehouse-1,2026-10-28T10:12:00Z,synthetic:position-warehouse-1,inventory,P1,main,12,each,net_available,sellable-main
+position-shop-1,shop,position-shop-1,shop-1,2026-10-28T10:12:00Z,synthetic:position-shop-1,inventory,P2,main,10,each,available_to_sell,sellable-main

@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "1.1.0",
+  "id": "partial-shipment",
+  "version": "1.0.0",
+  "purpose": "Ten ordered units, four uniquely handed off and six outstanding: detect a synthetic connector falsely claiming completion.",
+  "initialConditions": "Original synthetic records; importer-declared coverage in account-qualified main/all scope.",
+  "inputOrder": "unordered",
+  "requiredCapabilities": [
+    "fulfillment.quantities",
+    "observation.freshness"
+  ],
+  "assumptions": [
+    "Order A / line L1 and shipment S1 / line L1 share the same normalized shop source and merchant-demo account namespace; no cross-source mapping is required.",
+    "No provider compatibility is implied."
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "license": "Apache-2.0",
+    "references": [
+      "docs/DESIGN-GATE.md",
+      "docs/ORACLE-REVIEW.md",
+      "docs/SOURCES.md"
+    ]
+  },
+  "doesNotEstablish": [
+    "Production correctness, physical stock, eventual delivery, or vendor compatibility."
+  ],
+  "evaluationTime": "2026-10-28T10:12:00Z",
+  "evidence": {
+    "schemaVersion": "1.1.0",
+    "sources": [
+      {
+        "id": "shop",
+        "account": "merchant-demo",
+        "provider": "synthetic-store",
+        "apiVersion": "synthetic-1"
+      },
+      {
+        "id": "warehouse",
+        "account": "warehouse-demo",
+        "provider": "synthetic-warehouse",
+        "apiVersion": "synthetic-1"
+      }
+    ],
+    "coverage": [
+      {
+        "id": "order-snapshot",
+        "sourceId": "shop",
+        "resource": "orders",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "order-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      },
+      {
+        "id": "shipment-snapshot",
+        "sourceId": "shop",
+        "resource": "shipments",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "id": "order-line",
+        "sourceId": "shop",
+        "sourceRecordId": "order-line",
+        "entityType": "order",
+        "snapshotId": "order-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:order-line",
+        "fields": {
+          "orderId": "A",
+          "lineId": "L1",
+          "productId": "P1",
+          "ordered": 10,
+          "canceled": 0,
+          "eligible": true,
+          "releasedAt": "2026-10-28T10:00:00Z"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:00:00Z"
+      },
+      {
+        "id": "shipment-delivery-1",
+        "sourceId": "shop",
+        "sourceRecordId": "shipment-delivery-1",
+        "entityType": "shipment",
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:shipment-delivery-1",
+        "fields": {
+          "shipmentId": "S1",
+          "orderId": "A",
+          "lineId": "L1",
+          "quantity": 4,
+          "milestone": "handed_off"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:06:00Z"
+      },
+      {
+        "id": "shipment-delivery-duplicate",
+        "sourceId": "shop",
+        "sourceRecordId": "shipment-delivery-duplicate",
+        "entityType": "shipment",
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:shipment-delivery-duplicate",
+        "fields": {
+          "shipmentId": "S1",
+          "orderId": "A",
+          "lineId": "L1",
+          "quantity": 4,
+          "milestone": "handed_off"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:06:00Z"
+      }
+    ],
+    "mappings": [],
+    "outcomes": [
+      {
+        "id": "faulty-completion",
+        "sourceId": "shop",
+        "orderId": "A",
+        "completed": true
+      }
+    ],
+    "policy": {
+      "version": "1.0.0",
+      "checks": [
+        "observation.freshness",
+        "fulfillment.quantities"
+      ],
+      "synchronizationAllowanceMs": 300000,
+      "persistenceMs": 300000,
+      "freshness": [
+        {
+          "sourceId": "shop",
+          "resource": "orders",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        },
+        {
+          "sourceId": "shop",
+          "resource": "shipments",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        }
+      ]
+    }
+  },
+  "assertions": [
+    {
+      "id": "partial-diagnostic",
+      "kind": "diagnostic",
+      "required": true,
+      "checkId": "fulfillment.quantities:shop/A",
+      "expectedStatus": "PASS"
+    },
+    {
+      "id": "partial-detected",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "fulfillment.partial",
+      "present": true
+    },
+    {
+      "id": "faulty-outcome-detected",
+      "kind": "integration-status",
+      "required": true,
+      "target": "shop/A",
+      "expectedStatus": "FAIL"
+    },
+    {
+      "id": "partial-line-quantities",
+      "kind": "diagnostic",
+      "required": true,
+      "checkId": "fulfillment.line:shop/A/L1",
+      "expectedStatus": "PASS",
+      "expectedDetails": {
+        "obligation": 10,
+        "shipped": 4,
+        "remaining": 6,
+        "completed": false
+      }
+    },
+    {
+      "id": "no-stale-resources",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "observation.stale",
+      "present": false
+    }
+  ],
+  "integrationAssertions": [
+    {
+      "id": "completion-obligation",
+      "target": "shop/A",
+      "expectedCompleted": false,
+      "required": true
+    }
+  ]
+}

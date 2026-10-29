@@ -1,0 +1,51 @@
+{
+  "name": "commerce-reliability-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.23.0"
+  },
+  "bin": {
+    "commerce-check": "dist/packages/cli/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/packages/core/index.d.ts",
+      "import": "./dist/packages/core/index.js"
+    }
+  },
+  "files": [
+    "dist/packages",
+    "dist/scenarios",
+    "dist/schemas",
+    "dist/examples",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "GOVERNANCE.md",
+    "CODE_OF_CONDUCT.md",
+    "docs"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "check": "node node_modules/typescript/bin/tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs",
+    "demo": "node --experimental-strip-types packages/cli/index.ts demo partial-shipment",
+    "smoke:offline": "node scripts/clean-install-smoke.mjs",
+    "performance:once": "node scripts/performance.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.19.0"
+  }
+}

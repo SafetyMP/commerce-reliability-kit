@@ -1,0 +1,23 @@
+name: Documentation or usability improvement
+description: Explain a confusing instruction or demo interaction.
+title: "[Docs/UX] "
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Document or view
+      description: Page/section or demo view, and version/revision if known.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What was confusing?
+      description: Your goal, steps, expected behavior, and actual wording or interaction. Include browser/environment for UI issues.
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested improvement and evidence
+      description: Optional wording, accessibility needs, or synthetic screenshot. No customer data, secrets, or private URLs.

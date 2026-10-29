@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Partial shipment incorrectly marked complete · Local report</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#202e2c;background:#f6f5f0;line-height:1.6}body{max-width:960px;margin:auto;padding:32px 24px}h1{font-size:2rem;line-height:1.2;letter-spacing:-.035em}h2{margin-top:2rem;font-size:1.3rem}h3{font-size:1rem}section,article{background:white;border:1px solid #d9dfda;border-radius:10px;padding:20px;margin:16px 0}p,dd,td,th{overflow-wrap:anywhere}header>p:first-child{color:#164e48;font-weight:700}pre{font:12px/1.6 ui-monospace,monospace;background:#f2f4f1;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:6px}dl{display:grid;grid-template-columns:minmax(110px,1fr) 3fr;gap:8px}dt{font-weight:600}dd{margin:0}table{border-collapse:collapse;width:100%;text-align:left}td,th{padding:12px 8px;border-bottom:1px solid #d9dfda;vertical-align:top}.table{overflow:auto}.status{font-weight:700}summary{cursor:pointer;font-weight:600;padding:8px}summary:focus-visible{outline:3px solid #164e48;outline-offset:3px}li{margin:8px 0}.muted{color:#52625c}@media(max-width:600px){body{padding:20px 12px}h1{font-size:1.7rem}section,article{padding:14px}dl{grid-template-columns:1fr}dd{margin-bottom:10px}table{min-width:460px}}@media print{body{max-width:none;padding:0}pre{font-size:10px}details{break-inside:avoid}}
+</style></head><body>
+<header><p>Synthetic demo · No connected accounts</p><p>COMMERCE RELIABILITY KIT / RUN REPORT</p><h1>Partial shipment incorrectly marked complete</h1><p>Faulty example · Local synthetic example</p></header>
+<section><h2>Run context</h2><dl><dt>Scenario</dt><dd>partial-shipment / 1.0.0</dd><dt>Rule version</dt><dd>local-fixtures-1.0.0</dd><dt>Profile version</dt><dd>demo-policy-1.0.0</dd><dt>Evaluation time</dt><dd>2026-10-28T10:15:00.000Z (fixed fixture time)</dd></dl><h3>Selected policy</h3><pre>{}</pre><h3>Derived facts</h3><pre>{
+  &quot;order&quot;: &quot;DEMO-1042&quot;,
+  &quot;ordered&quot;: 5,
+  &quot;canceled&quot;: 0,
+  &quot;fulfilled&quot;: 3,
+  &quot;outstanding&quot;: 2,
+  &quot;eventDeliveries&quot;: 1,
+  &quot;uniqueShipments&quot;: 1
+}</pre></section>
+<section><h2>Assertion verdicts</h2><p>0 passed · 1 failed · 0 inconclusive · 0 not applicable</p><p class="muted">Assertions judge the example output; they are not a reliability score. An expected missing-order diagnosis can pass.</p>
+<article><h3 class="status">FAIL — Partial fulfillment state</h3><dl><dt>Expected</dt><dd>Partially fulfilled</dd><dt>Observed output</dt><dd>Complete</dd></dl><p>Outstanding quantity was incorrectly treated as fulfilled.</p><p>Supporting IDs: DEMO-order-line, DEMO-shipment-delivery-1, DEMO-order-snapshot, DEMO-shipment-snapshot</p></article></section>
+<section><h2>Operational findings</h2><p>Supported source facts, separate from assertion verdicts.</p><article><h3>info — Order is partially fulfilled</h3><p>3 units handed off; 2 units remain outstanding.</p><p>Supporting IDs: DEMO-order-line, DEMO-shipment-delivery-1, DEMO-order-snapshot, DEMO-shipment-snapshot</p></article></section>
+<section><h2>Evidence coverage</h2><p>Completeness is declared. A complete scope can still be stale or contain an unknown quantity.</p><div class="table"><table><thead><tr><th>Source / resource</th><th>Observed at</th><th>Scope status</th><th>Pagination</th></tr></thead><tbody><tr><td>shop / orders</td><td>2026-10-28T10:12:00Z</td><td>complete</td><td>exhausted</td></tr><tr><td>shop / shipments</td><td>2026-10-28T10:12:00Z</td><td>complete</td><td>exhausted</td></tr></tbody></table></div><details><summary>DEMO-order-snapshot — normalized scope</summary><pre>{
+  &quot;id&quot;: &quot;DEMO-order-snapshot&quot;,
+  &quot;sourceId&quot;: &quot;shop&quot;,
+  &quot;resource&quot;: &quot;orders&quot;,
+  &quot;scope&quot;: {
+    &quot;account&quot;: &quot;DEMO-shop&quot;,
+    &quot;locations&quot;: [
+      &quot;DEMO-MAIN&quot;
+    ],
+    &quot;filter&quot;: &quot;all&quot;
+  },
+  &quot;snapshotId&quot;: &quot;DEMO-order-snapshot&quot;,
+  &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+  &quot;status&quot;: &quot;complete&quot;,
+  &quot;pagination&quot;: &quot;exhausted&quot;,
+  &quot;completenessBasis&quot;: &quot;user-declared&quot;,
+  &quot;captureInterval&quot;: {
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+  },
+  &quot;limitations&quot;: [
+    &quot;Synthetic point-capture completeness declaration, not verified against a provider.&quot;
+  ]
+}</pre></details><details><summary>DEMO-shipment-snapshot — normalized scope</summary><pre>{
+  &quot;id&quot;: &quot;DEMO-shipment-snapshot&quot;,
+  &quot;sourceId&quot;: &quot;shop&quot;,
+  &quot;resource&quot;: &quot;shipments&quot;,
+  &quot;scope&quot;: {
+    &quot;account&quot;: &quot;DEMO-shop&quot;,
+    &quot;locations&quot;: [
+      &quot;DEMO-MAIN&quot;
+    ],
+    &quot;filter&quot;: &quot;all&quot;
+  },
+  &quot;snapshotId&quot;: &quot;DEMO-shipment-snapshot&quot;,
+  &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+  &quot;status&quot;: &quot;complete&quot;,
+  &quot;pagination&quot;: &quot;exhausted&quot;,
+  &quot;completenessBasis&quot;: &quot;user-declared&quot;,
+  &quot;captureInterval&quot;: {
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+  },
+  &quot;limitations&quot;: [
+    &quot;Synthetic point-capture completeness declaration, not verified against a provider.&quot;
+  ]
+}</pre></details></section>
+<section><h2>Supporting records</h2><p>Source event time is separate from observation time. An absent event timestamp is unknown, not the capture time.</p><article><h3>DEMO-order-line</h3><dl><dt>Source event</dt><dd>2026-10-28T10:00:00Z</dd><dt>Observed at</dt><dd>2026-10-28T10:12:00Z</dd></dl><pre>{
+  &quot;id&quot;: &quot;DEMO-order-line&quot;,
+  &quot;sourceId&quot;: &quot;shop&quot;,
+  &quot;sourceRecordId&quot;: &quot;DEMO-order-line&quot;,
+  &quot;snapshotId&quot;: &quot;DEMO-order-snapshot&quot;,
+  &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+  &quot;eventTime&quot;: &quot;2026-10-28T10:00:00Z&quot;,
+  &quot;evidenceRef&quot;: &quot;synthetic:DEMO-order-line&quot;,
+  &quot;unmappedFields&quot;: [],
+  &quot;entityType&quot;: &quot;order&quot;,
+  &quot;fields&quot;: {
+    &quot;orderId&quot;: &quot;DEMO-1042&quot;,
+    &quot;lineId&quot;: &quot;DEMO-L1&quot;,
+    &quot;productId&quot;: &quot;DEMO-SKU-08&quot;,
+    &quot;ordered&quot;: 5,
+    &quot;canceled&quot;: 0,
+    &quot;eligible&quot;: true,
+    &quot;releasedAt&quot;: &quot;2026-10-28T10:00:00Z&quot;
+  }
+}</pre></article><article><h3>DEMO-shipment-delivery-1</h3><dl><dt>Source event</dt><dd>2026-10-28T10:06:00Z</dd><dt>Observed at</dt><dd>2026-10-28T10:12:00Z</dd></dl><pre>{
+  &quot;id&quot;: &quot;DEMO-shipment-delivery-1&quot;,
+  &quot;sourceId&quot;: &quot;shop&quot;,
+  &quot;sourceRecordId&quot;: &quot;DEMO-SHIP-01&quot;,
+  &quot;snapshotId&quot;: &quot;DEMO-shipment-snapshot&quot;,
+  &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+  &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+  &quot;evidenceRef&quot;: &quot;synthetic:DEMO-shipment-delivery-1&quot;,
+  &quot;unmappedFields&quot;: [],
+  &quot;ingestedAt&quot;: &quot;2026-10-28T10:07:00Z&quot;,
+  &quot;entityType&quot;: &quot;shipment&quot;,
+  &quot;fields&quot;: {
+    &quot;shipmentId&quot;: &quot;DEMO-SHIP-01&quot;,
+    &quot;orderId&quot;: &quot;DEMO-1042&quot;,
+    &quot;lineId&quot;: &quot;DEMO-L1&quot;,
+    &quot;quantity&quot;: 3,
+    &quot;milestone&quot;: &quot;handed_off&quot;,
+    &quot;milestoneTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+  }
+}</pre></article></section>
+<section><h2>Limitations</h2><ul><li>Synthetic demo · No connected accounts</li><li>A six-fixture local evaluator produced this report, not the full Commerce Reliability Kit engine. No production integration has been tested.</li><li>Matching records does not establish physical stock accuracy. Completeness and mappings are synthetic declarations.</li><li>Operational findings describe supported source facts. Assertion verdicts judge the selected example output against the fixture expectation.</li><li>A recorded handoff does not establish delivery to the customer.</li></ul><p>PASS: sufficient evidence satisfies the assertion. FAIL: sufficient evidence contradicts it. INCONCLUSIVE: required evidence is missing, stale, ambiguous or incomplete. NOT APPLICABLE: declared prerequisites do not apply.</p></section>
+<details><summary>Full selected report, including evidence and policy identities</summary><pre>{
+  &quot;schemaVersion&quot;: &quot;demo-report-1&quot;,
+  &quot;scenarioId&quot;: &quot;partial-shipment&quot;,
+  &quot;scenarioName&quot;: &quot;Partial shipment incorrectly marked complete&quot;,
+  &quot;scenarioVersion&quot;: &quot;1.0.0&quot;,
+  &quot;variant&quot;: &quot;faulty&quot;,
+  &quot;runMode&quot;: &quot;Local synthetic example&quot;,
+  &quot;ruleVersion&quot;: &quot;local-fixtures-1.0.0&quot;,
+  &quot;profileVersion&quot;: &quot;demo-policy-1.0.0&quot;,
+  &quot;evaluationTime&quot;: &quot;2026-10-28T10:15:00.000Z&quot;,
+  &quot;policy&quot;: {},
+  &quot;observations&quot;: [
+    {
+      &quot;id&quot;: &quot;DEMO-order-line&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;DEMO-order-line&quot;,
+      &quot;snapshotId&quot;: &quot;DEMO-order-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;eventTime&quot;: &quot;2026-10-28T10:00:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:DEMO-order-line&quot;,
+      &quot;unmappedFields&quot;: [],
+      &quot;entityType&quot;: &quot;order&quot;,
+      &quot;fields&quot;: {
+        &quot;orderId&quot;: &quot;DEMO-1042&quot;,
+        &quot;lineId&quot;: &quot;DEMO-L1&quot;,
+        &quot;productId&quot;: &quot;DEMO-SKU-08&quot;,
+        &quot;ordered&quot;: 5,
+        &quot;canceled&quot;: 0,
+        &quot;eligible&quot;: true,
+        &quot;releasedAt&quot;: &quot;2026-10-28T10:00:00Z&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;DEMO-shipment-delivery-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;DEMO-SHIP-01&quot;,
+      &quot;snapshotId&quot;: &quot;DEMO-shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:DEMO-shipment-delivery-1&quot;,
+      &quot;unmappedFields&quot;: [],
+      &quot;ingestedAt&quot;: &quot;2026-10-28T10:07:00Z&quot;,
+      &quot;entityType&quot;: &quot;shipment&quot;,
+      &quot;fields&quot;: {
+        &quot;shipmentId&quot;: &quot;DEMO-SHIP-01&quot;,
+        &quot;orderId&quot;: &quot;DEMO-1042&quot;,
+        &quot;lineId&quot;: &quot;DEMO-L1&quot;,
+        &quot;quantity&quot;: 3,
+        &quot;milestone&quot;: &quot;handed_off&quot;,
+        &quot;milestoneTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+      }
+    }
+  ],
+  &quot;coverage&quot;: [
+    {
+      &quot;id&quot;: &quot;DEMO-order-snapshot&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;orders&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;DEMO-shop&quot;,
+        &quot;locations&quot;: [
+          &quot;DEMO-MAIN&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;DEMO-order-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;user-declared&quot;,
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      },
+      &quot;limitations&quot;: [
+        &quot;Synthetic point-capture completeness declaration, not verified against a provider.&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;DEMO-shipment-snapshot&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;shipments&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;DEMO-shop&quot;,
+        &quot;locations&quot;: [
+          &quot;DEMO-MAIN&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;DEMO-shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;user-declared&quot;,
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      },
+      &quot;limitations&quot;: [
+        &quot;Synthetic point-capture completeness declaration, not verified against a provider.&quot;
+      ]
+    }
+  ],
+  &quot;findings&quot;: [
+    {
+      &quot;id&quot;: &quot;fulfillment.partial&quot;,
+      &quot;title&quot;: &quot;Order is partially fulfilled&quot;,
+      &quot;detail&quot;: &quot;3 units handed off; 2 units remain outstanding.&quot;,
+      &quot;severity&quot;: &quot;info&quot;,
+      &quot;evidence&quot;: [
+        &quot;DEMO-order-line&quot;,
+        &quot;DEMO-shipment-delivery-1&quot;,
+        &quot;DEMO-order-snapshot&quot;,
+        &quot;DEMO-shipment-snapshot&quot;
+      ]
+    }
+  ],
+  &quot;assertions&quot;: [
+    {
+      &quot;id&quot;: &quot;fulfillment.state&quot;,
+      &quot;title&quot;: &quot;Partial fulfillment state&quot;,
+      &quot;expected&quot;: &quot;Partially fulfilled&quot;,
+      &quot;observed&quot;: &quot;Complete&quot;,
+      &quot;status&quot;: &quot;FAIL&quot;,
+      &quot;reason&quot;: &quot;Outstanding quantity was incorrectly treated as fulfilled.&quot;,
+      &quot;evidence&quot;: [
+        &quot;DEMO-order-line&quot;,
+        &quot;DEMO-shipment-delivery-1&quot;,
+        &quot;DEMO-order-snapshot&quot;,
+        &quot;DEMO-shipment-snapshot&quot;
+      ]
+    }
+  ],
+  &quot;metrics&quot;: {
+    &quot;order&quot;: &quot;DEMO-1042&quot;,
+    &quot;ordered&quot;: 5,
+    &quot;canceled&quot;: 0,
+    &quot;fulfilled&quot;: 3,
+    &quot;outstanding&quot;: 2,
+    &quot;eventDeliveries&quot;: 1,
+    &quot;uniqueShipments&quot;: 1
+  },
+  &quot;evidenceIdentity&quot;: &quot;{\&quot;coverage\&quot;:[{\&quot;captureInterval\&quot;:{\&quot;end\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;start\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;version\&quot;:\&quot;1.0.0\&quot;},\&quot;completenessBasis\&quot;:\&quot;user-declared\&quot;,\&quot;id\&quot;:\&quot;DEMO-order-snapshot\&quot;,\&quot;limitations\&quot;:[\&quot;Synthetic point-capture completeness declaration, not verified against a provider.\&quot;],\&quot;observedAt\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;pagination\&quot;:\&quot;exhausted\&quot;,\&quot;resource\&quot;:\&quot;orders\&quot;,\&quot;scope\&quot;:{\&quot;account\&quot;:\&quot;DEMO-shop\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;DEMO-MAIN\&quot;]},\&quot;snapshotId\&quot;:\&quot;DEMO-order-snapshot\&quot;,\&quot;sourceId\&quot;:\&quot;shop\&quot;,\&quot;status\&quot;:\&quot;complete\&quot;},{\&quot;captureInterval\&quot;:{\&quot;end\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;start\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;version\&quot;:\&quot;1.0.0\&quot;},\&quot;completenessBasis\&quot;:\&quot;user-declared\&quot;,\&quot;id\&quot;:\&quot;DEMO-shipment-snapshot\&quot;,\&quot;limitations\&quot;:[\&quot;Synthetic point-capture completeness declaration, not verified against a provider.\&quot;],\&quot;observedAt\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;pagination\&quot;:\&quot;exhausted\&quot;,\&quot;resource\&quot;:\&quot;shipments\&quot;,\&quot;scope\&quot;:{\&quot;account\&quot;:\&quot;DEMO-shop\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;DEMO-MAIN\&quot;]},\&quot;snapshotId\&quot;:\&quot;DEMO-shipment-snapshot\&quot;,\&quot;sourceId\&quot;:\&quot;shop\&quot;,\&quot;status\&quot;:\&quot;complete\&quot;}],\&quot;observations\&quot;:[{\&quot;entityType\&quot;:\&quot;order\&quot;,\&quot;eventTime\&quot;:\&quot;2026-10-28T10:00:00Z\&quot;,\&quot;evidenceRef\&quot;:\&quot;synthetic:DEMO-order-line\&quot;,\&quot;fields\&quot;:{\&quot;canceled\&quot;:0,\&quot;eligible\&quot;:true,\&quot;lineId\&quot;:\&quot;DEMO-L1\&quot;,\&quot;ordered\&quot;:5,\&quot;orderId\&quot;:\&quot;DEMO-1042\&quot;,\&quot;productId\&quot;:\&quot;DEMO-SKU-08\&quot;,\&quot;releasedAt\&quot;:\&quot;2026-10-28T10:00:00Z\&quot;},\&quot;id\&quot;:\&quot;DEMO-order-line\&quot;,\&quot;observedAt\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;snapshotId\&quot;:\&quot;DEMO-order-snapshot\&quot;,\&quot;sourceId\&quot;:\&quot;shop\&quot;,\&quot;sourceRecordId\&quot;:\&quot;DEMO-order-line\&quot;,\&quot;unmappedFields\&quot;:[]},{\&quot;entityType\&quot;:\&quot;shipment\&quot;,\&quot;eventTime\&quot;:\&quot;2026-10-28T10:06:00Z\&quot;,\&quot;evidenceRef\&quot;:\&quot;synthetic:DEMO-shipment-delivery-1\&quot;,\&quot;fields\&quot;:{\&quot;lineId\&quot;:\&quot;DEMO-L1\&quot;,\&quot;milestone\&quot;:\&quot;handed_off\&quot;,\&quot;milestoneTime\&quot;:\&quot;2026-10-28T10:06:00Z\&quot;,\&quot;orderId\&quot;:\&quot;DEMO-1042\&quot;,\&quot;quantity\&quot;:3,\&quot;shipmentId\&quot;:\&quot;DEMO-SHIP-01\&quot;},\&quot;id\&quot;:\&quot;DEMO-shipment-delivery-1\&quot;,\&quot;ingestedAt\&quot;:\&quot;2026-10-28T10:07:00Z\&quot;,\&quot;observedAt\&quot;:\&quot;2026-10-28T10:12:00Z\&quot;,\&quot;snapshotId\&quot;:\&quot;DEMO-shipment-snapshot\&quot;,\&quot;sourceId\&quot;:\&quot;shop\&quot;,\&quot;sourceRecordId\&quot;:\&quot;DEMO-SHIP-01\&quot;,\&quot;unmappedFields\&quot;:[]}]}&quot;,
+  &quot;policyIdentity&quot;: &quot;{}&quot;,
+  &quot;limitations&quot;: [
+    &quot;Synthetic demo · No connected accounts&quot;,
+    &quot;A six-fixture local evaluator produced this report, not the full Commerce Reliability Kit engine. No production integration has been tested.&quot;,
+    &quot;Matching records does not establish physical stock accuracy. Completeness and mappings are synthetic declarations.&quot;,
+    &quot;Operational findings describe supported source facts. Assertion verdicts judge the selected example output against the fixture expectation.&quot;,
+    &quot;A recorded handoff does not establish delivery to the customer.&quot;
+  ]
+}</pre></details>
+<footer><p>Local fixture evaluation. No uploads, connected accounts or production verification.</p></footer></body></html>

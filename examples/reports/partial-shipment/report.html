@@ -1,0 +1,235 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>Commerce Reliability Kit report</title><style>body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#17202a;background:#fff}table{border-collapse:collapse;display:block;overflow:auto}td,th{border:1px solid #aeb6bf;padding:.5rem;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f4f5;padding:1rem}h2{margin-top:2rem}</style></head><body><h1>Commerce Reliability Kit</h1><p>Mode: <strong>demo</strong>. Scenario: partial-shipment. Scenario success does not establish conclusive diagnostics or connector correctness.</p><h2>Counts and denominators</h2><pre>{
+  &quot;diagnostics&quot;: {
+    &quot;total&quot;: 4,
+    &quot;required&quot;: 4,
+    &quot;PASS&quot;: 4,
+    &quot;FAIL&quot;: 0,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;assertions&quot;: {
+    &quot;total&quot;: 5,
+    &quot;required&quot;: 5,
+    &quot;PASS&quot;: 5,
+    &quot;FAIL&quot;: 0,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;integrationAssertions&quot;: {
+    &quot;total&quot;: 1,
+    &quot;required&quot;: 1,
+    &quot;PASS&quot;: 0,
+    &quot;FAIL&quot;: 1,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;coverage&quot;: {
+    &quot;total&quot;: 2,
+    &quot;complete&quot;: 2,
+    &quot;declared&quot;: 2
+  },
+  &quot;exitCode&quot;: 0
+}</pre><h2>Diagnostic checks (4)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody><tr><td>fulfillment.line:shop/A/L1</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>partial_fulfillment</td><td>partial_fulfillment</td><td>order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>fulfillment.quantities:shop/A</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>partial_fulfillment</td><td>partial_fulfillment</td><td>order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>observation.freshness:shop/orders/main/all</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>fresh</td><td>fresh</td><td>order-snapshot</td></tr><tr><td>observation.freshness:shop/shipments/main/all</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>fresh</td><td>fresh</td><td>shipment-snapshot</td></tr></tbody></table><h2>Scenario or external assertions (5)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody><tr><td>partial-diagnostic</td><td>PASS</td><td>true</td><td>{&quot;status&quot;:&quot;PASS&quot;}</td><td>{&quot;details&quot;:{&quot;completed&quot;:false,&quot;obligation&quot;:10,&quot;overShipped&quot;:0,&quot;remaining&quot;:6,&quot;shipped&quot;:4},&quot;reason&quot;:&quot;partial_fulfillment&quot;,&quot;status&quot;:&quot;PASS&quot;}</td><td>expected_diagnostic_or_integration_result</td><td>order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>partial-detected</td><td>PASS</td><td>true</td><td>{&quot;present&quot;:true,&quot;ruleId&quot;:&quot;fulfillment.partial&quot;}</td><td>{&quot;entities&quot;:[&quot;shop/A&quot;],&quot;present&quot;:true,&quot;ruleId&quot;:&quot;fulfillment.partial&quot;}</td><td>expected_finding_presence_and_entities</td><td>order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>faulty-outcome-detected</td><td>PASS</td><td>true</td><td>{&quot;status&quot;:&quot;FAIL&quot;}</td><td>{&quot;details&quot;:{&quot;target&quot;:&quot;shop/A&quot;},&quot;reason&quot;:&quot;completion_contradicts_obligation_or_expectation&quot;,&quot;status&quot;:&quot;FAIL&quot;}</td><td>expected_diagnostic_or_integration_result</td><td>faulty-completion, order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>partial-line-quantities</td><td>PASS</td><td>true</td><td>{&quot;details&quot;:{&quot;completed&quot;:false,&quot;obligation&quot;:10,&quot;remaining&quot;:6,&quot;shipped&quot;:4},&quot;status&quot;:&quot;PASS&quot;}</td><td>{&quot;details&quot;:{&quot;completed&quot;:false,&quot;obligation&quot;:10,&quot;overShipped&quot;:0,&quot;remaining&quot;:6,&quot;shipped&quot;:4},&quot;reason&quot;:&quot;partial_fulfillment&quot;,&quot;status&quot;:&quot;PASS&quot;}</td><td>expected_diagnostic_or_integration_result</td><td>order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr><tr><td>no-stale-resources</td><td>PASS</td><td>true</td><td>{&quot;present&quot;:false,&quot;ruleId&quot;:&quot;observation.stale&quot;}</td><td>{&quot;entities&quot;:[],&quot;present&quot;:false,&quot;ruleId&quot;:&quot;observation.stale&quot;}</td><td>expected_finding_presence_and_entities</td><td></td></tr></tbody></table><h2>Integration outcomes (separate layer) (1)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody><tr><td>completion-obligation</td><td>FAIL</td><td>true</td><td>completed=false</td><td>completed=true</td><td>completion_contradicts_obligation_or_expectation</td><td>faulty-completion, order-line, order-snapshot, shipment-delivery-1, shipment-delivery-duplicate, shipment-snapshot</td></tr></tbody></table><h2>Findings with evidence</h2><pre>[
+  {
+    &quot;ruleId&quot;: &quot;fulfillment.partial&quot;,
+    &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+    &quot;evidence&quot;: [
+      &quot;order-line&quot;,
+      &quot;order-snapshot&quot;,
+      &quot;shipment-delivery-1&quot;,
+      &quot;shipment-delivery-duplicate&quot;,
+      &quot;shipment-snapshot&quot;
+    ],
+    &quot;entities&quot;: [
+      &quot;shop/A&quot;
+    ],
+    &quot;severity&quot;: &quot;info&quot;,
+    &quot;interpretation&quot;: &quot;4 units handed off; 6 units remain outstanding.&quot;,
+    &quot;uncertainty&quot;: [
+      &quot;Coverage completeness and mappings are supplied declarations, not independently established.&quot;
+    ],
+    &quot;blockingPrerequisites&quot;: []
+  }
+]</pre><h2>Coverage and searched scopes</h2><p>All completeness is user/importer-declared; none is independently established. Complete counts describe declarations, not usable atomic evidence. captureInterval records inclusive collection boundaries; missing/unknown or non-atomic intervals cannot support v0.1 snapshot conclusions.</p><pre>[
+  {
+    &quot;id&quot;: &quot;order-snapshot&quot;,
+    &quot;sourceId&quot;: &quot;shop&quot;,
+    &quot;resource&quot;: &quot;orders&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;order-snapshot&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+    }
+  },
+  {
+    &quot;id&quot;: &quot;shipment-snapshot&quot;,
+    &quot;sourceId&quot;: &quot;shop&quot;,
+    &quot;resource&quot;: &quot;shipments&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+    }
+  }
+]</pre><h2>Source evidence and timestamps</h2><p>eventTime/updatedTime describe source revisions; observedAt describes observation. ingestedAt never establishes event order or freshness. Capture completion never refreshes an earlier row.</p><pre>{
+  &quot;sources&quot;: [
+    {
+      &quot;id&quot;: &quot;shop&quot;,
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;provider&quot;: &quot;synthetic-store&quot;,
+      &quot;apiVersion&quot;: &quot;synthetic-1&quot;
+    },
+    {
+      &quot;id&quot;: &quot;warehouse&quot;,
+      &quot;account&quot;: &quot;warehouse-demo&quot;,
+      &quot;provider&quot;: &quot;synthetic-warehouse&quot;,
+      &quot;apiVersion&quot;: &quot;synthetic-1&quot;
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;id&quot;: &quot;order-line&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;order-line&quot;,
+      &quot;entityType&quot;: &quot;order&quot;,
+      &quot;snapshotId&quot;: &quot;order-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:order-line&quot;,
+      &quot;fields&quot;: {
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;productId&quot;: &quot;P1&quot;,
+        &quot;ordered&quot;: 10,
+        &quot;canceled&quot;: 0,
+        &quot;eligible&quot;: true,
+        &quot;releasedAt&quot;: &quot;2026-10-28T10:00:00Z&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:00:00Z&quot;
+    },
+    {
+      &quot;id&quot;: &quot;shipment-delivery-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;shipment-delivery-1&quot;,
+      &quot;entityType&quot;: &quot;shipment&quot;,
+      &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:shipment-delivery-1&quot;,
+      &quot;fields&quot;: {
+        &quot;shipmentId&quot;: &quot;S1&quot;,
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;quantity&quot;: 4,
+        &quot;milestone&quot;: &quot;handed_off&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    },
+    {
+      &quot;id&quot;: &quot;shipment-delivery-duplicate&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;shipment-delivery-duplicate&quot;,
+      &quot;entityType&quot;: &quot;shipment&quot;,
+      &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:shipment-delivery-duplicate&quot;,
+      &quot;fields&quot;: {
+        &quot;shipmentId&quot;: &quot;S1&quot;,
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;quantity&quot;: 4,
+        &quot;milestone&quot;: &quot;handed_off&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    }
+  ],
+  &quot;outcomes&quot;: [
+    {
+      &quot;id&quot;: &quot;faulty-completion&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;orderId&quot;: &quot;A&quot;,
+      &quot;completed&quot;: true
+    }
+  ]
+}</pre><h2>Transformations and mappings</h2><pre>{
+  &quot;mappings&quot;: [],
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;checks&quot;: [
+      &quot;observation.freshness&quot;,
+      &quot;fulfillment.quantities&quot;
+    ],
+    &quot;synchronizationAllowanceMs&quot;: 300000,
+    &quot;persistenceMs&quot;: 300000,
+    &quot;freshness&quot;: [
+      {
+        &quot;sourceId&quot;: &quot;shop&quot;,
+        &quot;resource&quot;: &quot;orders&quot;,
+        &quot;cadenceMs&quot;: 600000,
+        &quot;freshnessLimitMs&quot;: 600000
+      },
+      {
+        &quot;sourceId&quot;: &quot;shop&quot;,
+        &quot;resource&quot;: &quot;shipments&quot;,
+        &quot;cadenceMs&quot;: 600000,
+        &quot;freshnessLimitMs&quot;: 600000
+      }
+    ]
+  }
+}</pre><h2>Assumptions and limitations</h2><pre>{
+  &quot;assumptions&quot;: [
+    &quot;Order A / line L1 and shipment S1 / line L1 share the same normalized shop source and merchant-demo account namespace; no cross-source mapping is required.&quot;,
+    &quot;No provider compatibility is implied.&quot;
+  ],
+  &quot;limitations&quot;: [
+    &quot;Production correctness, physical stock, eventual delivery, or vendor compatibility.&quot;,
+    &quot;No provider validation, physical-stock conclusion, or general reliability certification.&quot;,
+    &quot;V0.1 requires declared point captures (captureInterval start=end=observedAt) for freshness, absence and quantity conclusions. Missing, unknown or non-atomic intervals remain INCONCLUSIVE; completion/ingestion times cannot refresh earlier evidence.&quot;,
+    &quot;Facility aggregation depends on declared nonoverlap; deadlines require explicit milestone times. No business calendar, bundles, live collectors or automatic corrections.&quot;
+  ]
+}</pre><h2>Versions and reproduction</h2><pre>{
+  &quot;toolVersion&quot;: &quot;0.1.0&quot;,
+  &quot;schemaVersion&quot;: &quot;1.1.0&quot;,
+  &quot;scenarioId&quot;: &quot;partial-shipment&quot;,
+  &quot;scenarioVersion&quot;: &quot;1.0.0&quot;,
+  &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+  &quot;importerVersion&quot;: &quot;normalized-1.1.0&quot;,
+  &quot;profileVersion&quot;: &quot;1.0.0&quot;,
+  &quot;mappingVersions&quot;: [],
+  &quot;inputHash&quot;: &quot;87c57568db5b4beb8f8c91fa1741a21c4647d27fcba189ad3f6308341252de69&quot;,
+  &quot;policyHash&quot;: &quot;e34d5069b0a13b8ea554ceede0e33c267b95d5d5c7afac73e555bd2ade8ed057&quot;,
+  &quot;evaluationTime&quot;: &quot;2026-10-28T10:12:00.000Z&quot;,
+  &quot;mode&quot;: &quot;demo&quot;,
+  &quot;reproductionCommand&quot;: &quot;node --experimental-strip-types packages/cli/index.ts demo partial-shipment&quot;
+}</pre></body></html>

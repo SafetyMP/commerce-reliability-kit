@@ -1,0 +1,53 @@
+# Dependencies, generated output, and local scratch
+node_modules/
+dist/
+.vite-cache/
+coverage/
+.tmp/
+.ecosystem/
+.codex/
+.agents/
+.aws/
+/reports/
+/my-first-report/
+/first-report/
+/capture-report/
+*-report/
+*.tgz
+*.log
+.DS_Store
+.env
+.env.*
+*.pem
+*.key
+*.tsbuildinfo
+/playwright-report/
+/test-results/
+/browser-traces/
+# Local computed CLI output; committed synthetic examples are kept.
+/faulty.jsonl
+/corrected.jsonl
+/*-capture.json
+/results.xml
+# Local harness launcher and instructions remain on disk.
+/acceptance/node-check.py
+/AGENTS.md
+# Public documentation is explicitly selected; run requests, receipts, and reviews stay local.
+/docs/*
+!/docs/CI.md
+!/docs/COMMERCIAL-BOUNDARY.md
+!/docs/COMPATIBILITY.md
+!/docs/EXPANDED-ORACLES.md
+!/docs/IMPORTS.md
+!/docs/SCENARIO-AUTHORING.md
+!/docs/SOURCES.md
+!/docs/architecture.md
+!/docs/cli-guide.md
+!/docs/demo-guide.md
+!/docs/deployment.md
+!/docs/development.md
+!/docs/limitations.md
+!/docs/roadmap.md
+!/docs/assets/
+/docs/assets/*
+!/docs/assets/demo-comparison.jpg

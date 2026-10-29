@@ -1,0 +1,304 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>Commerce Reliability Kit report</title><style>body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#17202a;background:#fff}table{border-collapse:collapse;display:block;overflow:auto}td,th{border:1px solid #aeb6bf;padding:.5rem;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f4f5;padding:1rem}h2{margin-top:2rem}</style></head><body><h1>Commerce Reliability Kit</h1><p>Mode: <strong>analyze</strong>. Scenario: capture. Scenario success does not establish conclusive diagnostics or connector correctness.</p><h2>Counts and denominators</h2><pre>{
+  &quot;diagnostics&quot;: {
+    &quot;total&quot;: 3,
+    &quot;required&quot;: 3,
+    &quot;PASS&quot;: 3,
+    &quot;FAIL&quot;: 0,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;assertions&quot;: {
+    &quot;total&quot;: 0,
+    &quot;required&quot;: 0,
+    &quot;PASS&quot;: 0,
+    &quot;FAIL&quot;: 0,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;integrationAssertions&quot;: {
+    &quot;total&quot;: 0,
+    &quot;required&quot;: 0,
+    &quot;PASS&quot;: 0,
+    &quot;FAIL&quot;: 0,
+    &quot;INCONCLUSIVE&quot;: 0,
+    &quot;NOT APPLICABLE&quot;: 0
+  },
+  &quot;coverage&quot;: {
+    &quot;total&quot;: 4,
+    &quot;complete&quot;: 4,
+    &quot;declared&quot;: 4
+  },
+  &quot;exitCode&quot;: 0
+}</pre><h2>Diagnostic checks (3)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody><tr><td>inventory.available:inventory-map</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>within_tolerance</td><td>within_tolerance</td><td>position-shop-1, position-warehouse-1, shop-1, warehouse-1</td></tr><tr><td>observation.freshness:shop/inventory/main/all</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>fresh</td><td>fresh</td><td>shop-1</td></tr><tr><td>observation.freshness:warehouse/inventory/main/all</td><td>PASS</td><td>true</td><td>Sufficient evidence for the declared check</td><td>fresh</td><td>fresh</td><td>warehouse-1</td></tr></tbody></table><h2>Scenario or external assertions (0)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody></tbody></table><h2>Integration outcomes (separate layer) (0)</h2><table><thead><tr><th>ID</th><th>Status</th><th>Required</th><th>Expected</th><th>Observed</th><th>Reason</th><th>Evidence IDs</th></tr></thead><tbody></tbody></table><h2>Findings with evidence</h2><pre>[]</pre><h2>Coverage and searched scopes</h2><p>All completeness is user/importer-declared; none is independently established. Complete counts describe declarations, not usable atomic evidence. captureInterval records inclusive collection boundaries; missing/unknown or non-atomic intervals cannot support v0.1 snapshot conclusions.</p><pre>[
+  {
+    &quot;id&quot;: &quot;shop-0&quot;,
+    &quot;sourceId&quot;: &quot;shop&quot;,
+    &quot;resource&quot;: &quot;inventory&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;shop-0&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    }
+  },
+  {
+    &quot;id&quot;: &quot;shop-1&quot;,
+    &quot;sourceId&quot;: &quot;shop&quot;,
+    &quot;resource&quot;: &quot;inventory&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;shop-1&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+    }
+  },
+  {
+    &quot;id&quot;: &quot;warehouse-0&quot;,
+    &quot;sourceId&quot;: &quot;warehouse&quot;,
+    &quot;resource&quot;: &quot;inventory&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;warehouse-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;warehouse-0&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    }
+  },
+  {
+    &quot;id&quot;: &quot;warehouse-1&quot;,
+    &quot;sourceId&quot;: &quot;warehouse&quot;,
+    &quot;resource&quot;: &quot;inventory&quot;,
+    &quot;scope&quot;: {
+      &quot;account&quot;: &quot;warehouse-demo&quot;,
+      &quot;locations&quot;: [
+        &quot;main&quot;
+      ],
+      &quot;filter&quot;: &quot;all&quot;
+    },
+    &quot;snapshotId&quot;: &quot;warehouse-1&quot;,
+    &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;pagination&quot;: &quot;exhausted&quot;,
+    &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+    &quot;limitations&quot;: [
+      &quot;Synthetic completeness declaration; not independently established.&quot;
+    ],
+    &quot;captureInterval&quot;: {
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+    }
+  }
+]</pre><h2>Source evidence and timestamps</h2><p>eventTime/updatedTime describe source revisions; observedAt describes observation. ingestedAt never establishes event order or freshness. Capture completion never refreshes an earlier row.</p><pre>{
+  &quot;sources&quot;: [
+    {
+      &quot;id&quot;: &quot;shop&quot;,
+      &quot;account&quot;: &quot;merchant-demo&quot;,
+      &quot;provider&quot;: &quot;synthetic-store&quot;,
+      &quot;apiVersion&quot;: &quot;synthetic-1&quot;
+    },
+    {
+      &quot;id&quot;: &quot;warehouse&quot;,
+      &quot;account&quot;: &quot;warehouse-demo&quot;,
+      &quot;provider&quot;: &quot;synthetic-warehouse&quot;,
+      &quot;apiVersion&quot;: &quot;synthetic-1&quot;
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;id&quot;: &quot;position-shop-0&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-shop-0&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;shop-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-shop-0&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P2&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 10,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;available_to_sell&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-shop-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-shop-1&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;shop-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-shop-1&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P2&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 10,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;available_to_sell&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-warehouse-0&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-warehouse-0&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;warehouse-0&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:06:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-warehouse-0&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P1&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 12,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;net_available&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;position-warehouse-1&quot;,
+      &quot;sourceId&quot;: &quot;warehouse&quot;,
+      &quot;sourceRecordId&quot;: &quot;position-warehouse-1&quot;,
+      &quot;entityType&quot;: &quot;inventory&quot;,
+      &quot;snapshotId&quot;: &quot;warehouse-1&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:position-warehouse-1&quot;,
+      &quot;fields&quot;: {
+        &quot;itemId&quot;: &quot;P1&quot;,
+        &quot;locationId&quot;: &quot;main&quot;,
+        &quot;quantity&quot;: 12,
+        &quot;unit&quot;: &quot;each&quot;,
+        &quot;semantics&quot;: &quot;net_available&quot;,
+        &quot;stockScope&quot;: &quot;sellable-main&quot;
+      },
+      &quot;unmappedFields&quot;: []
+    }
+  ],
+  &quot;outcomes&quot;: []
+}</pre><h2>Transformations and mappings</h2><pre>{
+  &quot;mappings&quot;: [
+    {
+      &quot;id&quot;: &quot;inventory-map&quot;,
+      &quot;version&quot;: &quot;1.0.0&quot;,
+      &quot;kind&quot;: &quot;inventory&quot;,
+      &quot;validFrom&quot;: &quot;2026-10-28T00:00:00Z&quot;,
+      &quot;ambiguous&quot;: false,
+      &quot;fromRef&quot;: {
+        &quot;sourceId&quot;: &quot;warehouse&quot;,
+        &quot;account&quot;: &quot;warehouse-demo&quot;,
+        &quot;entityId&quot;: &quot;P1&quot;,
+        &quot;locationId&quot;: &quot;main&quot;
+      },
+      &quot;toRef&quot;: {
+        &quot;sourceId&quot;: &quot;shop&quot;,
+        &quot;account&quot;: &quot;merchant-demo&quot;,
+        &quot;entityId&quot;: &quot;P2&quot;,
+        &quot;locationId&quot;: &quot;main&quot;
+      },
+      &quot;factor&quot;: 1,
+      &quot;fromUnit&quot;: &quot;each&quot;,
+      &quot;toUnit&quot;: &quot;each&quot;,
+      &quot;stockScope&quot;: &quot;sellable-main&quot;
+    }
+  ],
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;checks&quot;: [
+      &quot;observation.freshness&quot;,
+      &quot;inventory.available&quot;
+    ],
+    &quot;synchronizationAllowanceMs&quot;: 300000,
+    &quot;persistenceMs&quot;: 300000,
+    &quot;freshness&quot;: [
+      {
+        &quot;sourceId&quot;: &quot;warehouse&quot;,
+        &quot;resource&quot;: &quot;inventory&quot;,
+        &quot;cadenceMs&quot;: 600000,
+        &quot;freshnessLimitMs&quot;: 600000
+      },
+      {
+        &quot;sourceId&quot;: &quot;shop&quot;,
+        &quot;resource&quot;: &quot;inventory&quot;,
+        &quot;cadenceMs&quot;: 600000,
+        &quot;freshnessLimitMs&quot;: 600000
+      }
+    ],
+    &quot;inventory&quot;: {
+      &quot;mode&quot;: &quot;fixed-buffer&quot;,
+      &quot;buffer&quot;: 2,
+      &quot;tolerance&quot;: 0,
+      &quot;maxAlignmentMs&quot;: 60000,
+      &quot;floorAtZero&quot;: true
+    }
+  }
+}</pre><h2>Assumptions and limitations</h2><pre>{
+  &quot;assumptions&quot;: [
+    &quot;Coverage and mapping declarations are supplied by the caller.&quot;
+  ],
+  &quot;limitations&quot;: [
+    &quot;No provider validation, physical-stock conclusion, or general reliability certification.&quot;,
+    &quot;V0.1 requires declared point captures (captureInterval start=end=observedAt) for freshness, absence and quantity conclusions. Missing, unknown or non-atomic intervals remain INCONCLUSIVE; completion/ingestion times cannot refresh earlier evidence.&quot;,
+    &quot;Facility aggregation depends on declared nonoverlap; deadlines require explicit milestone times. No business calendar, bundles, live collectors or automatic corrections.&quot;
+  ]
+}</pre><h2>Versions and reproduction</h2><pre>{
+  &quot;toolVersion&quot;: &quot;0.1.0&quot;,
+  &quot;schemaVersion&quot;: &quot;1.1.0&quot;,
+  &quot;scenarioId&quot;: &quot;capture&quot;,
+  &quot;scenarioVersion&quot;: &quot;1.0.0&quot;,
+  &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+  &quot;importerVersion&quot;: &quot;normalized-1.1.0&quot;,
+  &quot;profileVersion&quot;: &quot;1.0.0&quot;,
+  &quot;mappingVersions&quot;: [
+    &quot;1.0.0&quot;
+  ],
+  &quot;inputHash&quot;: &quot;721a85a41054c21d6edac7edfe87fe1f22d4bac19f02a53b7333d7899ab5ed29&quot;,
+  &quot;policyHash&quot;: &quot;f75bbd1f24a10f0e5bc7becea5090bf4eda3a8c1835b9ddf92704c1366b33eef&quot;,
+  &quot;evaluationTime&quot;: &quot;2026-10-28T10:12:00.000Z&quot;,
+  &quot;mode&quot;: &quot;analyze&quot;,
+  &quot;reproductionCommand&quot;: &quot;node --experimental-strip-types packages/cli/index.ts analyze examples/capture.json --at 2026-10-28T10:12:00Z&quot;
+}</pre></body></html>

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "demo-report-1",
+  "scenarioId": "partial-shipment",
+  "scenarioName": "Partial shipment incorrectly marked complete",
+  "scenarioVersion": "1.0.0",
+  "variant": "faulty",
+  "runMode": "Local synthetic example",
+  "ruleVersion": "local-fixtures-1.0.0",
+  "profileVersion": "demo-policy-1.0.0",
+  "evaluationTime": "2026-10-28T10:15:00.000Z",
+  "policy": {},
+  "observations": [
+    {
+      "id": "DEMO-order-line",
+      "sourceId": "shop",
+      "sourceRecordId": "DEMO-order-line",
+      "snapshotId": "DEMO-order-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "eventTime": "2026-10-28T10:00:00Z",
+      "evidenceRef": "synthetic:DEMO-order-line",
+      "unmappedFields": [],
+      "entityType": "order",
+      "fields": {
+        "orderId": "DEMO-1042",
+        "lineId": "DEMO-L1",
+        "productId": "DEMO-SKU-08",
+        "ordered": 5,
+        "canceled": 0,
+        "eligible": true,
+        "releasedAt": "2026-10-28T10:00:00Z"
+      }
+    },
+    {
+      "id": "DEMO-shipment-delivery-1",
+      "sourceId": "shop",
+      "sourceRecordId": "DEMO-SHIP-01",
+      "snapshotId": "DEMO-shipment-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "eventTime": "2026-10-28T10:06:00Z",
+      "evidenceRef": "synthetic:DEMO-shipment-delivery-1",
+      "unmappedFields": [],
+      "ingestedAt": "2026-10-28T10:07:00Z",
+      "entityType": "shipment",
+      "fields": {
+        "shipmentId": "DEMO-SHIP-01",
+        "orderId": "DEMO-1042",
+        "lineId": "DEMO-L1",
+        "quantity": 3,
+        "milestone": "handed_off",
+        "milestoneTime": "2026-10-28T10:06:00Z"
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "id": "DEMO-order-snapshot",
+      "sourceId": "shop",
+      "resource": "orders",
+      "scope": {
+        "account": "DEMO-shop",
+        "locations": [
+          "DEMO-MAIN"
+        ],
+        "filter": "all"
+      },
+      "snapshotId": "DEMO-order-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "status": "complete",
+      "pagination": "exhausted",
+      "completenessBasis": "user-declared",
+      "captureInterval": {
+        "version": "1.0.0",
+        "start": "2026-10-28T10:12:00Z",
+        "end": "2026-10-28T10:12:00Z"
+      },
+      "limitations": [
+        "Synthetic point-capture completeness declaration, not verified against a provider."
+      ]
+    },
+    {
+      "id": "DEMO-shipment-snapshot",
+      "sourceId": "shop",
+      "resource": "shipments",
+      "scope": {
+        "account": "DEMO-shop",
+        "locations": [
+          "DEMO-MAIN"
+        ],
+        "filter": "all"
+      },
+      "snapshotId": "DEMO-shipment-snapshot",
+      "observedAt": "2026-10-28T10:12:00Z",
+      "status": "complete",
+      "pagination": "exhausted",
+      "completenessBasis": "user-declared",
+      "captureInterval": {
+        "version": "1.0.0",
+        "start": "2026-10-28T10:12:00Z",
+        "end": "2026-10-28T10:12:00Z"
+      },
+      "limitations": [
+        "Synthetic point-capture completeness declaration, not verified against a provider."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "fulfillment.partial",
+      "title": "Order is partially fulfilled",
+      "detail": "3 units handed off; 2 units remain outstanding.",
+      "severity": "info",
+      "evidence": [
+        "DEMO-order-line",
+        "DEMO-shipment-delivery-1",
+        "DEMO-order-snapshot",
+        "DEMO-shipment-snapshot"
+      ]
+    }
+  ],
+  "assertions": [
+    {
+      "id": "fulfillment.state",
+      "title": "Partial fulfillment state",
+      "expected": "Partially fulfilled",
+      "observed": "Complete",
+      "status": "FAIL",
+      "reason": "Outstanding quantity was incorrectly treated as fulfilled.",
+      "evidence": [
+        "DEMO-order-line",
+        "DEMO-shipment-delivery-1",
+        "DEMO-order-snapshot",
+        "DEMO-shipment-snapshot"
+      ]
+    }
+  ],
+  "metrics": {
+    "order": "DEMO-1042",
+    "ordered": 5,
+    "canceled": 0,
+    "fulfilled": 3,
+    "outstanding": 2,
+    "eventDeliveries": 1,
+    "uniqueShipments": 1
+  },
+  "evidenceIdentity": "{\"coverage\":[{\"captureInterval\":{\"end\":\"2026-10-28T10:12:00Z\",\"start\":\"2026-10-28T10:12:00Z\",\"version\":\"1.0.0\"},\"completenessBasis\":\"user-declared\",\"id\":\"DEMO-order-snapshot\",\"limitations\":[\"Synthetic point-capture completeness declaration, not verified against a provider.\"],\"observedAt\":\"2026-10-28T10:12:00Z\",\"pagination\":\"exhausted\",\"resource\":\"orders\",\"scope\":{\"account\":\"DEMO-shop\",\"filter\":\"all\",\"locations\":[\"DEMO-MAIN\"]},\"snapshotId\":\"DEMO-order-snapshot\",\"sourceId\":\"shop\",\"status\":\"complete\"},{\"captureInterval\":{\"end\":\"2026-10-28T10:12:00Z\",\"start\":\"2026-10-28T10:12:00Z\",\"version\":\"1.0.0\"},\"completenessBasis\":\"user-declared\",\"id\":\"DEMO-shipment-snapshot\",\"limitations\":[\"Synthetic point-capture completeness declaration, not verified against a provider.\"],\"observedAt\":\"2026-10-28T10:12:00Z\",\"pagination\":\"exhausted\",\"resource\":\"shipments\",\"scope\":{\"account\":\"DEMO-shop\",\"filter\":\"all\",\"locations\":[\"DEMO-MAIN\"]},\"snapshotId\":\"DEMO-shipment-snapshot\",\"sourceId\":\"shop\",\"status\":\"complete\"}],\"observations\":[{\"entityType\":\"order\",\"eventTime\":\"2026-10-28T10:00:00Z\",\"evidenceRef\":\"synthetic:DEMO-order-line\",\"fields\":{\"canceled\":0,\"eligible\":true,\"lineId\":\"DEMO-L1\",\"ordered\":5,\"orderId\":\"DEMO-1042\",\"productId\":\"DEMO-SKU-08\",\"releasedAt\":\"2026-10-28T10:00:00Z\"},\"id\":\"DEMO-order-line\",\"observedAt\":\"2026-10-28T10:12:00Z\",\"snapshotId\":\"DEMO-order-snapshot\",\"sourceId\":\"shop\",\"sourceRecordId\":\"DEMO-order-line\",\"unmappedFields\":[]},{\"entityType\":\"shipment\",\"eventTime\":\"2026-10-28T10:06:00Z\",\"evidenceRef\":\"synthetic:DEMO-shipment-delivery-1\",\"fields\":{\"lineId\":\"DEMO-L1\",\"milestone\":\"handed_off\",\"milestoneTime\":\"2026-10-28T10:06:00Z\",\"orderId\":\"DEMO-1042\",\"quantity\":3,\"shipmentId\":\"DEMO-SHIP-01\"},\"id\":\"DEMO-shipment-delivery-1\",\"ingestedAt\":\"2026-10-28T10:07:00Z\",\"observedAt\":\"2026-10-28T10:12:00Z\",\"snapshotId\":\"DEMO-shipment-snapshot\",\"sourceId\":\"shop\",\"sourceRecordId\":\"DEMO-SHIP-01\",\"unmappedFields\":[]}]}",
+  "policyIdentity": "{}",
+  "limitations": [
+    "Synthetic demo · No connected accounts",
+    "A six-fixture local evaluator produced this report, not the full Commerce Reliability Kit engine. No production integration has been tested.",
+    "Matching records does not establish physical stock accuracy. Completeness and mappings are synthetic declarations.",
+    "Operational findings describe supported source facts. Assertion verdicts judge the selected example output against the fixture expectation.",
+    "A recorded handoff does not establish delivery to the customer."
+  ]
+}

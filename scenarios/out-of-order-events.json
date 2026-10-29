@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "1.1.0",
+  "id": "out-of-order-events",
+  "version": "1.0.0",
+  "purpose": "An older four-unit revision arrives after the newer six-unit revision; remaining is four.",
+  "initialConditions": "An older four-unit revision arrives after the newer six-unit revision; remaining is four.",
+  "inputOrder": "unordered",
+  "requiredCapabilities": [
+    "fulfillment.quantities",
+    "observation.freshness"
+  ],
+  "assumptions": [
+    "Order A / line L1 and shipment S1 / line L1 share the same normalized shop source and merchant-demo account namespace; no cross-source mapping is required.",
+    "No provider compatibility is implied.",
+    "Source event timestamps describe revisions of S1; ingestion order is irrelevant."
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "license": "Apache-2.0",
+    "references": [
+      "docs/DESIGN-GATE.md",
+      "docs/ORACLE-REVIEW.md",
+      "docs/SOURCES.md",
+      "docs/EXPANDED-ORACLES.md"
+    ]
+  },
+  "doesNotEstablish": [
+    "Production correctness, physical stock, eventual delivery, or vendor compatibility.",
+    "Does not resolve absent or contradictory source revision times."
+  ],
+  "evaluationTime": "2026-10-28T10:12:00Z",
+  "evidence": {
+    "schemaVersion": "1.1.0",
+    "sources": [
+      {
+        "id": "shop",
+        "account": "merchant-demo",
+        "provider": "synthetic-store",
+        "apiVersion": "synthetic-1"
+      },
+      {
+        "id": "warehouse",
+        "account": "warehouse-demo",
+        "provider": "synthetic-warehouse",
+        "apiVersion": "synthetic-1"
+      }
+    ],
+    "coverage": [
+      {
+        "id": "order-snapshot",
+        "sourceId": "shop",
+        "resource": "orders",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "order-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      },
+      {
+        "id": "shipment-snapshot",
+        "sourceId": "shop",
+        "resource": "shipments",
+        "scope": {
+          "account": "merchant-demo",
+          "locations": [
+            "main"
+          ],
+          "filter": "all"
+        },
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "status": "complete",
+        "pagination": "exhausted",
+        "completenessBasis": "importer-declared",
+        "limitations": [
+          "Synthetic completeness declaration; not independently established."
+        ],
+        "captureInterval": {
+          "version": "1.0.0",
+          "start": "2026-10-28T10:12:00Z",
+          "end": "2026-10-28T10:12:00Z"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "id": "shipment-delivery-duplicate",
+        "sourceId": "shop",
+        "sourceRecordId": "shipment-delivery-duplicate",
+        "entityType": "shipment",
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:shipment-delivery-duplicate",
+        "fields": {
+          "shipmentId": "S1",
+          "orderId": "A",
+          "lineId": "L1",
+          "quantity": 6,
+          "milestone": "handed_off"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:08:00Z",
+        "ingestedAt": "2026-10-28T10:09:00Z"
+      },
+      {
+        "id": "shipment-delivery-1",
+        "sourceId": "shop",
+        "sourceRecordId": "shipment-delivery-1",
+        "entityType": "shipment",
+        "snapshotId": "shipment-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:shipment-delivery-1",
+        "fields": {
+          "shipmentId": "S1",
+          "orderId": "A",
+          "lineId": "L1",
+          "quantity": 4,
+          "milestone": "handed_off"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:06:00Z",
+        "ingestedAt": "2026-10-28T10:11:00Z"
+      },
+      {
+        "id": "order-line",
+        "sourceId": "shop",
+        "sourceRecordId": "order-line",
+        "entityType": "order",
+        "snapshotId": "order-snapshot",
+        "observedAt": "2026-10-28T10:12:00Z",
+        "evidenceRef": "synthetic:order-line",
+        "fields": {
+          "orderId": "A",
+          "lineId": "L1",
+          "productId": "P1",
+          "ordered": 10,
+          "canceled": 0,
+          "eligible": true,
+          "releasedAt": "2026-10-28T10:00:00Z"
+        },
+        "unmappedFields": [],
+        "eventTime": "2026-10-28T10:00:00Z"
+      }
+    ],
+    "mappings": [],
+    "outcomes": [],
+    "policy": {
+      "version": "1.0.0",
+      "checks": [
+        "observation.freshness",
+        "fulfillment.quantities"
+      ],
+      "synchronizationAllowanceMs": 300000,
+      "persistenceMs": 300000,
+      "freshness": [
+        {
+          "sourceId": "shop",
+          "resource": "orders",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        },
+        {
+          "sourceId": "shop",
+          "resource": "shipments",
+          "cadenceMs": 600000,
+          "freshnessLimitMs": 600000
+        }
+      ]
+    }
+  },
+  "assertions": [
+    {
+      "id": "literal-0",
+      "kind": "diagnostic",
+      "required": true,
+      "checkId": "fulfillment.quantities:shop/A",
+      "expectedStatus": "PASS",
+      "expectedReason": "partial_fulfillment",
+      "expectedDetails": {
+        "obligation": 10,
+        "shipped": 6,
+        "remaining": 4,
+        "completed": false
+      }
+    },
+    {
+      "id": "finding-1",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "fulfillment.over-shipped",
+      "present": false
+    },
+    {
+      "id": "finding-2",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "fulfillment.partial",
+      "present": true
+    },
+    {
+      "id": "finding-3",
+      "kind": "finding",
+      "required": true,
+      "ruleId": "observation.stale",
+      "present": false
+    }
+  ]
+}

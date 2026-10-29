@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuites name="Commerce Reliability Kit" tests="5" failures="0" skipped="0"><testsuite name="scenario-or-external-assertions" tests="5" failures="0" skipped="0"><properties><property name="mode" value="demo"/><property name="exitCode" value="0"/><property name="required" value="5"/><property name="testcaseSelection" value="scenario meta assertions"/><property name="diagnostics.total" value="4"/><property name="diagnostics.required" value="4"/><property name="diagnostics.PASS" value="4"/><property name="diagnostics.FAIL" value="0"/><property name="diagnostics.INCONCLUSIVE" value="0"/><property name="diagnostics.NOT APPLICABLE" value="0"/><property name="assertions.total" value="5"/><property name="assertions.required" value="5"/><property name="assertions.PASS" value="5"/><property name="assertions.FAIL" value="0"/><property name="assertions.INCONCLUSIVE" value="0"/><property name="assertions.NOT APPLICABLE" value="0"/><property name="integrationAssertions.total" value="1"/><property name="integrationAssertions.required" value="1"/><property name="integrationAssertions.PASS" value="0"/><property name="integrationAssertions.FAIL" value="1"/><property name="integrationAssertions.INCONCLUSIVE" value="0"/><property name="integrationAssertions.NOT APPLICABLE" value="0"/><property name="coverage.total" value="2"/><property name="coverage.complete" value="2"/><property name="coverage.declared" value="2"/></properties><testcase classname="scenario-or-external-assertions" name="partial-diagnostic"><system-out>{
+  &quot;id&quot;: &quot;partial-diagnostic&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;required&quot;: true,
+  &quot;reason&quot;: &quot;expected_diagnostic_or_integration_result&quot;,
+  &quot;evidence&quot;: [
+    &quot;order-line&quot;,
+    &quot;order-snapshot&quot;,
+    &quot;shipment-delivery-1&quot;,
+    &quot;shipment-delivery-duplicate&quot;,
+    &quot;shipment-snapshot&quot;
+  ],
+  &quot;expected&quot;: &quot;{\&quot;status\&quot;:\&quot;PASS\&quot;}&quot;,
+  &quot;observed&quot;: &quot;{\&quot;details\&quot;:{\&quot;completed\&quot;:false,\&quot;obligation\&quot;:10,\&quot;overShipped\&quot;:0,\&quot;remaining\&quot;:6,\&quot;shipped\&quot;:4},\&quot;reason\&quot;:\&quot;partial_fulfillment\&quot;,\&quot;status\&quot;:\&quot;PASS\&quot;}&quot;,
+  &quot;details&quot;: {}
+}</system-out></testcase><testcase classname="scenario-or-external-assertions" name="partial-detected"><system-out>{
+  &quot;id&quot;: &quot;partial-detected&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;required&quot;: true,
+  &quot;reason&quot;: &quot;expected_finding_presence_and_entities&quot;,
+  &quot;evidence&quot;: [
+    &quot;order-line&quot;,
+    &quot;order-snapshot&quot;,
+    &quot;shipment-delivery-1&quot;,
+    &quot;shipment-delivery-duplicate&quot;,
+    &quot;shipment-snapshot&quot;
+  ],
+  &quot;expected&quot;: &quot;{\&quot;present\&quot;:true,\&quot;ruleId\&quot;:\&quot;fulfillment.partial\&quot;}&quot;,
+  &quot;observed&quot;: &quot;{\&quot;entities\&quot;:[\&quot;shop/A\&quot;],\&quot;present\&quot;:true,\&quot;ruleId\&quot;:\&quot;fulfillment.partial\&quot;}&quot;,
+  &quot;details&quot;: {}
+}</system-out></testcase><testcase classname="scenario-or-external-assertions" name="faulty-outcome-detected"><system-out>{
+  &quot;id&quot;: &quot;faulty-outcome-detected&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;required&quot;: true,
+  &quot;reason&quot;: &quot;expected_diagnostic_or_integration_result&quot;,
+  &quot;evidence&quot;: [
+    &quot;faulty-completion&quot;,
+    &quot;order-line&quot;,
+    &quot;order-snapshot&quot;,
+    &quot;shipment-delivery-1&quot;,
+    &quot;shipment-delivery-duplicate&quot;,
+    &quot;shipment-snapshot&quot;
+  ],
+  &quot;expected&quot;: &quot;{\&quot;status\&quot;:\&quot;FAIL\&quot;}&quot;,
+  &quot;observed&quot;: &quot;{\&quot;details\&quot;:{\&quot;target\&quot;:\&quot;shop/A\&quot;},\&quot;reason\&quot;:\&quot;completion_contradicts_obligation_or_expectation\&quot;,\&quot;status\&quot;:\&quot;FAIL\&quot;}&quot;,
+  &quot;details&quot;: {}
+}</system-out></testcase><testcase classname="scenario-or-external-assertions" name="partial-line-quantities"><system-out>{
+  &quot;id&quot;: &quot;partial-line-quantities&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;required&quot;: true,
+  &quot;reason&quot;: &quot;expected_diagnostic_or_integration_result&quot;,
+  &quot;evidence&quot;: [
+    &quot;order-line&quot;,
+    &quot;order-snapshot&quot;,
+    &quot;shipment-delivery-1&quot;,
+    &quot;shipment-delivery-duplicate&quot;,
+    &quot;shipment-snapshot&quot;
+  ],
+  &quot;expected&quot;: &quot;{\&quot;details\&quot;:{\&quot;completed\&quot;:false,\&quot;obligation\&quot;:10,\&quot;remaining\&quot;:6,\&quot;shipped\&quot;:4},\&quot;status\&quot;:\&quot;PASS\&quot;}&quot;,
+  &quot;observed&quot;: &quot;{\&quot;details\&quot;:{\&quot;completed\&quot;:false,\&quot;obligation\&quot;:10,\&quot;overShipped\&quot;:0,\&quot;remaining\&quot;:6,\&quot;shipped\&quot;:4},\&quot;reason\&quot;:\&quot;partial_fulfillment\&quot;,\&quot;status\&quot;:\&quot;PASS\&quot;}&quot;,
+  &quot;details&quot;: {}
+}</system-out></testcase><testcase classname="scenario-or-external-assertions" name="no-stale-resources"><system-out>{
+  &quot;id&quot;: &quot;no-stale-resources&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;required&quot;: true,
+  &quot;reason&quot;: &quot;expected_finding_presence_and_entities&quot;,
+  &quot;evidence&quot;: [],
+  &quot;expected&quot;: &quot;{\&quot;present\&quot;:false,\&quot;ruleId\&quot;:\&quot;observation.stale\&quot;}&quot;,
+  &quot;observed&quot;: &quot;{\&quot;entities\&quot;:[],\&quot;present\&quot;:false,\&quot;ruleId\&quot;:\&quot;observation.stale\&quot;}&quot;,
+  &quot;details&quot;: {}
+}</system-out></testcase><system-out>{
+  &quot;checks&quot;: [
+    {
+      &quot;id&quot;: &quot;fulfillment.line:shop/A/L1&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;partial_fulfillment&quot;,
+      &quot;evidence&quot;: [
+        &quot;order-line&quot;,
+        &quot;order-snapshot&quot;,
+        &quot;shipment-delivery-1&quot;,
+        &quot;shipment-delivery-duplicate&quot;,
+        &quot;shipment-snapshot&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;partial_fulfillment&quot;,
+      &quot;details&quot;: {
+        &quot;obligation&quot;: 10,
+        &quot;shipped&quot;: 4,
+        &quot;remaining&quot;: 6,
+        &quot;overShipped&quot;: 0,
+        &quot;completed&quot;: false
+      }
+    },
+    {
+      &quot;id&quot;: &quot;fulfillment.quantities:shop/A&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;partial_fulfillment&quot;,
+      &quot;evidence&quot;: [
+        &quot;order-line&quot;,
+        &quot;order-snapshot&quot;,
+        &quot;shipment-delivery-1&quot;,
+        &quot;shipment-delivery-duplicate&quot;,
+        &quot;shipment-snapshot&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;partial_fulfillment&quot;,
+      &quot;details&quot;: {
+        &quot;obligation&quot;: 10,
+        &quot;shipped&quot;: 4,
+        &quot;remaining&quot;: 6,
+        &quot;overShipped&quot;: 0,
+        &quot;completed&quot;: false
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observation.freshness:shop/orders/main/all&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;fresh&quot;,
+      &quot;evidence&quot;: [
+        &quot;order-snapshot&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;fresh&quot;,
+      &quot;details&quot;: {
+        &quot;ageMs&quot;: 0,
+        &quot;scope&quot;: &quot;{\&quot;account\&quot;:\&quot;merchant-demo\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;main\&quot;]}&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observation.freshness:shop/shipments/main/all&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;fresh&quot;,
+      &quot;evidence&quot;: [
+        &quot;shipment-snapshot&quot;
+      ],
+      &quot;expected&quot;: &quot;Sufficient evidence for the declared check&quot;,
+      &quot;observed&quot;: &quot;fresh&quot;,
+      &quot;details&quot;: {
+        &quot;ageMs&quot;: 0,
+        &quot;scope&quot;: &quot;{\&quot;account\&quot;:\&quot;merchant-demo\&quot;,\&quot;filter\&quot;:\&quot;all\&quot;,\&quot;locations\&quot;:[\&quot;main\&quot;]}&quot;
+      }
+    }
+  ],
+  &quot;integrationAssertions&quot;: [
+    {
+      &quot;id&quot;: &quot;completion-obligation&quot;,
+      &quot;status&quot;: &quot;FAIL&quot;,
+      &quot;required&quot;: true,
+      &quot;reason&quot;: &quot;completion_contradicts_obligation_or_expectation&quot;,
+      &quot;evidence&quot;: [
+        &quot;faulty-completion&quot;,
+        &quot;order-line&quot;,
+        &quot;order-snapshot&quot;,
+        &quot;shipment-delivery-1&quot;,
+        &quot;shipment-delivery-duplicate&quot;,
+        &quot;shipment-snapshot&quot;
+      ],
+      &quot;expected&quot;: &quot;completed=false&quot;,
+      &quot;observed&quot;: &quot;completed=true&quot;,
+      &quot;details&quot;: {
+        &quot;target&quot;: &quot;shop/A&quot;
+      }
+    }
+  ],
+  &quot;findings&quot;: [
+    {
+      &quot;ruleId&quot;: &quot;fulfillment.partial&quot;,
+      &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+      &quot;evidence&quot;: [
+        &quot;order-line&quot;,
+        &quot;order-snapshot&quot;,
+        &quot;shipment-delivery-1&quot;,
+        &quot;shipment-delivery-duplicate&quot;,
+        &quot;shipment-snapshot&quot;
+      ],
+      &quot;entities&quot;: [
+        &quot;shop/A&quot;
+      ],
+      &quot;severity&quot;: &quot;info&quot;,
+      &quot;interpretation&quot;: &quot;4 units handed off; 6 units remain outstanding.&quot;,
+      &quot;uncertainty&quot;: [
+        &quot;Coverage completeness and mappings are supplied declarations, not independently established.&quot;
+      ],
+      &quot;blockingPrerequisites&quot;: []
+    }
+  ],
+  &quot;summary&quot;: {
+    &quot;diagnostics&quot;: {
+      &quot;total&quot;: 4,
+      &quot;required&quot;: 4,
+      &quot;PASS&quot;: 4,
+      &quot;FAIL&quot;: 0,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;assertions&quot;: {
+      &quot;total&quot;: 5,
+      &quot;required&quot;: 5,
+      &quot;PASS&quot;: 5,
+      &quot;FAIL&quot;: 0,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;integrationAssertions&quot;: {
+      &quot;total&quot;: 1,
+      &quot;required&quot;: 1,
+      &quot;PASS&quot;: 0,
+      &quot;FAIL&quot;: 1,
+      &quot;INCONCLUSIVE&quot;: 0,
+      &quot;NOT APPLICABLE&quot;: 0
+    },
+    &quot;coverage&quot;: {
+      &quot;total&quot;: 2,
+      &quot;complete&quot;: 2,
+      &quot;declared&quot;: 2
+    },
+    &quot;exitCode&quot;: 0
+  },
+  &quot;coverage&quot;: [
+    {
+      &quot;id&quot;: &quot;order-snapshot&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;orders&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;merchant-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;order-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;shipment-snapshot&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;resource&quot;: &quot;shipments&quot;,
+      &quot;scope&quot;: {
+        &quot;account&quot;: &quot;merchant-demo&quot;,
+        &quot;locations&quot;: [
+          &quot;main&quot;
+        ],
+        &quot;filter&quot;: &quot;all&quot;
+      },
+      &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;pagination&quot;: &quot;exhausted&quot;,
+      &quot;completenessBasis&quot;: &quot;importer-declared&quot;,
+      &quot;limitations&quot;: [
+        &quot;Synthetic completeness declaration; not independently established.&quot;
+      ],
+      &quot;captureInterval&quot;: {
+        &quot;version&quot;: &quot;1.0.0&quot;,
+        &quot;start&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+        &quot;end&quot;: &quot;2026-10-28T10:12:00Z&quot;
+      }
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;id&quot;: &quot;order-line&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;order-line&quot;,
+      &quot;entityType&quot;: &quot;order&quot;,
+      &quot;snapshotId&quot;: &quot;order-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:order-line&quot;,
+      &quot;fields&quot;: {
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;productId&quot;: &quot;P1&quot;,
+        &quot;ordered&quot;: 10,
+        &quot;canceled&quot;: 0,
+        &quot;eligible&quot;: true,
+        &quot;releasedAt&quot;: &quot;2026-10-28T10:00:00Z&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:00:00Z&quot;
+    },
+    {
+      &quot;id&quot;: &quot;shipment-delivery-1&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;shipment-delivery-1&quot;,
+      &quot;entityType&quot;: &quot;shipment&quot;,
+      &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:shipment-delivery-1&quot;,
+      &quot;fields&quot;: {
+        &quot;shipmentId&quot;: &quot;S1&quot;,
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;quantity&quot;: 4,
+        &quot;milestone&quot;: &quot;handed_off&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    },
+    {
+      &quot;id&quot;: &quot;shipment-delivery-duplicate&quot;,
+      &quot;sourceId&quot;: &quot;shop&quot;,
+      &quot;sourceRecordId&quot;: &quot;shipment-delivery-duplicate&quot;,
+      &quot;entityType&quot;: &quot;shipment&quot;,
+      &quot;snapshotId&quot;: &quot;shipment-snapshot&quot;,
+      &quot;observedAt&quot;: &quot;2026-10-28T10:12:00Z&quot;,
+      &quot;evidenceRef&quot;: &quot;synthetic:shipment-delivery-duplicate&quot;,
+      &quot;fields&quot;: {
+        &quot;shipmentId&quot;: &quot;S1&quot;,
+        &quot;orderId&quot;: &quot;A&quot;,
+        &quot;lineId&quot;: &quot;L1&quot;,
+        &quot;quantity&quot;: 4,
+        &quot;milestone&quot;: &quot;handed_off&quot;
+      },
+      &quot;unmappedFields&quot;: [],
+      &quot;eventTime&quot;: &quot;2026-10-28T10:06:00Z&quot;
+    }
+  ],
+  &quot;manifest&quot;: {
+    &quot;toolVersion&quot;: &quot;0.1.0&quot;,
+    &quot;schemaVersion&quot;: &quot;1.1.0&quot;,
+    &quot;scenarioId&quot;: &quot;partial-shipment&quot;,
+    &quot;scenarioVersion&quot;: &quot;1.0.0&quot;,
+    &quot;ruleVersion&quot;: &quot;1.1.1&quot;,
+    &quot;importerVersion&quot;: &quot;normalized-1.1.0&quot;,
+    &quot;profileVersion&quot;: &quot;1.0.0&quot;,
+    &quot;mappingVersions&quot;: [],
+    &quot;inputHash&quot;: &quot;87c57568db5b4beb8f8c91fa1741a21c4647d27fcba189ad3f6308341252de69&quot;,
+    &quot;policyHash&quot;: &quot;e34d5069b0a13b8ea554ceede0e33c267b95d5d5c7afac73e555bd2ade8ed057&quot;,
+    &quot;evaluationTime&quot;: &quot;2026-10-28T10:12:00.000Z&quot;,
+    &quot;mode&quot;: &quot;demo&quot;,
+    &quot;reproductionCommand&quot;: &quot;node --experimental-strip-types packages/cli/index.ts demo partial-shipment&quot;
+  }
+}</system-out></testsuite></testsuites>

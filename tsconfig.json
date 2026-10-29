@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "strict": true, "noUncheckedIndexedAccess": true, "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true, "rewriteRelativeImportExtensions": true,
+    "declaration": true, "outDir": "dist", "rootDir": ".", "skipLibCheck": true
+  },
+  "include": ["packages/**/*.ts", "examples/**/*.ts", "tests/**/*.ts"]
+}
