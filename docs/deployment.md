@@ -1,6 +1,6 @@
 # GitHub Pages deployment and rollback
 
-The confirmed repository is [SafetyMP/commerce-reliability-kit](https://github.com/SafetyMP/commerce-reliability-kit), with default/deployment branch `main`. The project subpath is `/commerce-reliability-kit/`. No live URL or deployment success is claimed here; use the URL returned by a successful deployment and verify it before adding it to the README and repository homepage.
+The confirmed repository is [SafetyMP/commerce-reliability-kit](https://github.com/SafetyMP/commerce-reliability-kit), with default/deployment branch `main`. The project subpath is `/commerce-reliability-kit/`. The [live synthetic demo](https://safetymp.github.io/commerce-reliability-kit/) is published through GitHub Actions. Initial CI, deployment, and live browser acceptance passed on 2026-10-29; future updates must repeat the checks below.
 
 ## Validation and promotion
 

@@ -2,7 +2,9 @@
 
 Reproduce, diagnose, and test order and inventory integration failures using explicit evidence and deterministic synthetic scenarios.
 
-**Early, unreleased v0.1 toolkit and frontend demo.** The repository implements a Node CLI and library with 24 scenarios, normalized capture imports, assertions, and reports. The browser demo uses a separate, smaller six-fixture evaluator. [Source repository](https://github.com/SafetyMP/commerce-reliability-kit). A live demo URL will be added after deployment is verified.
+[Open the live synthetic demo](https://safetymp.github.io/commerce-reliability-kit/)
+
+**Early v0.1 toolkit and frontend demo.** The repository implements a Node CLI and library with 24 scenarios, normalized capture imports, assertions, and reports. The browser demo uses a separate, smaller six-fixture evaluator. [Source repository](https://github.com/SafetyMP/commerce-reliability-kit). No versioned package release is published.
 
 Built for integration agencies, connector engineers, warehouse and fulfillment software teams, and merchant technical teams. For example: a connector marks an order complete after one shipment, while units remain outstanding. Inspect the evidence, run faulty and corrected examples, and compare their assertions.
 
