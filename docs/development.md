@@ -1,6 +1,6 @@
 # Development
 
-Use Node **22.23.2**, npm **10**, TypeScript 5.9.3, React 19.2.0, and Vite 7.2.2. Keep root and demo lockfiles separate. Installation requires registry access or a populated npm cache; runtime evaluation needs no external services.
+Use Node **22.23.2**, npm **10**, TypeScript 5.9.3, React 19.2.0, and Vite 7.3.7. Keep root and demo lockfiles separate. Installation requires registry access or a populated npm cache; runtime evaluation needs no external services.
 
 From the repository root:
 

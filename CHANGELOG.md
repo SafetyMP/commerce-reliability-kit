@@ -1,5 +1,9 @@
 # Changelog
 
+## Security maintenance — unreleased, 2026-10-29
+
+- Update Ajv from 8.17.1 to 8.18.0 and Vite from 7.2.2 to 7.3.7, including Vite-required esbuild dependencies, to address reported dependency security advisories.
+
 ## 0.1.0 — unreleased, 2026-10-28
 
 - 24 synthetic scenarios, deterministic order/fulfillment/inventory/freshness checks, explicit evaluation time, nonoverlapping facility aggregation, and shipment deadlines.
