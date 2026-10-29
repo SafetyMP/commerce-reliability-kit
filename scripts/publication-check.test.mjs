@@ -22,6 +22,13 @@ test('Markdown validation requires public targets and valid headings, ignores fe
   assert.deepEqual(markdownProblems('README.md', '```md\n[Sample](missing.md)\n```', files, read), []);
 });
 
+test('Markdown heading IDs strip inline tags and unfinished trailing tags', () => {
+  const files = new Set(['README.md']);
+  for (const heading of ['# <EM>Guide</EM>', '# Guide<script', '# Guide<SCRIPT', '# Guide<>']) {
+    assert.deepEqual(markdownProblems('README.md', '[Guide](#guide)', files, () => heading), [], heading);
+  }
+});
+
 function fixture(t) {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), 'publication-test-')));
   t.after(() => rmSync(dir, { recursive: true, force: true }));

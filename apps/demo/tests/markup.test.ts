@@ -36,7 +36,7 @@ test('initial library markup has six named scenario actions and accessible nativ
   assert.equal((html.match(/aria-label="Open /g) ?? []).length, 6);
   for (const s of scenarios) assert(html.includes(`aria-label="Open ${s.title}"`));
   assert.match(html, /aria-live="polite"/);
-  assert.doesNotMatch(html, /<a[^>]+href="https?:|<img|<iframe|<script/);
+  assert.doesNotMatch(html, /<a[^>]+href="https?:|<img|<iframe|<script/i);
 });
 
 test('insufficient report components print Unknown rather than null, undefined, or invented zero totals', () => {
@@ -80,7 +80,7 @@ test('React escapes hostile normalized records and attribute values in the inlin
     const html = renderToStaticMarkup(createElement(EvidencePanel, {
       facts: report, selected, onSelect: () => {}, evaluationTime: report.evaluationTime,
     }));
-    assert.doesNotMatch(html, /<img|<script|onerror="alert/);
+    assert.doesNotMatch(html, /<img|<script|onerror="alert/i);
     assert.match(html, /&lt;img/);
     assert.match(html, /&quot;/);
   }

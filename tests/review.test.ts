@@ -77,9 +77,9 @@ test('review: distinct location mismatches have distinct comparison identities',
 test('review: HTML escapes unchecked JavaScript caller enum fields too', () => {
   const report = evaluate(fixture('normal-delay'));
   Object.assign(report.manifest, { mode: '<img src=x onerror=alert(1)>' });
-  Object.assign(report.checks[0]!, { status: '<img src=x onerror=alert(1)>', required: '<script>bad</script>' });
+  Object.assign(report.checks[0]!, { status: '<IMG src=x onerror=alert(1)>', required: '<ScRiPt>bad</ScRiPt>' });
   const html = renderHTML(report);
-  assert.doesNotMatch(html, /<img|<script>/);
+  assert.doesNotMatch(html, /<img|<script/i);
 });
 
 test('review: same-ID void must reverse the latest preceding revision', () => {

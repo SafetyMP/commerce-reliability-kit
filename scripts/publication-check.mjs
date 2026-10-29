@@ -47,7 +47,8 @@ function anchors(text) {
   const seen = new Map();
   const ids = new Set();
   for (const match of prose(text).matchAll(/^#{1,6}\s+(.+?)\s*#*$/gm)) {
-    const slug = match[1].toLowerCase().replace(/<[^>]+>/g, '').replace(/[^\p{L}\p{N}_\-\s]/gu, '').replace(/\s/g, '-');
+    // Strip tag-like spans, including an unfinished trailing tag, for heading IDs.
+    const slug = match[1].toLowerCase().replace(/<[^>]*>?/g, '').replace(/[^\p{L}\p{N}_\-\s]/gu, '').replace(/\s/g, '-');
     const count = seen.get(slug) ?? 0;
     seen.set(slug, count + 1); ids.add(count ? `${slug}-${count}` : slug);
   }
