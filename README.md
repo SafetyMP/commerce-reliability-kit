@@ -4,6 +4,8 @@ Open-source tools for reproducing, diagnosing, and testing **order, fulfillment,
 
 An order is marked complete after one shipment, but units remain outstanding. Reproduce the failure, inspect the supporting records, test corrected behavior, and share a report that explains the result.
 
+**SafetyMP reliability thesis — automation depends on dependable operations.** AI-enabled decisions inherit risk from the records and integrations beneath them. This kit explores how reproducible scenarios, explicit evidence, and inconclusive verdicts can surface order, fulfillment, and inventory discrepancies before teams rely on faulty signals. It tests integrations, not AI models or live merchant systems. See the [portfolio thesis](https://github.com/SafetyMP/SafetyMP).
+
 [![Validation and Pages deployment](https://github.com/SafetyMP/commerce-reliability-kit/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/SafetyMP/commerce-reliability-kit/actions/workflows/pages.yml)
 
 **[Try the live demo](https://safetymp.github.io/commerce-reliability-kit/)** · [Source repository](https://github.com/SafetyMP/commerce-reliability-kit) · [Apache-2.0 license](LICENSE)
