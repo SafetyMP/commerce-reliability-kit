@@ -19,6 +19,33 @@ const labels: Record<Variant, string> = {
   insufficient: 'Try a partial capture',
 };
 
+const actionLabels = {
+  close: 'Close the case as complete',
+  follow: 'Keep open and follow up',
+  confirm: 'Request warehouse confirmation',
+} as const;
+export type SupportAction = keyof typeof actionLabels;
+
+export function supportDecision(report: RunReport, action: SupportAction) {
+  const remaining = report.metrics.outstanding;
+  const known = typeof remaining === 'number';
+  if (action === 'close') return {
+    assessment: known ? 'Closure contradicts the shop records' : 'Closure lacks sufficient evidence',
+    reply: 'We have marked your order complete and closed this support case.',
+    work: known ? `No follow-up assigned. The shop still shows ${remaining} outstanding units.` : 'No follow-up assigned. The partial feed leaves the outstanding balance unresolved.',
+  };
+  if (action === 'confirm') return {
+    assessment: known ? 'Independent confirmation requested' : 'Evidence gap escalated',
+    reply: 'We are keeping your case open and asking fulfillment to check the warehouse handoff records.',
+    work: known ? `Ask fulfillment to verify the warehouse records for the ${remaining} units still open in the shop.` : 'Ask fulfillment for a complete shipment record matched to this order line. Reconcile it before quoting a balance.',
+  };
+  return {
+    assessment: known ? 'Open balance retained for follow-up' : 'Case held pending complete evidence',
+    reply: known ? `The shop shows ${remaining} units still open. We will follow up on their shipment status.` : 'We are keeping your case open while we check its shipment status.',
+    work: known ? `Assign fulfillment to trace the ${remaining} open units and return an update to support.` : 'Keep the ticket in the pending queue. Support still needs a complete shipment capture to establish the balance.',
+  };
+}
+
 export function pilotValue(values: Assumptions) {
   const numbers = fields.map(({key}) => Number(values[key]));
   if (fields.some(({key}) => values[key].trim() === '') ||
@@ -35,14 +62,17 @@ interface Props {
   heading: RefObject<HTMLHeadingElement | null>;
   variant: Variant;
   onVariant: (variant: Variant) => void;
+  action: SupportAction | null;
+  onAction: (action: SupportAction | null) => void;
   values: Assumptions;
   onValues: (values: Assumptions) => void;
   onInspect: (report: RunReport) => void;
 }
 
-export function CommerceCase({heading, variant, onVariant, values, onValues, onInspect}: Props) {
+export function CommerceCase({heading, variant, onVariant, action, onAction, values, onValues, onInspect}: Props) {
   const report = evaluateScenario('partial-shipment', variant);
   const assertion = report.assertions[0]!;
+  const decision = action ? supportDecision(report, action) : null;
   const { ordered, fulfilled, outstanding } = report.metrics;
   const result = pilotValue(values);
   const shipment = report.observations.find(o => o.entityType === 'shipment');
@@ -86,9 +116,27 @@ export function CommerceCase({heading, variant, onVariant, values, onValues, onI
         </dl>
         <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
         <p><strong>Selected example’s output</strong><br/>{assertion.observed}</p>
-        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{variant === 'faulty' ? 'Keep the order open. Two units still need a handoff.' : variant === 'corrected' ? 'Keep the order open and follow up on the remaining two units.' : 'Request the remaining shipment records before quoting a balance.'}</span></div>
+        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{assertion.reason}</span></div>
         <button type="button" className="secondary" onClick={() => onInspect(report)}>Inspect this run’s records in the technical workspace</button>
       </div>
+    </section>
+
+    <section className="support-decision" aria-labelledby="support-heading">
+      <div>
+        <p className="dispatch-kicker">Support desk · Simulated response</p>
+        <h2 id="support-heading">What will you tell the customer?</h2>
+        <div role="group" aria-label="Choose a support action" className="support-actions">
+          {(Object.keys(actionLabels) as SupportAction[]).map(key => <button key={key} type="button"
+            className={action === key ? 'primary' : 'secondary'} aria-pressed={action === key}
+            onClick={() => onAction(key)}>{actionLabels[key]}</button>)}
+        </div>
+      </div>
+      <div className="response-slip" aria-live="polite">{decision ? <>
+        <h3>{decision.assessment}</h3>
+        <p><strong>Customer reply</strong><br/>{decision.reply}</p>
+        <p><strong>Fulfillment follow-up</strong><br/>{decision.work}</p>
+        <button className="text-button" type="button" onClick={() => onAction(null)}>Clear response and try again</button>
+      </> : <p>Your choice opens a draft customer reply and shows who owns the next step.</p>}</div>
     </section>
 
     <section className="case-investment" aria-labelledby="pilot-heading">

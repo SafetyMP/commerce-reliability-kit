@@ -19,7 +19,7 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   }
   return nextLoad(url, context);
 } });
-const { pilotValue, initialAssumptions } = await import('../src/CommerceCase.tsx');
+const { pilotValue, initialAssumptions, supportDecision } = await import('../src/CommerceCase.tsx');
 const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
@@ -42,6 +42,21 @@ test('default order case displays the actual fixture verdict and auditable works
   assert.equal(pilotValue({...initialAssumptions,cases:'0'})?.threshold, null);
   assert.equal(pilotValue({...initialAssumptions,rate:'0',cost:'0'})?.threshold, 0);
   for (const cases of ['', '-1', '0.5', 'Infinity']) assert.equal(pilotValue({...initialAssumptions,cases}), null);
+});
+
+test('support action consequences use the evidence even when the connector declares completion', () => {
+  for (const variant of ['faulty', 'corrected'] as const) {
+    const report = evaluateScenario('partial-shipment', variant);
+    assert.match(supportDecision(report, 'close').assessment, /contradicts/);
+    assert.match(supportDecision(report, 'close').work, /No follow-up assigned.*2 outstanding/);
+    assert.match(supportDecision(report, 'follow').reply, /2 units still open/);
+    assert.match(supportDecision(report, 'confirm').work, /verify.*2 units/);
+  }
+  const partial = evaluateScenario('partial-shipment', 'insufficient');
+  assert.match(supportDecision(partial, 'close').assessment, /lacks sufficient evidence/);
+  assert.match(supportDecision(partial, 'follow').work, /pending.*complete shipment capture/);
+  assert.match(supportDecision(partial, 'confirm').assessment, /Evidence gap escalated/);
+  assert.match(supportDecision(partial, 'confirm').work, /before quoting a balance/);
 });
 
 test('direct library markup has six named scenario actions and accessible native navigation/search', () => {

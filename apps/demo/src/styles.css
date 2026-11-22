@@ -79,3 +79,12 @@
 .guide-tools li {display:grid; grid-template-columns:minmax(120px,1fr) 3fr; align-items:baseline; border-top:1px solid var(--border); padding:10px 0; gap:16px}
 .guide-tools a,.guide-tools button {justify-self:start; font-weight:650; padding:3px 0; min-height:0; text-decoration:underline}
 @media(max-width:600px) {.guide-tools li {grid-template-columns:1fr; gap:2px}}
+.support-decision {display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,3vw,44px); margin:28px 0 36px; padding-bottom:26px; border-bottom:1px solid var(--border)}
+.support-decision .dispatch-kicker {color:#80472e; text-transform:uppercase}
+.support-decision h2 {font-size:clamp(22px,2.3vw,32px)}
+.support-actions {display:flex; flex-wrap:wrap; gap:8px}
+.support-actions button {font-size:14px; padding:8px 12px}
+.response-slip {align-self:start; background:#fffaf0; border:1px dashed #ad8e70; border-radius:5px; padding:18px 22px}
+.response-slip h3 {font-size:18px}
+.response-slip p {font-size:15px}
+@media(max-width:800px) {.support-decision {grid-template-columns:1fr}}

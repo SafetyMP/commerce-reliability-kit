@@ -9,7 +9,7 @@ import { Empty, EvidencePanel, Icon, MetricFacts, PolicyFacts, ResultStrip, Stat
 import type { IconName } from './components.tsx';
 import type { Category, Policy, PolicyKey, RunReport, SavedRun, ScenarioId, Variant } from './types.ts';
 
-import { CommerceCase, initialAssumptions } from './CommerceCase.tsx';
+import { CommerceCase, initialAssumptions, type SupportAction } from './CommerceCase.tsx';
 import { initialView, observeHash, skipToMain } from './navigation.ts';
 import type { View } from './navigation.ts';
 const navigation: { id: View; label: string; icon: IconName }[] = [
@@ -24,6 +24,7 @@ const message = (error: unknown) => error instanceof Error ? error.message : 'An
 export function App() {
   const [view, setView] = useState<View>(initialView);
   const [caseVariant, setCaseVariant] = useState<Variant>('faulty');
+  const [caseAction, setCaseAction] = useState<SupportAction | null>(null);
   const [caseValues, setCaseValues] = useState(initialAssumptions);
   const [scenarioId, setScenarioId] = useState<ScenarioId>('partial-shipment');
   const [variant, setVariant] = useState<Variant>('faulty');
@@ -111,7 +112,7 @@ export function App() {
   function reset() {
     clearHistory(); setScenarioId('partial-shipment'); setVariant('faulty'); setInputs({});
     setQuery(''); setCategory('All'); setRunError(''); setAbout(false); sequence.current = 1;
-    setCaseValues(initialAssumptions); setCaseVariant('faulty');
+    setCaseValues(initialAssumptions); setCaseVariant('faulty'); setCaseAction(null);
     setAnnouncement('Demo reset. Drafts and in-memory reports cleared.'); navigate('case');
   }
   function exportSelected(format: 'json' | 'html') {
@@ -145,7 +146,7 @@ export function App() {
         <div className="page-meta"><span className="eyebrow">{view === 'case' ? 'Merchant support investigation' : view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
         {about && <section id="about-demo" className="notice about-panel"><h2>A local, synthetic workbench</h2><p>All records are synthetic. Runs use a small six-fixture evaluator, distinct from the full toolkit engine. No production integration has been tested. Matching records does not establish physical stock accuracy.</p><p>Nothing is uploaded or stored outside this session. Downloads happen only when you request them. Evaluation uses fixed fixture times. Reloading or resetting clears the session.</p><p><a href="https://github.com/SafetyMP/commerce-reliability-kit">Repository</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/demo-guide.md">Demo guide</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/limitations.md">Limitations</a></p></section>}
         {view === 'case' && <CommerceCase heading={heading} variant={caseVariant} onVariant={setCaseVariant}
-          values={caseValues} onValues={setCaseValues} onInspect={saveReport}/>}
+          action={caseAction} onAction={setCaseAction} values={caseValues} onValues={setCaseValues} onInspect={saveReport}/>}
         {view === 'technical' && <section className="technical-guide">
           <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Technical workspace</h1>
             <p>Trace the DEMO-1042 decision from the shop’s source records through the quantity check to a saved assertion.</p></div></div>
