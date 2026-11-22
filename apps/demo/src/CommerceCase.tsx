@@ -1,5 +1,6 @@
-import type { RefObject } from 'react';
+import { useRef, type RefObject } from 'react';
 import { evaluateScenario } from './evaluator.ts';
+import { StockProbe, type Offer, type StockPacket, replay, stockCapture } from './StockProbe.tsx';
 import { StatusBadge } from './components.tsx';
 import type { RunReport, Variant } from './types.ts';
 
@@ -59,6 +60,12 @@ export function pilotValue(values: Assumptions) {
 }
 
 interface Props {
+  opened: boolean;
+  onOpen: () => void;
+  stock: StockPacket;
+  offer: Offer | null;
+  selectStock: (p: StockPacket) => void;
+  selectOffer: (n: Offer) => void;
   heading: RefObject<HTMLHeadingElement | null>;
   variant: Variant;
   onVariant: (variant: Variant) => void;
@@ -71,7 +78,9 @@ interface Props {
   onInvestment: (choice: string) => void;
 }
 
-export function CommerceCase({heading, variant, onVariant, action, onAction, values, onValues, technicalHref, investment, onInvestment}: Props) {
+export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectOffer, heading, variant, onVariant, action, onAction, values, onValues, technicalHref, investment, onInvestment}: Props) {
+  const evidenceHeading = useRef<HTMLHeadingElement>(null);
+  const allocation = offer === null ? null : replay(stockCapture(stock), offer, 3, 8);
   const report = evaluateScenario('partial-shipment', variant);
   const assertion = report.assertions[0]!;
   const decision = action ? supportDecision(report, action) : null;
@@ -89,19 +98,35 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
   return <div className="commerce-case">
     <section className="dispatch" aria-labelledby="case-heading">
       <div className="dispatch-brief">
-        <p className="dispatch-kicker">Fulfillment desk · Order {report.metrics.order}</p>
-        <h1 id="case-heading" ref={heading} tabIndex={-1}>Can the desk close this order?</h1>
-        <p>The shop’s order lists five units. Its shipment feed records one handoff of three. The original connector closed the order on that first shipment. What should support tell the customer?</p>
-        <fieldset className="case-modes">
-          <legend>Test the connector decision</legend>
-          {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
-            <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => onVariant(v)}/>
-            {labels[v]}
-          </label>)}
-        </fieldset>
+        <p className="dispatch-kicker">North Quay Lighting · A fictional merchant case</p>
+        <h1 id="case-heading" ref={heading} tabIndex={-1}>Five tables before the doors open</h1>
+        <p>At six tonight, Mina opens her neighborhood café for its first dinner service. She ordered a rechargeable lamp for each of five tables from North Quay. This morning she received one shipping notice.</p>
+        <p>Jo runs North Quay’s service desk. She can see what the shop sold. The packing team sees what went into each carton. Someone has to piece those records together before Mina can plan the room.</p>
+        <button type="button" aria-expanded={opened} onClick={() => {
+          onOpen();
+          requestAnimationFrame(() => evidenceHeading.current?.focus());
+        }}>Read Jo’s order file <span aria-hidden="true">↓</span></button>
+      </div>
+      <figure className="cafe-note">
+        <figcaption>Dinner service · Opening night</figcaption>
+        <div className="floor-plan" aria-hidden="true">{Array.from({length: 5}, (_, i) => <span className="cafe-table" key={i}><i /></span>)}</div>
+        <blockquote>“I have five tables to set. Does that shipping notice cover all five lamps, or should I arrange a pickup?”</blockquote>
+        <p>Mina · Café owner</p>
+      </figure>
+    </section>
+    {opened && <>
+    <section className="support-decision record-section" aria-labelledby="evidence-heading">
+      <div>
+        <p className="dispatch-kicker">Morning shift · Order {report.metrics.order}</p>
+        <h2 id="evidence-heading" ref={evidenceHeading} tabIndex={-1}>Inside Jo’s order file</h2>
+        <ol className="review-trail">
+          <li><strong>At checkout</strong><span>The shop creates one order line for Mina’s lamps.</span></li>
+          <li><strong>At the packing bench</strong><span>Each carton can leave separately. The shop records a handoff when a carton goes to the carrier.</span></li>
+          <li><strong>At the service desk</strong><span>Jo reads the shop’s copy of those handoffs. Delivery to the café takes a separate confirmation.</span></li>
+        </ol>
       </div>
       <div className="dispatch-ticket" aria-live="polite">
-        <p className="ticket-title">Shop records for this order</p>
+        <p className="ticket-title">Packing slip · {report.metrics.order}</p>
         <figure className="unit-ledger">
           <div className="parcel-row" aria-hidden="true">
             {Array.from({length: recordedUnits}, (_, index) => {
@@ -117,14 +142,14 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
           <div><dt>Canceled</dt><dd>{canceled}</dd></div>
         </dl>
         <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
-        <a className="secondary" href={technicalHref}>Trace this order in the technical workspace</a>
+
       </div>
     </section>
 
     <section className="support-decision" aria-labelledby="support-heading">
       <div>
         <p className="dispatch-kicker">Support desk · Simulated response</p>
-        <h2 id="support-heading">What will you tell the customer?</h2>
+        <h2 id="support-heading">What will you tell Mina?</h2>
         <div role="group" aria-label="Choose a support action" className="support-actions">
           {(Object.keys(actionLabels) as SupportAction[]).map(key => <button key={key} type="button"
             className={action === key ? 'primary' : 'secondary'} aria-pressed={action === key}
@@ -141,10 +166,25 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
       </> : <p>Your choice opens a draft customer reply and shows who owns the next step.</p>}</div>
     </section>
 
+    {action && <>
+    <StockProbe packet={stock} offer={offer} selectPacket={selectStock} selectOffer={selectOffer}
+      lead={action === 'close' ? 'With her ticket closed, Mina calls the desk again.' : action === 'confirm' ? 'Mina gives Jo that update while fulfillment checks the earlier handoff.' : 'Jo gets the update on their scheduled follow-up.'} />
+    <details className="replay-options"><summary>Replay the order with a different connector or an incomplete shipment feed</summary>
+      <fieldset className="case-modes"><legend>Choose the records and rule for Jo’s next reply</legend>
+        {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
+          <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => {
+            onVariant(v);
+            requestAnimationFrame(() => evidenceHeading.current?.focus());
+          }}/>{labels[v]}
+        </label>)}
+      </fieldset>
+    </details>
     <section className="case-investment" aria-labelledby="pilot-heading">
       <div className="case-context">
         <p className="dispatch-kicker">Decision for the ecommerce operations manager</p>
         <h2 id="pilot-heading">Would a reconciliation pilot pay for the review time it saves?</h2>
+        <p>{action === 'close' ? 'On this shift, closing the ticket sent Mina back through the queue. Count that second contact when timing manual reviews.' : action === 'confirm' ? 'On this shift, fulfillment had to check the warehouse record. Include the time of both teams in the comparison.' : 'On this shift, Jo kept ownership of the follow-up. Time the work through the callback as well as the first reply.'}</p>
+        {allocation && <p>{allocation.unfilled === null ? 'Your listing took orders with sellable stock still unknown. Track how long customers wait for confirmation.' : allocation.unfilled > 0 ? 'Your listing accepted an online order the counter could not fill. Track those promises alongside time saved.' : (allocation.idle ?? 0) >= 2 ? 'Your listing protected both café loaners. Track the online requests that could not check out alongside successful pickups.' : 'Your listing filled the web orders but left no café loaners. Track whether customers find an alternative in time.'}</p>}
         <ul className="review-trail" aria-label="Who resolves this exception">
           <li><strong>Support agent</strong><span>Use the available shipment evidence to answer the customer.</span></li>
           <li><strong>Fulfillment lead</strong><span>Supply warehouse handoff records when the shop feed is incomplete.</span></li>
@@ -155,10 +195,13 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
       <div className="pilot-sheet">
         <h3>First-year worksheet</h3>
         <p>The defaults are illustrative. Estimate the capacity your team could recover. Use support’s ticket counts and time study, and engineering’s estimate for setup and maintenance.</p>
-        <div className="case-inputs">{fields.map(({key, label}) => <label key={key}>{label}
+        <div role="group" className="support-actions" aria-label="Try a measured time saving">
+          {[10, 15].map(n => <button type="button" key={n} aria-pressed={values.minutes === String(n)} onClick={() => onValues({...values, minutes: String(n)})}>{n} minutes saved</button>)}
+        </div>
+        <details><summary>Edit the pilot assumptions</summary><div className="case-inputs">{fields.map(({key, label}) => <label key={key}>{label}
           <input type="number" min="0" step={key === 'cases' ? 1 : 'any'} value={values[key]}
             onChange={e => onValues({...values, [key]: e.currentTarget.value})}/>
-        </label>)}</div>
+        </label>)}</div></details>
         <div className="pilot-result" aria-live="polite">{result ? <>
           <figure className="pilot-chart">
             <figcaption>First-year comparison in USD</figcaption>
@@ -178,13 +221,17 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
           <button key={option} type="button" className={investment === option ? 'primary' : 'secondary'} aria-pressed={investment === option} onClick={() => onInvestment(option)}>{option}</button>)}
       </div>
       {investment && <p role="status">{investment === 'Keep manual review' ? 'Keep the queue with support. Sample reopened tickets and time the next manual reconciliations to establish a baseline.' : investment === 'Fund a connector test' ? 'Ask integration engineering to test a partial handoff and an incomplete feed. Support still owns the customer follow-up.' : 'Pilot with support and fulfillment for four weeks. Compare time per review and reopened cases against the manual baseline.'}
-        {investment === 'Trial shared reports' && result && ' Your worksheet models '+currency.format(result.net)+' in first-year net labor value.'}</p>}
+        {investment === 'Trial shared reports' && result && <> Your worksheet models {currency.format(result.net)} in first-year net labor value. {result.net < 0 ? 'At this saving, the pilot falls short of its cost. Reduce scope or stop if measured reviews bear that out.' : 'Expand only if timed reviews cover the cost and reopened cases do not increase.'}</>}</p>}
     </section>
     <details><summary>Calculation and decision criteria</summary><p>Monthly reviews × 12 × minutes saved ÷ 60 × hourly cost, less first-year cost. Count only eligible cases. Confirm that the team can use the released time, and expand only if observed savings cover cost without increasing erroneous closures. Refunds and retained sales are outside this estimate.</p></details>
       </div>
     </section>
+    </>}
+    <a className="secondary technical-cta" href={technicalHref}>Trace this order in the technical workspace</a>
+    </>}
     <details className="case-sources"><summary>Evidence behind the case</summary>
       <p>Both the order line and shipment record come from the synthetic shop feed. The handoff is a recorded shipping milestone. Independent confirmation from the warehouse or proof of customer delivery would require separate records.</p>
+      <p>The café, lamps, deadline and demand sequence are fictional. The substitute uses a separate inventory fixture. Shopify distinguishes stock on hand from stock available to sell. <a href="https://help.shopify.com/en/manual/inventory-and-locations/fundamentals/inventory-states">Inventory states</a></p>
       <p>Shopify models total and remaining quantities for each fulfillment-order line. Its guidance also describes out-of-order or missed webhook deliveries and periodic reconciliation. These sources inform the business problem. The example uses the kit’s own records. <a href="https://shopify.dev/docs/api/admin-graphql/latest/objects/FulfillmentOrderLineItem">Line quantities</a> · <a href="https://shopify.dev/docs/apps/build/webhooks">Webhook behavior</a></p>
       <p>Shopify places order access with customer support and picking, packing and shipping with fulfillment staff. Its developer guide covers fulfillment integrations. We propose the ecommerce operations manager as sponsor because that role coordinates fulfillment and customer service. <a href="https://help.shopify.com/en/manual/your-account/users/roles/predefined-roles">Support roles</a> · <a href="https://help.shopify.com/en/manual/your-account/users/roles/role-examples">Fulfillment roles</a> · <a href="https://shopify.dev/docs/apps/build/orders-fulfillment/fulfillment-service-apps/build-for-fulfillment-services">Integration guide</a> · <a href="https://www.shopify.com/enterprise/blog/how-to-overcome-your-daily-operational-frustrations-to-focus-on-future-growth">Ecommerce operations responsibilities</a></p>
     </details>

@@ -29,11 +29,11 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-Five units were ordered and the shop records a handoff of three. The connector closed the order. Decide what support can tell the customer and who should take the next action. Then compare manual review, a connector-only test and a four-week shared-report pilot. Change the worksheet inputs before choosing what to fund. [Open the order case](https://safetymp.github.io/commerce-reliability-kit/#case).
+Mina is opening a café with five tables tonight. She has one shipping notice for the lamps she ordered. Join Jo at the merchant’s service desk, read the order file and decide what to tell her. At the pickup counter, try different online listing limits to see who gets the available loaners. Use that shift to weigh a manual process, a connector test and a four-week pilot. [Open the case](https://safetymp.github.io/commerce-reliability-kit/#case).
 
-![Order DEMO-1042 and the shop handoff evidence for the fulfillment desk](docs/assets/fulfillment-case.jpg)
+![Mina’s opening-night request and the five café tables](docs/assets/fulfillment-case.jpg)
 
-The [technical workspace](https://safetymp.github.io/commerce-reliability-kit/#technical) traces the selected order from capture to support handoff. Compare the current connector result with two saved runs, or inspect a separate stock capture before promising a replacement. [Case and technical walkthrough](docs/demo-guide.md).
+The technical workspace carries the same order, response and loaner listing through capture, reconciliation and support handoff. Change shipment coverage, inspect the normalized records and compare two saved runs. [Open the technical workspace](https://safetymp.github.io/commerce-reliability-kit/#technical) · [Walk through the case](docs/demo-guide.md).
 
 ## Test your integration
 

@@ -78,3 +78,23 @@ test('technical bookmarks render only the short project reference', () => {
     if (descriptor) Object.defineProperty(globalThis, 'window', descriptor); else Reflect.deleteProperty(globalThis, 'window');
   }
 });
+
+test('selected reply opens the stock decision and carries its consequences into the pilot', () => {
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  try {
+    for (const [hash, expected, hidden] of [
+      ['#case?packet=faulty', 'Packing slip', 'Two loaner lamps for tonight'],
+      ['#case?packet=faulty&response=close&offer=3', 'Both café tables can have a loaner', 'unfilled promise'],
+      ['#case?packet=corrected&response=follow&offer=6', 'Your listing accepted an online order the counter could not fill', 'Both café tables can have a loaner'],
+      ['#case?packet=insufficient&response=confirm&stock=count&offer=6', 'The café is waiting on inspection', 'Both café tables can have a loaner'],
+      ['#technical?stage=stock&stock=count&offer=3', 'the café’s allocation is unknown', 'Two loaner lamps for tonight'],
+    ]) {
+      Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { hash } } });
+      const html = renderToStaticMarkup(createElement(App));
+      assert(html.includes(expected!), hash);
+      assert(!html.includes(hidden!), hash);
+    }
+  } finally {
+    if (descriptor) Object.defineProperty(globalThis, 'window', descriptor); else Reflect.deleteProperty(globalThis, 'window');
+  }
+});

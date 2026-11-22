@@ -24,10 +24,10 @@ const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
-test('original order evidence, response and sponsor worksheet open the demo', () => {
+test('a new visit establishes the café and the merchant before revealing the order or a solution', () => {
   const html = renderToStaticMarkup(createElement(App));
-  for (const label of ['Can the desk close this order?', 'What will you tell the customer?', 'Would a reconciliation pilot pay', 'What would you fund?', '$960 first-year net labor value']) assert(html.includes(label));
-  assert(!html.includes('Closure contradicts the shop records'));
+  for (const label of ['Five tables before the doors open', 'first dinner service', 'Jo runs North Quay', 'Read Jo’s order file']) assert(html.includes(label));
+  for (const spoiler of ['Packing slip', 'What will you tell Mina?', 'Closure contradicts', 'first-year net labor value']) assert(!html.includes(spoiler));
 });
 
 test('archived order trials can be reproduced by the browser evaluator', () => {
