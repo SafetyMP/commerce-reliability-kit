@@ -22,12 +22,9 @@ Push the reviewed change through the repository's permitted branch/PR process. R
 
 Build with the intended base, inspect it, and preview as in [development](development.md). In a browser, exercise the actual production output at the subpath, then repeat on the URL returned by Pages:
 
-- Root and `#library`, `#workbench`, `#report`, `#compare` direct navigation, refresh, invalid hash fallback, back/forward, and honest empty states after refresh.
-- JavaScript, CSS, favicon, and embedded fixtures load; no unexpected console errors or runtime external requests. Block external requests while allowing same-origin assets for the local production journey.
-- Search/filter, faulty partial shipment (5/3/2), evidence inspection, corrected run, comparison, stale-evidence INCONCLUSIVE, and inventory-buffer policy.
-- Actual JSON and standalone HTML downloads, visible synthetic disclosure, real repository/documentation links under About this demo, keyboard focus/skip link, desktop and narrow layouts.
-
-No service worker or offline/PWA support is claimed. If browser verification is unavailable, report that separately; a static artifact check does not replace it. Publish only appropriate synthetic screenshots. Keep the real comparison screenshot updated when the UI changes and manually inspect it for private content.
+- Open the desk at the project subpath, then open the technical reference through the navigation and an old workbench bookmark. Verify refresh and browser history.
+- Replay the inspection hold at listing limits six and four with three counter and eight online requests. Verify the two printed records keep their input settings. Replay the cycle count and verify unsupported quantities read Unknown.
+- Check local assets, console errors, keyboard navigation, and narrow and wide layouts. Inspect the production screenshot for synthetic records only.
 
 ## Failure diagnosis and rollback
 

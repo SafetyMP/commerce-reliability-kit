@@ -37,7 +37,7 @@ node scripts/publication-check.mjs --artifact apps/demo/dist --base /commerce-re
 npm --prefix apps/demo run preview
 ```
 
-Visit the preview server at `/commerce-reliability-kit/`, including `#library`, `#workbench`, `#report`, and `#compare`. Hash navigation survives refresh without server rewrites; report history does not. Follow the [demo guide](demo-guide.md) for journeys and [deployment](deployment.md) for browser acceptance. Static checks and Node rendering are not browser verification.
+Visit the preview server at `/commerce-reliability-kit/`, including `#case` and `#technical`. Hash navigation survives refresh without server rewrites; the dispatch tape clears on reload. Follow the [demo guide](demo-guide.md) for journeys and [deployment](deployment.md) for browser acceptance. Static checks and Node rendering are not browser verification.
 
 The repository inventory is deterministic: `node scripts/publication-check.mjs --list` emits paths, and `--json` emits paths with SHA-256 content hashes. Only that reviewed set is intended for publication. Add new public files to `scripts/publication-files.json` deliberately; update documentation exceptions in `.gitignore` when adding public docs. The scanner does not discover or approve unlisted files. The check rejects broken relative Markdown file/heading links, recognizable sensitive paths/tokens, and source maps. Pattern scanning is not a full secret scanner or proof that data is safe; inspect actual publication files and the artifact manually.
 

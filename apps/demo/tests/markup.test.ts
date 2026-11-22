@@ -5,7 +5,7 @@ import { registerHooks } from 'node:module';
 import ts from 'typescript';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { evaluateScenario, scenarios } from '../src/evaluator.ts';
+import { evaluateScenario } from '../src/evaluator.ts';
 
 // Render real components in Node using the provisioned compiler and React.
 // No browser, synthetic DOM, hook mocks, dependency install, or output files.
@@ -19,98 +19,22 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   }
   return nextLoad(url, context);
 } });
-const { CommerceCase, pilotValue, initialAssumptions, supportDecision } = await import('../src/CommerceCase.tsx');
-const { App, updateDeskSession } = await import('../src/App.tsx');
+const { captures, replay } = await import('../src/CommerceCase.tsx');
+const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
-test('default order case presents ungraded records and an auditable worksheet', () => {
+test('desk starts with source records, two demand controls and an empty dispatch tape', () => {
   const html = renderToStaticMarkup(createElement(App));
-  assert.match(html, /Can the desk close this order/);
-  assert.match(html, /Its shipment feed records one handoff of three/);
-  assert.match(html, /In this handoff<\/dt><dd>3/);
-  assert.match(html, /Shop shipment snapshot · complete/);
-  assert.doesNotMatch(html, /selected example reports|outstanding balance is|2 units open|ticket-verdict|>FAIL<|Closure contradicts/);
-  assert.match(html, /href="#technical">Technical workspace/);
-  assert.doesNotMatch(html, /Technical workspace views|>Workbench<|>Run report<|>Library</);
-  assert.equal((html.match(/class="parcel recorded"/g) ?? []).length, 3);
-  assert.equal((html.match(/class="parcel open"/g) ?? []).length, 2);
-  assert.match(html, /First-year comparison in USD/);
-  assert.match(html, /Inspect this run’s records/);
-  assert.match(html, /\$960 first-year net labor value/);
-  assert.match(html, /12.5 minutes saved per review/);
-  assert.deepEqual(pilotValue(initialAssumptions), {hours:120, net:960, threshold:12.5});
-  assert.equal(pilotValue({...initialAssumptions,cases:'0'})?.threshold, null);
-  assert.equal(pilotValue({...initialAssumptions,rate:'0',cost:'0'})?.threshold, 0);
-  for (const cases of ['', '-1', '0.5', 'Infinity']) assert.equal(pilotValue({...initialAssumptions,cases}), null);
+  for (const label of ['The stock promise desk', 'Net sellable', 'Counter pickups', 'Online requests', 'Technical reference']) assert(html.includes(label));
+  assert(!html.includes('Unfilled promises'));
 });
 
-test('connector grading appears only after a support choice for the selected evidence', () => {
-  for (const [variant, grade] of [['faulty','FAIL'], ['corrected','PASS'], ['insufficient','INCONCLUSIVE']] as const) {
-    const props = { heading: {current:null}, variant, values: initialAssumptions,
-      onVariant() {}, onAction() {}, onValues() {}, onInspect() {} };
-    const initial = renderToStaticMarkup(createElement(CommerceCase, {...props, action: null}));
-    assert.doesNotMatch(initial, /ticket-verdict|selected example reports|outstanding balance is/);
-    assert.match(initial, /Inspect this run’s records/);
-    const after = renderToStaticMarkup(createElement(CommerceCase, {...props, action: 'close'}));
-    assert.match(after, /Connector check/);
-    assert(after.includes(grade));
-    assert(after.includes(variant === 'insufficient' ? 'Closure lacks sufficient evidence' : 'Closure contradicts the shop records'));
-  }
-});
-
-test('switching packets after a reply restores the decision before grading new evidence', () => {
-  const opened = updateDeskSession({variant:'faulty', action:null}, {reply:'close'});
-  assert.equal(opened.action, 'close');
-  const partial = updateDeskSession(opened, {packet:'insufficient'});
-  assert.deepEqual(partial, {variant:'insufficient', action:null});
-  const props = {heading:{current:null}, values:initialAssumptions, onVariant() {}, onAction() {}, onValues() {}, onInspect() {}};
-  const render = (session: typeof partial) => renderToStaticMarkup(createElement(CommerceCase, {...props, ...session}));
-  assert.doesNotMatch(render(partial), /ticket-verdict|Closure lacks sufficient evidence|Evidence gap escalated/);
-  const reviewed = updateDeskSession(partial, {reply:'confirm'});
-  assert.match(render(reviewed), /Evidence gap escalated/);
-  assert.match(render(reviewed), /INCONCLUSIVE/);
-  assert.doesNotMatch(render(updateDeskSession(reviewed, {packet:'corrected'})), /ticket-verdict/);
-});
-
-test('support action consequences use the evidence even when the connector declares completion', () => {
-  for (const variant of ['faulty', 'corrected'] as const) {
-    const report = evaluateScenario('partial-shipment', variant);
-    assert.match(supportDecision(report, 'close').assessment, /contradicts/);
-    assert.match(supportDecision(report, 'close').work, /No follow-up assigned.*2 outstanding/);
-    assert.match(supportDecision(report, 'follow').reply, /2 units still open/);
-    assert.match(supportDecision(report, 'confirm').work, /verify.*2 units/);
-  }
-  const partial = evaluateScenario('partial-shipment', 'insufficient');
-  assert.match(supportDecision(partial, 'close').assessment, /lacks sufficient evidence/);
-  assert.match(supportDecision(partial, 'follow').work, /pending.*complete shipment capture/);
-  assert.match(supportDecision(partial, 'confirm').assessment, /Evidence gap escalated/);
-  assert.match(supportDecision(partial, 'confirm').work, /before quoting a balance/);
-});
-
-test('direct library markup has six named scenario actions and accessible native navigation/search', () => {
-  const original = Object.getOwnPropertyDescriptor(globalThis, 'window');
-  let html: string;
-  try {
-    Object.defineProperty(globalThis, 'window', {configurable:true, value:{location:{hash:'#library'}}});
-    html = renderToStaticMarkup(createElement(App));
-  } finally {
-    if (original) Object.defineProperty(globalThis, 'window', original);
-    else Reflect.deleteProperty(globalThis, 'window');
-  }
-  assert.match(html, /Synthetic demo · No connected accounts/);
-  assert.match(html, /No production verification/);
-  assert.match(html, /href="#main"/);
-  assert.match(html, /<main id="main" tabindex="-1">/);
-  assert.match(html, /<h1[^>]*>Scenario library<\/h1>/);
-  assert.match(html, /<nav aria-label="Technical workspace views">/);
-  assert.match(html, /href="#case">Return to order case/);
-  assert.match(html, /aria-current="page"/);
-  assert.match(html, /Search scenarios<\/span>.*?<input type="search"/);
-  assert.equal((html.match(/aria-label="Open /g) ?? []).length, 6);
-  for (const s of scenarios) assert(html.includes(`aria-label="Open ${s.title}"`));
-  assert.match(html, /aria-live="polite"/);
-  assert.doesNotMatch(html, /<a[^>]+href="https?:|<img|<iframe|<script/i);
+test('orders, rejected demand and unfilled promises follow independent limits', () => {
+  assert.deepEqual(replay(captures[0]!, 6, 3, 8), {orders:6, turnedAway:2, unfilled:1, idle:0, policy:6});
+  assert.deepEqual(replay(captures[0]!, 4, 3, 8), {orders:4, turnedAway:4, unfilled:0, idle:1, policy:6});
+  assert.deepEqual(replay(captures[1]!, 6, 3, 8), {orders:6, turnedAway:2, unfilled:null, idle:null, policy:null});
+  assert.deepEqual(replay(captures[2]!, 0, 16, 0), {orders:0, turnedAway:0, unfilled:0, idle:0, policy:10});
 });
 
 test('insufficient report components print Unknown rather than null, undefined, or invented zero totals', () => {

@@ -7,11 +7,10 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { initialView, observeHash, skipToMain, viewFromHash } from '../src/navigation.ts';
 
-test('case entry, four technical views, and invalid fallback are deterministic', () => {
-  for (const view of ['case', 'technical', 'library', 'workbench', 'report', 'compare']) assert.equal(viewFromHash(`#${view}`), view);
-  for (const hash of ['#unknown', '#REPORT', '#/report', '#report/1', '#%72eport']) assert.equal(viewFromHash(hash), 'library');
+test('former technical bookmarks resolve to the component reference', () => {
+  for (const name of ['technical','library','workbench','report','compare']) assert.equal(viewFromHash('#'+name), 'technical');
+  for (const hash of ['', '#case', '#unknown']) assert.equal(viewFromHash(hash), 'case');
   assert.equal(initialView(), 'case');
-  assert.equal(viewFromHash(''), 'case');
 });
 
 test('hash changes support navigation and cleanup without hijacking the skip link', () => {
@@ -23,13 +22,13 @@ test('hash changes support navigation and cleanup without hijacking the skip lin
   for (const hash of ['#report', '#compare', '#report', '#main', '#invalid']) {
     location.hash = hash; events.dispatchEvent(new Event('hashchange'));
   }
-  assert.deepEqual(views, ['report', 'compare', 'report', 'library']);
+  assert.deepEqual(views, ['technical', 'technical', 'technical', 'case']);
   stop(); location.hash = '#workbench'; events.dispatchEvent(new Event('hashchange'));
   assert.equal(views.length, 4);
 });
 
 test('skip link focuses main without replacing the route used by refresh and back', () => {
-  for (const view of ['case', 'technical', 'library', 'workbench', 'report', 'compare']) {
+  for (const view of ['case', 'technical']) {
     const history = [`#${view}`];
     let focused = false;
     const main = { focus() { focused = true; } };
@@ -65,21 +64,15 @@ const hook = registerHooks({ load(url, context, nextLoad) {
 const { App } = await import('../src/App.tsx');
 hook.deregister();
 
-test('direct report and comparison views honestly render empty after a fresh session', () => {
+test('technical bookmarks render only the short project reference', () => {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
   try {
-    for (const [hash, heading, empty] of [
-      ['#technical', 'Technical workspace', 'What the evidence supports'],
-      ['#report', 'Run report', 'No saved run yet'],
-      ['#compare', 'Compare runs', 'Two runs make a comparison'],
-      ['#workbench', 'Partial shipment', 'No run yet'],
-      ['#invalid', 'Scenario library', '06 / LOCAL SCENARIOS'],
-    ]) {
-      Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { hash } } });
+    for (const hash of ['#technical', '#workbench', '#report', '#compare', '#library']) {
+      Object.defineProperty(globalThis, 'window', { configurable:true, value:{location:{hash}} });
       const html = renderToStaticMarkup(createElement(App));
-      assert(html.toLowerCase().includes(heading.toLowerCase()));
-      assert(html.includes(empty));
-      assert(html.includes('Synthetic demo · No connected accounts'));
+      assert.match(html, /<h1>Technical reference/);
+      assert.match(html, /packages\/core\/index.ts/);
+      assert.doesNotMatch(html, /<select|<fieldset|Scenario library|The stock promise desk/);
     }
   } finally {
     if (descriptor) Object.defineProperty(globalThis, 'window', descriptor); else Reflect.deleteProperty(globalThis, 'window');
