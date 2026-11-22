@@ -1,8 +1,9 @@
-export type View = 'case' | 'library' | 'workbench' | 'report' | 'compare';
+export type View = 'case' | 'technical' | 'library' | 'workbench' | 'report' | 'compare';
 
 export function viewFromHash(hash: string): View {
   switch (hash) {
     case '': case '#case': return 'case';
+    case '#technical': return 'technical';
     case '#workbench': return 'workbench';
     case '#report': return 'report';
     case '#compare': return 'compare';

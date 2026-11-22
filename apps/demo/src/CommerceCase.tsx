@@ -45,6 +45,15 @@ export function CommerceCase({heading, variant, onVariant, values, onValues, onI
   const assertion = report.assertions[0]!;
   const { ordered, fulfilled, outstanding } = report.metrics;
   const result = pilotValue(values);
+  const shipment = report.observations.find(o => o.entityType === 'shipment');
+  const recorded = shipment?.entityType === 'shipment' ? shipment.fields.quantity ?? 0 : 0;
+  const coverage = report.coverage.find(c => c.resource === 'shipments')?.status;
+  const recordedUnits = Number(ordered);
+  const comparison = result ? [
+    { label: 'Recovered labor capacity', value: result.hours * Number(values.rate) },
+    { label: 'First-year pilot cost', value: Number(values.cost) },
+  ] : [];
+  const scale = Math.max(1, ...comparison.map(row => row.value));
   return <div className="commerce-case">
     <section className="dispatch" aria-labelledby="case-heading">
       <div className="dispatch-brief">
@@ -61,15 +70,24 @@ export function CommerceCase({heading, variant, onVariant, values, onValues, onI
       </div>
       <div className="dispatch-ticket" aria-live="polite">
         <p className="ticket-title">Shipment reconciliation</p>
+        <figure className="unit-ledger">
+          <div className="parcel-row" aria-hidden="true">
+            {Array.from({length: recordedUnits}, (_, index) => {
+              const state = index < recorded ? 'recorded' : coverage === 'complete' ? 'open' : 'uncertain';
+              return <span key={index} className={`parcel ${state}`}><b>{state === 'recorded' ? '✓' : state === 'open' ? '–' : '?'}</b></span>;
+            })}
+          </div>
+          <figcaption>{recorded} units in one recorded handoff · {coverage === 'complete' ? outstanding + ' units open' : 'other unit statuses unknown'}</figcaption>
+        </figure>
         <dl className="ticket-totals">
           <div><dt>Ordered</dt><dd>{ordered}</dd></div>
           <div><dt>Handed off</dt><dd>{fulfilled ?? 'Unknown'}</dd></div>
           <div><dt>Outstanding</dt><dd>{outstanding ?? 'Unknown'}</dd></div>
         </dl>
-        <p className="ticket-scope">Shop shipment snapshot · {report.coverage.find(c => c.resource === 'shipments')?.status}</p>
+        <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
         <p><strong>Selected example’s output</strong><br/>{assertion.observed}</p>
         <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{variant === 'faulty' ? 'Keep the order open. Two units still need a handoff.' : variant === 'corrected' ? 'Keep the order open and follow up on the remaining two units.' : 'Request the remaining shipment records before quoting a balance.'}</span></div>
-        <button type="button" className="secondary" onClick={() => onInspect(report)}>Inspect this run’s records</button>
+        <button type="button" className="secondary" onClick={() => onInspect(report)}>Inspect this run’s records in the technical workspace</button>
       </div>
     </section>
 
@@ -77,7 +95,11 @@ export function CommerceCase({heading, variant, onVariant, values, onValues, onI
       <div className="case-context">
         <p className="dispatch-kicker">Decision for the ecommerce operations manager</p>
         <h2 id="pilot-heading">Would a reconciliation pilot pay for the review time it saves?</h2>
-        <p>The support agent needs an accurate answer for this customer. The fulfillment lead can check warehouse handoff records if the shop feed is incomplete. The integration engineer can reproduce the closure and add a quantity assertion to the connector’s tests.</p>
+        <ul className="review-trail" aria-label="Who resolves this exception">
+          <li><strong>Support agent</strong><span>Use the open balance to answer the customer.</span></li>
+          <li><strong>Fulfillment lead</strong><span>Supply warehouse handoff records when the shop feed is incomplete.</span></li>
+          <li><strong>Integration engineer</strong><span>Reproduce the closure and test the connector against the ordered quantity.</span></li>
+        </ul>
         <p>As pilot sponsor, the ecommerce operations manager can keep manual review, fund a connector test alone, or trial shared reports for four weeks. Time comparable tickets with and without a report. Track reopened cases and missing records before expanding.</p>
       </div>
       <div className="pilot-sheet">
@@ -88,6 +110,13 @@ export function CommerceCase({heading, variant, onVariant, values, onValues, onI
             onChange={e => onValues({...values, [key]: e.currentTarget.value})}/>
         </label>)}</div>
         <div className="pilot-result" aria-live="polite">{result ? <>
+          <figure className="pilot-chart">
+            <figcaption>First-year comparison in USD</figcaption>
+            {comparison.map(({label, value}) => <div className="pilot-bar" key={label}>
+              <div><span>{label}</span><b>{currency.format(value)}</b></div>
+              <span className="bar-track" aria-hidden="true"><i style={{width: (value / scale * 100) + '%'}}/></span>
+            </div>)}
+          </figure>
           <strong>{currency.format(result.net)} first-year net labor value</strong>
           <p>{result.hours.toLocaleString('en-US', {maximumFractionDigits: 2})} hours of modeled capacity across 12 months. {result.threshold === null ? 'Positive cost cannot be recovered at this volume and rate.' : 'Break-even requires ' + (Math.ceil(result.threshold * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' minutes saved per review.'}</p>
         </> : <p>Enter a nonnegative number in each field and a whole monthly case count.</p>}</div>

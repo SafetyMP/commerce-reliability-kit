@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { initialView, observeHash, skipToMain, viewFromHash } from '../src/navigation.ts';
 
 test('case entry, four technical views, and invalid fallback are deterministic', () => {
-  for (const view of ['case', 'library', 'workbench', 'report', 'compare']) assert.equal(viewFromHash(`#${view}`), view);
+  for (const view of ['case', 'technical', 'library', 'workbench', 'report', 'compare']) assert.equal(viewFromHash(`#${view}`), view);
   for (const hash of ['#unknown', '#REPORT', '#/report', '#report/1', '#%72eport']) assert.equal(viewFromHash(hash), 'library');
   assert.equal(initialView(), 'case');
   assert.equal(viewFromHash(''), 'case');
@@ -29,7 +29,7 @@ test('hash changes support navigation and cleanup without hijacking the skip lin
 });
 
 test('skip link focuses main without replacing the route used by refresh and back', () => {
-  for (const view of ['case', 'library', 'workbench', 'report', 'compare']) {
+  for (const view of ['case', 'technical', 'library', 'workbench', 'report', 'compare']) {
     const history = [`#${view}`];
     let focused = false;
     const main = { focus() { focused = true; } };
@@ -69,6 +69,7 @@ test('direct report and comparison views honestly render empty after a fresh ses
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
   try {
     for (const [hash, heading, empty] of [
+      ['#technical', 'Technical workspace', 'What the evidence supports'],
       ['#report', 'Run report', 'No saved run yet'],
       ['#compare', 'Compare runs', 'Two runs make a comparison'],
       ['#workbench', 'Partial shipment', 'No run yet'],

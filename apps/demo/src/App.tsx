@@ -14,6 +14,7 @@ import { initialView, observeHash, skipToMain } from './navigation.ts';
 import type { View } from './navigation.ts';
 const navigation: { id: View; label: string; icon: IconName }[] = [
   { id: 'case', label: 'Order case', icon: 'box' },
+  { id: 'technical', label: 'Technical workspace', icon: 'library' },
   { id: 'library', label: 'Library', icon: 'library' }, { id: 'workbench', label: 'Workbench', icon: 'workbench' },
   { id: 'report', label: 'Run report', icon: 'report' }, { id: 'compare', label: 'Compare', icon: 'compare' },
 ];
@@ -131,19 +132,37 @@ export function App() {
 
   return <div className="app-shell">
     <a className="skip-link" href="#main" onClick={event => skipToMain(event, document)}>Skip to main content</a>
-    <aside className="rail" aria-label="Application navigation">
+    {view !== 'case' && view !== 'technical' && <aside className="rail" aria-label="Technical workspace">
       <div className="brand-mark" aria-label="Commerce Reliability Kit">cr<span>k</span><i aria-hidden="true">.</i></div>
-      <nav aria-label="Main views">{navigation.map(n => <button key={n.id} type="button" aria-current={view === n.id ? 'page' : undefined} className={`nav-button ${view === n.id ? 'active' : ''}`} onClick={() => n.id === 'compare' ? openCompare() : navigate(n.id)}><Icon name={n.icon}/><span>{n.label}</span></button>)}</nav>
+      <nav aria-label="Technical workspace views">{navigation.filter(n => n.id !== 'case' && n.id !== 'technical').map(n => <button key={n.id} type="button" aria-current={view === n.id ? 'page' : undefined} className={`nav-button ${view === n.id ? 'active' : ''}`} onClick={() => n.id === 'compare' ? openCompare() : navigate(n.id)}><Icon name={n.icon}/><span>{n.label}</span></button>)}</nav>
       <button type="button" className="nav-button reset" onClick={reset}><Icon name="reset"/><span>Reset demo</span></button>
       <span className="rail-foot">LOCAL / 01</span>
-    </aside>
+    </aside>}
     <div className="app-body">
-      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span><span>{view === 'case' ? 'Order case' : view === 'library' ? 'Scenario library' : view === 'compare' ? 'Compare runs' : view === 'report' && report ? report.scenarioId : scenarioId}</span></div><span className="demo-label"><span aria-hidden="true">◉</span> Synthetic demo · No connected accounts</span></header>
+      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span>{view === 'case' ? <span>Order case</span> : view === 'technical' ? <span>Technical workspace</span> : <a href="#technical">Technical workspace</a>}</div><div className="workspace-switch"><span className="demo-label">Synthetic demo · No connected accounts</span>
+        {view === 'case' ? <a href="#technical">Technical workspace</a> : <a href="#case">Return to order case</a>}</div></header>
       <main id="main" tabIndex={-1}>
         <div className="page-meta"><span className="eyebrow">{view === 'case' ? 'Merchant support investigation' : view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
         {about && <section id="about-demo" className="notice about-panel"><h2>A local, synthetic workbench</h2><p>All records are synthetic. Runs use a small six-fixture evaluator, distinct from the full toolkit engine. No production integration has been tested. Matching records does not establish physical stock accuracy.</p><p>Nothing is uploaded or stored outside this session. Downloads happen only when you request them. Evaluation uses fixed fixture times. Reloading or resetting clears the session.</p><p><a href="https://github.com/SafetyMP/commerce-reliability-kit">Repository</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/demo-guide.md">Demo guide</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/limitations.md">Limitations</a></p></section>}
         {view === 'case' && <CommerceCase heading={heading} variant={caseVariant} onVariant={setCaseVariant}
           values={caseValues} onValues={setCaseValues} onInspect={saveReport}/>}
+        {view === 'technical' && <section className="technical-guide">
+          <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Technical workspace</h1>
+            <p>Trace the DEMO-1042 decision from the shop’s source records through the quantity check to a saved assertion.</p></div></div>
+          <div className="guide-evidence">
+            <h2>What the evidence supports</h2>
+            <p><b>Order line.</b> The order requests five units of DEMO-SKU-08. None were canceled.</p>
+            <p><b>Shipment feed.</b> DEMO-SHIP-01 records one three-unit handoff. A declared complete snapshot leaves two units outstanding. Partial coverage leaves the exact balance unknown.</p>
+            <p><b>Assertion.</b> Closing on the first shipment fails. Reconciling the same records passes. Customer delivery needs separate evidence.</p>
+          </div>
+          <h2>Inspect a technical tool</h2>
+          <ul className="guide-tools">
+            <li><a href="#library">Scenario library</a><span>Choose from six order, fulfillment and inventory fixtures.</span></li>
+            <li><a href="#workbench">Workbench</a><span>Evaluate the selected fixture with its rule and evidence coverage.</span></li>
+            <li><a href="#report">Run report</a><span>{history.length ? 'Inspect a saved run and its normalized records.' : 'Run an example to populate its report and downloads.'}</span></li>
+            <li><button className="text-button" type="button" onClick={openCompare}>Compare runs</button><span>Compare the assertion, policy and source evidence from two saved runs.</span></li>
+          </ul>
+        </section>}
         {view === 'library' && <>
           <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Scenario library</h1><p>Reproduce an integration failure. Inspect the evidence. Test a better outcome.</p></div><span className="index-label">06 / LOCAL SCENARIOS</span></div>
           <div className="library-toolbar"><label className="search-field"><span className="sr-only">Search scenarios</span><Icon name="search"/><input type="search" placeholder="Search scenarios or evidence…" value={query} onChange={e => setQuery(e.target.value)}/></label><div className="filters" role="group" aria-label="Filter by category">{(['All', 'Orders', 'Fulfillment', 'Inventory', 'Data coverage'] as const).map(c => <button type="button" key={c} aria-pressed={category === c} className={category === c ? 'selected' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div></div>

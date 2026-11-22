@@ -31,7 +31,7 @@ The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs n
 
 At the support desk, the original connector has closed order DEMO-1042 after the shop’s shipment feed recorded a handoff of three of the five units ordered. Test the original rule, reconcile the shop’s order and shipment records, or try a partial capture. Inspect the exact records behind the result. A first-year worksheet lets the ecommerce operations manager test whether the time saved on comparable cases could cover a pilot. [Open the order case](https://safetymp.github.io/commerce-reliability-kit/#case).
 
-In the scenario library, follow the partial-shipment example:
+Open **Technical workspace** for the evidence guide, then choose **Scenario library** and follow the partial-shipment example:
 
 1. Run the faulty example: **5 ordered, 3 fulfilled, 2 outstanding**, but the example reports the order complete.
 2. Inspect the assertion and its exact supporting records.

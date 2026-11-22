@@ -29,6 +29,11 @@ test('default order case displays the actual fixture verdict and auditable works
   assert.match(html, /Can the desk close this order/);
   assert.match(html, /Its shipment feed records one handoff of three/);
   assert.match(html, /Selected example’s output/);
+  assert.match(html, /href="#technical">Technical workspace/);
+  assert.doesNotMatch(html, /Technical workspace views|>Workbench<|>Run report<|>Library</);
+  assert.equal((html.match(/class="parcel recorded"/g) ?? []).length, 3);
+  assert.equal((html.match(/class="parcel open"/g) ?? []).length, 2);
+  assert.match(html, /First-year comparison in USD/);
   assert.match(html, /Inspect this run’s records/);
   assert.match(html, /FAIL/);
   assert.match(html, /\$960 first-year net labor value/);
@@ -54,7 +59,8 @@ test('direct library markup has six named scenario actions and accessible native
   assert.match(html, /href="#main"/);
   assert.match(html, /<main id="main" tabindex="-1">/);
   assert.match(html, /<h1[^>]*>Scenario library<\/h1>/);
-  assert.match(html, /<nav aria-label="Main views">/);
+  assert.match(html, /<nav aria-label="Technical workspace views">/);
+  assert.match(html, /href="#case">Return to order case/);
   assert.match(html, /aria-current="page"/);
   assert.match(html, /Search scenarios<\/span>.*?<input type="search"/);
   assert.equal((html.match(/aria-label="Open /g) ?? []).length, 6);
