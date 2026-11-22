@@ -1,6 +1,6 @@
 # Five tables before the doors open
 
-North Quay Lighting and Mina’s café are fictional. The order, shipment and inventory evidence comes from the kit’s synthetic fixtures. The case starts with Mina’s deadline, what North Quay normally does, and why a shipping notice alone leaves her with a question.
+North Quay Lighting and Mina’s café are fictional. The order, shipment and inventory evidence comes from the kit’s synthetic fixtures. Before opening the file, follow an order from checkout to the packing bench and Jo’s service desk. A customer sees one notice for a carton while the shop may send several cartons for one order. The shift example counts staff time spent tracing inquiries across the desk and packing bench. Its figures illustrate the cost of that work.
 
 Choose **Read Jo’s order file**. The checkout line and the packing slip both come from the shop. Read the quantities before choosing what Jo tells Mina. The resulting customer reply and assignment depend on the response and the coverage of the records. After a reply, use the replay disclosure to see what changes under another connector rule or with incomplete shipment evidence.
 

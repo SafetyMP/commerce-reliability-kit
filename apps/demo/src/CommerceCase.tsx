@@ -100,12 +100,8 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
       <div className="dispatch-brief">
         <p className="dispatch-kicker">North Quay Lighting · A fictional merchant case</p>
         <h1 id="case-heading" ref={heading} tabIndex={-1}>Five tables before the doors open</h1>
-        <p>At six tonight, Mina opens her neighborhood café for its first dinner service. She ordered a rechargeable lamp for each of five tables from North Quay. This morning she received one shipping notice.</p>
-        <p>Jo runs North Quay’s service desk. She can see what the shop sold. The packing team sees what went into each carton. Someone has to piece those records together before Mina can plan the room.</p>
-        <button type="button" aria-expanded={opened} onClick={() => {
-          onOpen();
-          requestAnimationFrame(() => evidenceHeading.current?.focus());
-        }}>Read Jo’s order file <span aria-hidden="true">↓</span></button>
+        <p>North Quay Lighting sells lamps online and from a pickup counter. One packing crew serves both. Jo runs the service desk, where a question from an online customer lands even when the answer is tucked inside a carton.</p>
+        <p>At six tonight, Mina opens her neighborhood café for its first dinner service. She ordered a rechargeable lamp for each of five tables. This morning North Quay sent her one shipping notice.</p>
       </div>
       <figure className="cafe-note">
         <figcaption>Dinner service · Opening night</figcaption>
@@ -114,16 +110,34 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
         <p>Mina · Café owner</p>
       </figure>
     </section>
+    <section className="merchant-handoffs" aria-labelledby="merchant-flow">
+      <h2 id="merchant-flow">How an order moves through North Quay</h2>
+      <ol className="handoff-steps">
+        <li><h3>Checkout</h3><p>A customer pays online. The shop records the items and quantities on one order and sends a pick list to the packing bench.</p></li>
+        <li><h3>Packing</h3><p>A packer works from that list and records what goes into each carton. Cartons from one order can leave on different carrier pickups.</p></li>
+        <li><h3>Support</h3><p>When a customer calls, Jo opens the order and sees the shipping notice. It tells her a carton left. To find out what was inside, she has to look up the packing entry.</p></li>
+      </ol>
+      <div className="handoff-cost">
+        <div>
+          <h3>When a customer needs an answer</h3>
+          <p>If Jo can’t match the notice to a packing entry, she calls the bench. A packer puts down the next order to check. While they look, the pickup queue grows and the customer waits for a callback.</p>
+        </div>
+        <div className="shift-example">
+          <h4>What ten inquiries can cost</h4>
+          <p>At 10 minutes of Jo’s time and 8 minutes of a packer’s time per inquiry, ten inquiries use <strong>3 staff-hours</strong>. That’s an illustrative shift, before counting any second calls.</p>
+        </div>
+      </div>
+      <button type="button" className="primary" onClick={() => {
+        onOpen();
+        requestAnimationFrame(() => evidenceHeading.current?.focus());
+      }}>Read Jo’s order file <span aria-hidden="true">↓</span></button>
+    </section>
     {opened && <>
     <section className="support-decision record-section" aria-labelledby="evidence-heading">
       <div>
         <p className="dispatch-kicker">Morning shift · Order {report.metrics.order}</p>
         <h2 id="evidence-heading" ref={evidenceHeading} tabIndex={-1}>Inside Jo’s order file</h2>
-        <ol className="review-trail">
-          <li><strong>At checkout</strong><span>The shop creates one order line for Mina’s lamps.</span></li>
-          <li><strong>At the packing bench</strong><span>Each carton can leave separately. The shop records a handoff when a carton goes to the carrier.</span></li>
-          <li><strong>At the service desk</strong><span>Jo reads the shop’s copy of those handoffs. Delivery to the café takes a separate confirmation.</span></li>
-        </ol>
+        <p>Mina’s message is waiting. On Jo’s screen are the original order line and the shop’s record of a carrier pickup. What do those two entries tell you about her lamps?</p>
       </div>
       <div className="dispatch-ticket" aria-live="polite">
         <p className="ticket-title">Packing slip · {report.metrics.order}</p>
@@ -228,12 +242,12 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
     </section>
     </>}
     <a className="secondary technical-cta" href={technicalHref}>Trace this order in the technical workspace</a>
-    </>}
     <details className="case-sources"><summary>Evidence behind the case</summary>
       <p>Both the order line and shipment record come from the synthetic shop feed. The handoff is a recorded shipping milestone. Independent confirmation from the warehouse or proof of customer delivery would require separate records.</p>
       <p>The café, lamps, deadline and demand sequence are fictional. The substitute uses a separate inventory fixture. Shopify distinguishes stock on hand from stock available to sell. <a href="https://help.shopify.com/en/manual/inventory-and-locations/fundamentals/inventory-states">Inventory states</a></p>
       <p>Shopify models total and remaining quantities for each fulfillment-order line. Its guidance also describes out-of-order or missed webhook deliveries and periodic reconciliation. These sources inform the business problem. The example uses the kit’s own records. <a href="https://shopify.dev/docs/api/admin-graphql/latest/objects/FulfillmentOrderLineItem">Line quantities</a> · <a href="https://shopify.dev/docs/apps/build/webhooks">Webhook behavior</a></p>
       <p>Shopify places order access with customer support and picking, packing and shipping with fulfillment staff. Its developer guide covers fulfillment integrations. We propose the ecommerce operations manager as sponsor because that role coordinates fulfillment and customer service. <a href="https://help.shopify.com/en/manual/your-account/users/roles/predefined-roles">Support roles</a> · <a href="https://help.shopify.com/en/manual/your-account/users/roles/role-examples">Fulfillment roles</a> · <a href="https://shopify.dev/docs/apps/build/orders-fulfillment/fulfillment-service-apps/build-for-fulfillment-services">Integration guide</a> · <a href="https://www.shopify.com/enterprise/blog/how-to-overcome-your-daily-operational-frustrations-to-focus-on-future-growth">Ecommerce operations responsibilities</a></p>
     </details>
+    </>}
   </div>;
 }

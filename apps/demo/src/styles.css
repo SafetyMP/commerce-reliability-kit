@@ -665,3 +665,35 @@ details > p {
 .allocation-marks i { width: 18px; height: 9px; border: 1px solid #81927d; border-radius: 2px; }
 .allocation-marks .filled { background: #476346; }
 .allocation-marks .unknown { border-style: dashed; }
+
+.merchant-handoffs { margin: clamp(26px, 4vw, 46px) 0; }
+.merchant-handoffs h2 { font-size: clamp(24px, 3vw, 36px); }
+.handoff-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 24px;
+}
+.handoff-steps li { position: relative; border-top: 2px solid #a67f5b; padding-top: 14px; }
+.handoff-steps li::before {
+  content: ''; position: absolute; left: 0; top: -5px;
+  width: 8px; height: 8px; border-radius: 50%; background: #845332;
+}
+.handoff-steps h3, .handoff-cost h3 { font-size: 1.15rem; }
+.handoff-steps p, .handoff-cost p { margin: 0; }
+.handoff-cost {
+  display: grid; grid-template-columns: 1.2fr 1fr;
+  gap: clamp(18px, 4vw, 42px); align-items: center;
+  padding: 18px 0; border-top: 1px solid var(--border);
+}
+.shift-example { padding: 14px 18px; background: #f2e7d5; border-left: 3px solid #a67f5b; }
+.shift-example h4 { margin: 0 0 5px; }
+@media (max-width: 700px) {
+  .handoff-steps, .handoff-cost { grid-template-columns: 1fr; }
+  .handoff-steps { gap: 0; }
+  .handoff-steps li { border: 0; border-left: 2px solid #a67f5b; padding: 0 0 18px 16px; }
+  .handoff-steps li::before { top: 6px; left: -5px; }
+  .handoff-steps li:last-child { padding-bottom: 0; }
+}
