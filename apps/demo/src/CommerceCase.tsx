@@ -28,6 +28,8 @@ export function replay(
   const orders = Math.min(cap, online);
   const capacity = net === null ? null : Math.max(0, net - counter);
   return {
+    counterFilled: net === null ? null : Math.min(counter, net),
+    counterShort: net === null ? null : Math.max(0, counter - net),
     orders,
     turnedAway: online - orders,
     unfilled: capacity === null ? null : Math.max(0, orders - capacity),
@@ -231,7 +233,7 @@ export function CommerceCase({
             <div className="demands">
               {[
                 {
-                  label: "Counter pickups",
+                  label: "Counter pickup requests",
                   value: counter,
                   update: setCounter,
                 },
@@ -285,9 +287,11 @@ export function CommerceCase({
                 </div>
                 <dl>
                   {[
-                    ["Orders accepted", t.result.orders],
-                    ["Demand turned away", t.result.turnedAway],
-                    ["Unfilled promises", t.result.unfilled],
+                    ["Counter pickups filled", t.result.counterFilled],
+                    ["Counter requests short", t.result.counterShort],
+                    ["Online orders accepted", t.result.orders],
+                    ["Online requests declined", t.result.turnedAway],
+                    ["Online promises unfilled", t.result.unfilled],
                     ["Sellable units left", t.result.idle],
                   ].map(([label, value]) => (
                     <div key={String(label)}>

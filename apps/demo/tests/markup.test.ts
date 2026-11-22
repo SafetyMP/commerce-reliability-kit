@@ -26,15 +26,15 @@ hook.deregister();
 
 test('desk starts with source records, two demand controls and an empty dispatch tape', () => {
   const html = renderToStaticMarkup(createElement(App));
-  for (const label of ['The stock promise desk', 'Net sellable', 'Counter pickups', 'Online requests', 'Technical reference']) assert(html.includes(label));
-  assert(!html.includes('Unfilled promises'));
+  for (const label of ['The stock promise desk', 'Net sellable', 'Counter pickup requests', 'Online requests', 'Technical reference']) assert(html.includes(label));
+  assert(!html.includes('Online promises unfilled'));
 });
 
 test('orders, rejected demand and unfilled promises follow independent limits', () => {
-  assert.deepEqual(replay(captures[0]!, 6, 3, 8), {orders:6, turnedAway:2, unfilled:1, idle:0, policy:6});
-  assert.deepEqual(replay(captures[0]!, 4, 3, 8), {orders:4, turnedAway:4, unfilled:0, idle:1, policy:6});
-  assert.deepEqual(replay(captures[1]!, 6, 3, 8), {orders:6, turnedAway:2, unfilled:null, idle:null, policy:null});
-  assert.deepEqual(replay(captures[2]!, 0, 16, 0), {orders:0, turnedAway:0, unfilled:0, idle:0, policy:10});
+  assert.deepEqual(replay(captures[0]!, 6, 3, 8), {counterFilled:3, counterShort:0, orders:6, turnedAway:2, unfilled:1, idle:0, policy:6});
+  assert.deepEqual(replay(captures[0]!, 4, 3, 8), {counterFilled:3, counterShort:0, orders:4, turnedAway:4, unfilled:0, idle:1, policy:6});
+  assert.deepEqual(replay(captures[1]!, 6, 3, 8), {counterFilled:null, counterShort:null, orders:6, turnedAway:2, unfilled:null, idle:null, policy:null});
+  assert.deepEqual(replay(captures[2]!, 0, 16, 0), {counterFilled:12, counterShort:4, orders:0, turnedAway:0, unfilled:0, idle:0, policy:10});
 });
 
 test('insufficient report components print Unknown rather than null, undefined, or invented zero totals', () => {
