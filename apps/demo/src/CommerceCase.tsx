@@ -15,9 +15,9 @@ export type Assumptions = Record<Field, string>;
 export const initialAssumptions: Assumptions = { cases: '40', minutes: '15', rate: '48', cost: '4800' };
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const labels: Record<Variant, string> = {
-  faulty: 'Close on first shipment',
-  corrected: 'Reconcile line quantities',
-  insufficient: 'Try a partial capture',
+  faulty: 'First shipment',
+  corrected: 'Line quantities',
+  insufficient: 'Line quantities · missing page',
 };
 
 const actionLabels = {
@@ -166,33 +166,45 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
           <blockquote>“{decision.reply}”</blockquote>
           <p>{decision.work}</p>
         </>}</div>
-        {action && <details className="replay-options"><summary>Inspect or replay the connector check</summary>
-          <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>Connector output: {assertion.observed}. {assertion.reason}</span></div>
-          <fieldset className="case-modes"><legend>Replay the order</legend>
-            {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
-              <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => {
-                onVariant(v);
-                requestAnimationFrame(() => evidenceHeading.current?.focus());
-              }}/>{labels[v]}
-            </label>)}
-          </fieldset>
-          <button type="button" className="text-button" onClick={() => {
-            onAction(null);
-            requestAnimationFrame(() => evidenceHeading.current?.focus());
-          }}>Clear reply</button>
-        </details>}
+        {action && <button type="button" className="text-button" onClick={() => {
+          onAction(null);
+          requestAnimationFrame(() => evidenceHeading.current?.focus());
+        }}>Clear reply</button>}
       </div>
       </div>
     </section>
 
     {action && <>
+    <section className="scenario-check" aria-labelledby="scenario-heading">
+      <p className="dispatch-kicker">Commerce Reliability Kit · Scenario-based integration testing</p>
+      <h2 id="scenario-heading">Can Jo trust the order status?</h2>
+      <p>A connector turns shipment updates into an order status for Jo. The kit replays Mina’s order, works out which status the records support, and tests the connector’s answer against it.</p>
+      <fieldset className="scenario-replays">
+        <legend>Replay the connector</legend>
+        {(Object.keys(labels) as Variant[]).map(v =>
+          <button type="button" key={v} aria-pressed={variant === v} onClick={() => onVariant(v)}>{labels[v]}</button>)}
+      </fieldset>
+      <div aria-live="polite" aria-atomic="true" className="scenario-result">
+        <dl className="scenario-facts">
+          <div><dt>Shop evidence</dt><dd>{ordered} ordered · {recorded} handed off<small>{coverage === 'complete' ? 'All shipment pages captured' : 'A shipment page is missing'}</small></dd></div>
+          <div><dt>Status the evidence supports</dt><dd>{assertion.expected}</dd></div>
+          <div><dt>Status the connector returns</dt><dd>{assertion.observed}</dd></div>
+        </dl>
+        <p className="scenario-verdict"><StatusBadge status={assertion.status}/><span>{assertion.status === 'FAIL'
+          ? `The connector would close an order with ${report.metrics.outstanding} lamps still open. Engineering can use this case to reproduce the error.`
+          : assertion.status === 'PASS'
+            ? `The revised rule passes on the same records. Jo can see the ${report.metrics.outstanding} lamps that still need follow-up.`
+            : 'The missing page could contain another handoff. Jo needs the rest of the shipment record before quoting a balance.'}</span></p>
+      </div>
+      <a href={technicalHref}>Trace this check in the technical workspace</a>
+    </section>
     <StockProbe packet={stock} offer={offer} selectPacket={selectStock} selectOffer={selectOffer}
       lead={action === 'close' ? 'Mina calls back after her ticket closes.' : action === 'confirm' ? 'Mina calls while packing checks the handoff.' : 'Jo calls Mina as promised.'} />
     {offer !== null && <section className="case-investment" aria-labelledby="pilot-heading">
       <div className="case-context">
         <p className="dispatch-kicker">The operations manager’s pilot</p>
         <h2 id="pilot-heading">Is a shared order report worth the cost?</h2>
-        <p>North Quay could trial one report for support and packing for four weeks. Compare the time both teams spend on similar tickets.</p>
+        <p>For four weeks, Jo and packing could share the kit’s report on repeat inquiries. Engineering can rerun the same cases after connector changes. Time comparable tickets and count how often customers have to call back.</p>
         <p>{action === 'close' ? 'Count Mina’s second call in the manual baseline.' : action === 'confirm' ? 'Include the packer’s time checking the handoff.' : 'Include Jo’s callback in the time per ticket.'}
         {' '}{allocation?.unfilled == null ? 'Track promises made before inspection.' : allocation.unfilled > 0 ? 'Track accepted web orders that still have to wait.' : (allocation.idle ?? 0) >= 2 ? 'Count the web shoppers turned away to protect café loaners.' : 'Track café pickups the shop could not fill.'}</p>
       </div>
@@ -236,7 +248,7 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
       </div>
     </section>}
     </>}
-    <a className="secondary technical-cta" href={technicalHref}>Trace this order in the technical workspace</a>
+    {!action && <a className="secondary technical-cta" href={technicalHref}>Trace this order in the technical workspace</a>}
     <details className="case-sources"><summary>Evidence behind the case</summary>
       <p>Both the order line and shipment record come from the synthetic shop feed. The handoff is a recorded shipping milestone. Independent confirmation from the warehouse or proof of customer delivery would require separate records.</p>
       <p>The café, lamps, deadline and demand sequence are fictional. The substitute uses a separate inventory fixture. Shopify distinguishes stock on hand from stock available to sell. <a href="https://help.shopify.com/en/manual/inventory-and-locations/fundamentals/inventory-states">Inventory states</a></p>

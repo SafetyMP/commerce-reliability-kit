@@ -29,7 +29,7 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-Mina is opening a café with five tables tonight. She has one shipping notice for the lamps she ordered. Join Jo at the merchant’s service desk, read the order file and decide what to tell her. At the pickup counter, try different online listing limits to see who gets the available loaners. Use that shift to weigh a manual process, a connector test and a four-week pilot. [Open the case](https://safetymp.github.io/commerce-reliability-kit/#case).
+Mina is opening a café with five tables tonight. She has one shipping notice for the lamps she ordered. Join Jo at the merchant’s service desk, read the order file and decide what to tell her. Replay the same order to see how the kit tests the connector’s status against the shipment records, then try a missing page. At the pickup counter, try different online listing limits to see who gets the available loaners. Use that shift to weigh a manual process, a connector test and a four-week pilot. [Open the case](https://safetymp.github.io/commerce-reliability-kit/#case).
 
 ![Mina’s opening-night request and the five café tables](docs/assets/fulfillment-case.jpg)
 

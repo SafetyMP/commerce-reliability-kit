@@ -83,7 +83,10 @@ test('selected reply opens the stock decision and carries its consequences into 
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
   try {
     for (const [hash, expected, hidden] of [
-      ['#case?packet=faulty', 'Packing slip', 'Two loaner lamps for tonight'],
+      ['#case?packet=faulty', 'Packing slip', 'Can Jo trust the order status?'],
+      ['#case?packet=faulty&response=follow', 'The connector would close an order with 2 lamps still open', 'The revised rule passes'],
+      ['#case?packet=corrected&response=follow', 'The revised rule passes on the same records', 'The connector would close an order'],
+      ['#case?packet=insufficient&response=follow', 'The missing page could contain another handoff', 'The revised rule passes'],
       ['#case?packet=faulty&response=close', 'Three pickups come first, then eight web requests', 'What would you fund?'],
       ['#case?packet=faulty&response=close&offer=3', 'Both café tables can have a loaner', 'unfilled promise'],
       ['#case?packet=corrected&response=follow&offer=6', 'Track accepted web orders that still have to wait', 'Both café tables can have a loaner'],

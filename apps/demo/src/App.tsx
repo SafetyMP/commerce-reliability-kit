@@ -95,12 +95,12 @@ export function App() {
             offer={selected.offer}
             selectStock={(stock) => change({ stock })}
             selectOffer={(offer) => change({ offer })}
-            onVariant={(variant) => change({ variant, action: null })}
+            onVariant={(variant) => change({ variant })}
             action={selected.action}
             onAction={(action) => change({ action })}
             values={values}
             onValues={setValues}
-            technicalHref={technicalHref}
+            technicalHref={link("technical", { ...selected, stage: selected.action ? "handoff" : "capture" })}
             investment={investment}
             onInvestment={setInvestment}
           />

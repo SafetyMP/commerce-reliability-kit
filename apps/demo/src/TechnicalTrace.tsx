@@ -43,6 +43,7 @@ export function TechnicalTrace({
   const selected = evaluateScenario("partial-shipment", variant);
   const archive = trials[trial];
   const current = selected.assertions[0]!;
+  const orderFinding = selected.findings.find(finding => finding.id === "fulfillment.partial");
   const recorded = archive.assertions[0]!;
   const shipment = selected.observations.find(
     (row) => row.entityType === "shipment",
@@ -61,6 +62,7 @@ export function TechnicalTrace({
     <article className="trace">
       <p className="dispatch-kicker">Technical workspace · DEMO-1042</p>
       <h1>Trace the partial shipment</h1>
+      <p>The kit turns Jo’s ticket into a repeatable test. It derives the expected order status from captured records, then checks the connector’s output against it.</p>
       <section aria-label="Trace Jo’s order or Mina’s loaners">
         <div className="choices" role="group" aria-label="Trace stage">
           {(Object.keys(stages) as Stage[]).map((key) =>
@@ -117,7 +119,12 @@ export function TechnicalTrace({
               </select>
             </label>
             <div role="status">
-              <h3>{current.observed} · {current.status}</h3>
+              <h3>Connector assertion · {current.status}</h3>
+              <p><strong>Order finding</strong> · {orderFinding?.detail ?? "The captured pages leave the order balance unknown."}</p>
+              <dl className="record-facts">
+                <div><dt>Expected order status</dt><dd>{current.expected}</dd></div>
+                <div><dt>Connector output</dt><dd>{current.observed}</dd></div>
+              </dl>
               <p>{current.reason}</p>
             </div>
             <details>
@@ -160,6 +167,7 @@ export function TechnicalTrace({
       </section>
       <details className="trial-archive">
         <summary>Compare a saved connector run</summary>
+        <p>Engineering can replay the same shipment after a connector change. The saved runs hold the order records and evaluation time fixed.</p>
         <div className="choices" role="group" aria-label="Saved run">
           {(["original", "reconciled"] as const).map(k =>
             <button type="button" onClick={() => selectTrial(k)} aria-pressed={trial === k} key={k}>
@@ -188,6 +196,7 @@ export function TechnicalTrace({
                 selected.metrics.outstanding ?? "Unknown",
                 archive.metrics.outstanding,
               ],
+              ["Expected order status", current.expected, recorded.expected],
               ["Connector output", current.observed, recorded.observed],
               ["Assertion", current.status, recorded.status],
             ].map(([name, a, b]) => (
@@ -213,9 +222,7 @@ export function TechnicalTrace({
           </p>
           <p>Evidence IDs · {recorded.evidence.join(", ")}.</p>
           <p>
-            Run <code>npm --prefix apps/demo test</code> to compare the
-            snapshots with the deterministic evaluator. These local fixture runs
-            make no claim about a live connector.
+            Run <code>npm --prefix apps/demo test</code> to check the saved assertions against the browser evaluator. These fixtures exercise a synthetic connector.
           </p>
           <p>
             <a href={source + "apps/demo/src/evaluator.ts"}>
