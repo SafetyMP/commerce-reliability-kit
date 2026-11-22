@@ -73,7 +73,7 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
   const report = evaluateScenario('partial-shipment', variant);
   const assertion = report.assertions[0]!;
   const decision = action ? supportDecision(report, action) : null;
-  const { ordered, fulfilled, outstanding } = report.metrics;
+  const { ordered, canceled, outstanding } = report.metrics;
   const result = pilotValue(values);
   const shipment = report.observations.find(o => o.entityType === 'shipment');
   const recorded = shipment?.entityType === 'shipment' ? shipment.fields.quantity ?? 0 : 0;
@@ -99,7 +99,7 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
         </fieldset>
       </div>
       <div className="dispatch-ticket" aria-live="polite">
-        <p className="ticket-title">Shipment reconciliation</p>
+        <p className="ticket-title">Shop records for this order</p>
         <figure className="unit-ledger">
           <div className="parcel-row" aria-hidden="true">
             {Array.from({length: recordedUnits}, (_, index) => {
@@ -107,16 +107,14 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
               return <span key={index} className={`parcel ${state}`}><b>{state === 'recorded' ? '✓' : state === 'open' ? '–' : '?'}</b></span>;
             })}
           </div>
-          <figcaption>{recorded} units in one recorded handoff · {coverage === 'complete' ? outstanding + ' units open' : 'other unit statuses unknown'}</figcaption>
+          <figcaption>Each parcel represents one ordered unit. A check marks a unit in the recorded handoff{coverage === 'complete' ? '.' : '. Question marks indicate incomplete coverage.'}</figcaption>
         </figure>
         <dl className="ticket-totals">
           <div><dt>Ordered</dt><dd>{ordered}</dd></div>
-          <div><dt>Handed off</dt><dd>{fulfilled ?? 'Unknown'}</dd></div>
-          <div><dt>Outstanding</dt><dd>{outstanding ?? 'Unknown'}</dd></div>
+          <div><dt>In this handoff</dt><dd>{recorded}</dd></div>
+          <div><dt>Canceled</dt><dd>{canceled}</dd></div>
         </dl>
         <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
-        <p><strong>Selected example’s output</strong><br/>{assertion.observed}</p>
-        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{assertion.reason}</span></div>
         <button type="button" className="secondary" onClick={() => onInspect(report)}>Inspect this run’s records in the technical workspace</button>
       </div>
     </section>
@@ -135,6 +133,8 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
         <h3>{decision.assessment}</h3>
         <p><strong>Customer reply</strong><br/>{decision.reply}</p>
         <p><strong>Fulfillment follow-up</strong><br/>{decision.work}</p>
+        <p><strong>Connector check</strong><br/>The selected example reports “{assertion.observed}”. The outstanding balance is {outstanding ?? 'unknown'}.</p>
+        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{assertion.reason}</span></div>
         <button className="text-button" type="button" onClick={() => onAction(null)}>Clear response and try again</button>
       </> : <p>Your choice opens a draft customer reply and shows who owns the next step.</p>}</div>
     </section>
@@ -144,7 +144,7 @@ export function CommerceCase({heading, variant, onVariant, action, onAction, val
         <p className="dispatch-kicker">Decision for the ecommerce operations manager</p>
         <h2 id="pilot-heading">Would a reconciliation pilot pay for the review time it saves?</h2>
         <ul className="review-trail" aria-label="Who resolves this exception">
-          <li><strong>Support agent</strong><span>Use the open balance to answer the customer.</span></li>
+          <li><strong>Support agent</strong><span>Use the available shipment evidence to answer the customer.</span></li>
           <li><strong>Fulfillment lead</strong><span>Supply warehouse handoff records when the shop feed is incomplete.</span></li>
           <li><strong>Integration engineer</strong><span>Reproduce the closure and test the connector against the ordered quantity.</span></li>
         </ul>

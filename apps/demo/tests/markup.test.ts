@@ -19,29 +19,44 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   }
   return nextLoad(url, context);
 } });
-const { pilotValue, initialAssumptions, supportDecision } = await import('../src/CommerceCase.tsx');
+const { CommerceCase, pilotValue, initialAssumptions, supportDecision } = await import('../src/CommerceCase.tsx');
 const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
-test('default order case displays the actual fixture verdict and auditable worksheet', () => {
+test('default order case presents ungraded records and an auditable worksheet', () => {
   const html = renderToStaticMarkup(createElement(App));
   assert.match(html, /Can the desk close this order/);
   assert.match(html, /Its shipment feed records one handoff of three/);
-  assert.match(html, /Selected example’s output/);
+  assert.match(html, /In this handoff<\/dt><dd>3/);
+  assert.match(html, /Shop shipment snapshot · complete/);
+  assert.doesNotMatch(html, /selected example reports|outstanding balance is|2 units open|ticket-verdict|>FAIL<|Closure contradicts/);
   assert.match(html, /href="#technical">Technical workspace/);
   assert.doesNotMatch(html, /Technical workspace views|>Workbench<|>Run report<|>Library</);
   assert.equal((html.match(/class="parcel recorded"/g) ?? []).length, 3);
   assert.equal((html.match(/class="parcel open"/g) ?? []).length, 2);
   assert.match(html, /First-year comparison in USD/);
   assert.match(html, /Inspect this run’s records/);
-  assert.match(html, /FAIL/);
   assert.match(html, /\$960 first-year net labor value/);
   assert.match(html, /12.5 minutes saved per review/);
   assert.deepEqual(pilotValue(initialAssumptions), {hours:120, net:960, threshold:12.5});
   assert.equal(pilotValue({...initialAssumptions,cases:'0'})?.threshold, null);
   assert.equal(pilotValue({...initialAssumptions,rate:'0',cost:'0'})?.threshold, 0);
   for (const cases of ['', '-1', '0.5', 'Infinity']) assert.equal(pilotValue({...initialAssumptions,cases}), null);
+});
+
+test('connector grading appears only after a support choice for the selected evidence', () => {
+  for (const [variant, grade] of [['faulty','FAIL'], ['corrected','PASS'], ['insufficient','INCONCLUSIVE']] as const) {
+    const props = { heading: {current:null}, variant, values: initialAssumptions,
+      onVariant() {}, onAction() {}, onValues() {}, onInspect() {} };
+    const initial = renderToStaticMarkup(createElement(CommerceCase, {...props, action: null}));
+    assert.doesNotMatch(initial, /ticket-verdict|selected example reports|outstanding balance is/);
+    assert.match(initial, /Inspect this run’s records/);
+    const after = renderToStaticMarkup(createElement(CommerceCase, {...props, action: 'close'}));
+    assert.match(after, /Connector check/);
+    assert(after.includes(grade));
+    assert(after.includes(variant === 'insufficient' ? 'Closure lacks sufficient evidence' : 'Closure contradicts the shop records'));
+  }
 });
 
 test('support action consequences use the evidence even when the connector declares completion', () => {
