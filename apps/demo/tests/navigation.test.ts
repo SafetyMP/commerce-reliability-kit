@@ -84,8 +84,9 @@ test('selected reply opens the stock decision and carries its consequences into 
   try {
     for (const [hash, expected, hidden] of [
       ['#case?packet=faulty', 'Packing slip', 'Two loaner lamps for tonight'],
+      ['#case?packet=faulty&response=close', 'Three pickups come first, then eight web requests', 'What would you fund?'],
       ['#case?packet=faulty&response=close&offer=3', 'Both café tables can have a loaner', 'unfilled promise'],
-      ['#case?packet=corrected&response=follow&offer=6', 'Your listing accepted an online order the counter could not fill', 'Both café tables can have a loaner'],
+      ['#case?packet=corrected&response=follow&offer=6', 'Track accepted web orders that still have to wait', 'Both café tables can have a loaner'],
       ['#case?packet=insufficient&response=confirm&stock=count&offer=6', 'The café is waiting on inspection', 'Both café tables can have a loaner'],
       ['#technical?stage=stock&stock=count&offer=3', 'the café’s allocation is unknown', 'Two loaner lamps for tonight'],
     ]) {

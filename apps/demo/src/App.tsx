@@ -95,9 +95,9 @@ export function App() {
             offer={selected.offer}
             selectStock={(stock) => change({ stock })}
             selectOffer={(offer) => change({ offer })}
-            onVariant={(variant) => change({ variant, action: null, offer: null })}
+            onVariant={(variant) => change({ variant, action: null })}
             action={selected.action}
-            onAction={(action) => change({ action, offer: null })}
+            onAction={(action) => change({ action })}
             values={values}
             onValues={setValues}
             technicalHref={technicalHref}
@@ -109,7 +109,7 @@ export function App() {
             {...selected}
             selectStock={(stock) => change({ stock })}
             selectOffer={(offer) => change({ offer })}
-            selectVariant={(variant) => change({ variant, opened: true, action: null, offer: null })}
+            selectVariant={(variant) => change({ variant, opened: true })}
             selectStage={(stage) => change({ stage })}
             selectTrial={(trial) => change({ trial })}
             permalink={technicalHref}

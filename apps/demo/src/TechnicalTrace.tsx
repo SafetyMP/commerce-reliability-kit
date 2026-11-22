@@ -11,10 +11,10 @@ export type Stage = "capture" | "balance" | "handoff" | "stock";
 const source =
   "https://github.com/SafetyMP/commerce-reliability-kit/blob/main/";
 const stages: Record<Stage, string> = {
-  capture: "Capture the records",
-  balance: "Reconcile the line",
-  handoff: "Hand off the exception",
-  stock: "Trace the loaner stock",
+  capture: "Capture",
+  balance: "Line balance",
+  handoff: "Support handoff",
+  stock: "Loaner stock",
 };
 
 export function TechnicalTrace({
@@ -55,122 +55,117 @@ export function TechnicalTrace({
   const listing = latest(inventory, "shop");
   const allocation = offer === null ? null : replay(inventory, offer, 3, 8);
   const disposition = action ? supportDecision(selected, action) : null;
+  const handedOff = shipment?.entityType === "shipment" ? shipment.fields.quantity : null;
+  const fullFeed = variant !== "insufficient";
   return (
     <article className="trace">
       <p className="dispatch-kicker">Technical workspace · DEMO-1042</p>
       <h1>Trace the partial shipment</h1>
-      <p>
-        Follow Jo’s order through the browser evaluator. Change the input and watch which conclusions the same rule can support. The loaner trace uses the separate warehouse record from Mina’s pickup scenario.
-      </p>
-      <section aria-labelledby="path-title">
-        <h2 id="path-title">From shop record to support queue</h2>
+      <section aria-label="Trace Jo’s order or Mina’s loaners">
         <div className="choices" role="group" aria-label="Trace stage">
-          {(Object.keys(stages) as Stage[]).map((key) => (
-            <button
-              type="button"
-              aria-pressed={stage === key}
-              onClick={() => selectStage(key)}
-              key={key}
-            >
+          {(Object.keys(stages) as Stage[]).map((key) =>
+            <button type="button" aria-pressed={stage === key} onClick={() => selectStage(key)} key={key}>
               {stages[key]}
-            </button>
-          ))}
+            </button>)}
         </div>
-        <div className="trace-slip" aria-live="polite">
-          {stage !== "stock" && <label className="stock-label">Order replay
-            <select value={variant} onChange={e => selectVariant(e.target.value as Variant)}>
-              <option value="faulty">First-handoff rule · full feed</option>
-              <option value="corrected">Line reconciliation · full feed</option>
-              <option value="insufficient">Line reconciliation · partial feed</option>
-            </select>
-          </label>}
-          {stage === "capture" ? (
-            <>
-              <h3>Shop capture · {coverage?.status}</h3>
-              <p>
-                The order lists {selected.metrics.ordered} units. The capture
-                contains{" "}
-                {shipment?.entityType === "shipment"
-                  ? shipment.fields.quantity
-                  : 0}{" "}
-                in the handoff. Shipment coverage is {coverage?.status}.
-              </p>
-              <p>
-                Order and shipment come from the same shop feed. Neither is an
-                independent warehouse confirmation.
-              </p>
+        <div className="trace-slip">
+          {(stage === "capture" || stage === "balance") && <>
+            <h2>Shipment feed</h2>
+            <div className="choices" role="group" aria-label="Shipment feed">
+              <button type="button" aria-pressed={fullFeed}
+                onClick={() => { if (!fullFeed) selectVariant("corrected"); }}>Complete feed</button>
+              <button type="button" aria-pressed={!fullFeed}
+                onClick={() => { if (fullFeed) selectVariant("insufficient"); }}>Partial feed</button>
+            </div>
+            {!fullFeed && <p>Restoring the complete feed uses the line-reconciliation rule.</p>}
+          </>}
+          {stage === "capture" && <>
+            <div role="status">
+              <h3>{selected.metrics.ordered} ordered · {handedOff ?? "Unknown"} recorded in the handoff</h3>
+              <p>{fullFeed ? "All pages of the shop’s shipment record were captured." : "Only some pages were captured. Other handoffs are unknown."}</p>
+            </div>
+            <details>
+              <summary>Inspect the shop snapshot</summary>
+              <p>Both records come from the shop. Independent warehouse confirmation requires a separate source.</p>
               <dl className="record-facts">
                 <div><dt>Shop record</dt><dd>{shipment?.sourceRecordId}</dd></div>
                 <div><dt>Snapshot</dt><dd>{coverage?.snapshotId}</dd></div>
                 <div><dt>Pagination</dt><dd>{coverage?.pagination}</dd></div>
                 <div><dt>Coverage declared by</dt><dd>{coverage?.completenessBasis}</dd></div>
               </dl>
-            </>
-          ) : stage === "balance" ? (
-            <>
-              <h3>
-                Line balance · {selected.metrics.outstanding ?? "Unknown"}
-              </h3>
-              <p>
-                {selected.metrics.outstanding === null
-                  ? "A handoff is visible, but the capture is partial. A defensible remaining quantity needs complete shipment coverage."
-                  : `${selected.metrics.ordered} ordered − ${selected.metrics.canceled} canceled − ${selected.metrics.fulfilled} uniquely handed off = ${selected.metrics.outstanding} outstanding.`}
-              </p>
-              <p>The evaluator groups shipment observations by source, shipment ID and order line. A retry with the same key counts once. It releases a balance only when the captures declare full coverage and all pages have been read.</p>
+            </details>
+          </>}
+          {stage === "balance" && <>
+            <div role="status">
+              <h3>Line balance · {selected.metrics.outstanding ?? "Unknown"}</h3>
+              <p>{selected.metrics.outstanding === null
+                ? "A missing page could contain another handoff. The remaining quantity stays unknown."
+                : `${selected.metrics.ordered} ordered − ${selected.metrics.canceled} canceled − ${selected.metrics.fulfilled} handed off = ${selected.metrics.outstanding} outstanding.`}</p>
+            </div>
+            <details>
+              <summary>Inspect the reconciliation rule</summary>
+              <p>The evaluator counts each source, shipment ID and order line once. It calculates the balance when all pages are captured and every shipment quantity is present.</p>
               {shipment?.entityType === "shipment" && <code>{[shipment.sourceId, shipment.fields.shipmentId, shipment.fields.lineId].join(" / ")}</code>}
-            </>
-          ) : stage === "stock" ? (
-            <>
-              <h3>Mina’s substitute · inventory mapping</h3>
-              <div className="controls-row">
-                <label>Warehouse record<select value={stock} onChange={e => selectStock(e.target.value as StockPacket)}><option value="inspection">After inspection</option><option value="count">Before inspection</option></select></label>
-                <label>Case listing limit<select value={offer ?? ""} onChange={e => selectOffer(e.target.value === "" ? null : Number(e.target.value) as Offer)}><option value="">No listing chosen</option>{[3,5,6].map(n => <option key={n} value={n}>{n}</option>)}</select></label>
-              </div>
+            </details>
+          </>}
+          {stage === "handoff" && <>
+            <label className="stock-label">Order replay
+              <select value={variant} onChange={e => selectVariant(e.target.value as Variant)}>
+                <option value="faulty">First-handoff rule · full feed</option>
+                <option value="corrected">Line reconciliation · full feed</option>
+                <option value="insufficient">Line reconciliation · partial feed</option>
+              </select>
+            </label>
+            <div role="status">
+              <h3>{current.observed} · {current.status}</h3>
+              <p>{current.reason}</p>
+            </div>
+            <details>
+              <summary>Jo’s follow-up</summary>
+              {disposition ? <p><strong>{disposition.assessment}.</strong> {disposition.work}</p> :
+                <p>Choose a response in the order case to assign the next step.</p>}
+            </details>
+          </>}
+          {stage === "stock" && <>
+            <label className="stock-label">Warehouse record
+              <select value={stock} onChange={e => selectStock(e.target.value as StockPacket)}>
+                <option value="inspection">After inspection</option><option value="count">Before inspection</option>
+              </select>
+            </label>
+            <div role="status">
+              <h3>{warehouse.fields.quantity} {warehouse.fields.semantics === "net_available" ? "sellable loaner lamps" : "lamps counted · sellable stock unknown"}</h3>
+              <p>{allocation ? `With ${allocation.orders} online orders after three counter pickups, ${allocation.idle == null ? "the café’s allocation is unknown" : Math.min(2, allocation.idle) + " lamps are available for the café"}.` :
+                "Choose a listing limit to see how many loaners Mina can collect."}</p>
+            </div>
+            <details>
+              <summary>Change the listing limit</summary>
+              <label className="stock-label">Case listing limit
+                <select value={offer ?? ""} onChange={e => selectOffer(e.target.value === "" ? null : Number(e.target.value) as Offer)}>
+                  <option value="">No listing chosen</option>
+                  {[3,5,6].map(n => <option key={n} value={n}>{n}</option>)}
+                </select>
+              </label>
+            </details>
+            <details>
+              <summary>Inspect the inventory mapping</summary>
               <dl className="record-facts">
                 <div><dt>Warehouse quantity</dt><dd>{warehouse.fields.quantity} · {warehouse.fields.semantics}</dd></div>
                 <div><dt>Shop’s recorded listing</dt><dd>{listing.fields.quantity} · {listing.fields.semantics}</dd></div>
               </dl>
-              <p>{warehouse.fields.semantics === "net_available" ? `The fixture’s publication rule subtracts its buffer of ${inventory.fixture.evidence.policy.inventory.buffer} from already-sellable stock. It does not deduct quarantined lamps again.` : "A gross count cannot supply a net sellable balance. The publication check cannot establish a supported listing from this capture."}</p>
-              <p>{allocation ? `Your simulated listing accepts ${allocation.orders} orders. After the pickups, ${allocation.idle == null ? "the café’s allocation is unknown" : Math.min(2, allocation.idle) + " lamps are available for the café"}. The simulation does not write to the fixture.` : "Choose a case listing limit to replay the counter, website and café queue."}</p>
-              <a href={source + "scenarios/" + inventory.fixture.id + ".json"}>Read the inventory fixture</a>
-            </>
-          ) : (
-            <>
-              <h3>
-                {disposition?.assessment ?? "Support disposition pending"}
-              </h3>
-              <p>
-                {disposition?.work ??
-                  "Return to the order case and choose the next action for support. The resulting assignment will appear here."}
-              </p>
-              <p>
-                The selected connector reports “{current.observed}”. An
-                assertion checks the connector separately from the action
-                support takes.
-              </p>
-            </>
-          )}
+              <p>{warehouse.fields.semantics === "net_available" ? `The fixture deducts a buffer of ${inventory.fixture.evidence.policy.inventory.buffer} from sellable stock. Inspection holds are already excluded.` : "The gross count includes stock awaiting inspection. A net publication quantity cannot be calculated."}</p>
+              <p>The listing simulation reads this separate inventory fixture. <a href={source + "scenarios/" + inventory.fixture.id + ".json"}>Stock fixture</a></p>
+            </details>
+          </>}
         </div>
       </section>
-      <details className="trial-archive" open={stage === "handoff" || undefined} key={stage === "handoff" ? "result" : "archive"}>
+      <details className="trial-archive">
         <summary>Compare a saved connector run</summary>
         <div className="choices" role="group" aria-label="Saved run">
-          {(["original", "reconciled"] as const).map((k) => (
-            <button
-              type="button"
-              onClick={() => selectTrial(k)}
-              aria-pressed={trial === k}
-              key={k}
-            >
+          {(["original", "reconciled"] as const).map(k =>
+            <button type="button" onClick={() => selectTrial(k)} aria-pressed={trial === k} key={k}>
               {k === "original" ? "First-handoff rule" : "Line reconciliation"}
-            </button>
-          ))}
-          <a href={permalink}>Link to this comparison</a>
+            </button>)}
         </div>
-        <p className="share-note">
-          The comparison link saves this order’s packet, response, trace stage
-          and trial, plus the loaner record and listing limit. Worksheet edits stay in this visit.
-        </p>
         <table aria-live="polite">
           <caption>Order DEMO-1042 · selected case and saved run</caption>
           <thead>
@@ -213,10 +208,10 @@ export function TechnicalTrace({
         <details>
           <summary>Inspect identifiers and reproduce the check</summary>
           <p>
-            Saved run at {archive.evaluationTime} · {recorded.id} ·{" "}
+            Saved synthetic run at {archive.evaluationTime} · {recorded.id} ·{" "}
             {archive.ruleVersion}
           </p>
-          <p>Evidence references: {recorded.evidence.join(", ")}.</p>
+          <p>Evidence IDs · {recorded.evidence.join(", ")}.</p>
           <p>
             Run <code>npm --prefix apps/demo test</code> to compare the
             snapshots with the deterministic evaluator. These local fixture runs

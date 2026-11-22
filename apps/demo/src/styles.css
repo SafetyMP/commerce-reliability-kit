@@ -642,16 +642,21 @@ details > p {
   margin: 18px 0 12px;
 }
 .cafe-note p { margin: 0; }
-.record-section { align-items: center; }
+.record-section > h2 { margin-bottom: 0; }
+.record-section .support-decision { align-items: start; margin-top: 16px; }
+.reply-choice > h3 { font-size: 1.3rem; }
+.reply-result blockquote { margin: 15px 0 6px; font: 1.25rem/1.4 Georgia, serif; }
+.reply-result p { margin: 0; }
+.stock-alternate { margin-top: 14px; }
+.stock-alternate label { margin-top: 8px; }
+.stock-reading { margin-top: 0; }
+.stock-scene .allocation { margin: 0; }
+
 .record-section .dispatch-ticket { border: 1px solid var(--border); box-shadow: none; }
 .stock-scene { padding: clamp(18px, 3vw, 38px); background: #e9eee4; border-radius: 8px; }
 .stock-scene > p { max-width: 72ch; }
 .stock-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .stock-label { display: grid; gap: 4px; max-width: 240px; }
-.queue-strip { display: flex; list-style: none; padding: 0; gap: 12px; }
-.queue-strip li { flex: 1; font-size: 14px; line-height: 1.3; border-top: 2px solid #72816b; }
-.queue-strip b { display: block; font-size: 26px; }
-.allocation { margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 12px; }
 .replay-options, .technical-cta, .pilot-sheet details { margin-block: 16px; }
 @media (max-width: 700px) { .stock-layout { grid-template-columns: 1fr; } }
 .trace .stock-label { margin-bottom: 16px; }

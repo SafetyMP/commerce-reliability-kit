@@ -21,9 +21,9 @@ const labels: Record<Variant, string> = {
 };
 
 const actionLabels = {
-  close: 'Close the case as complete',
-  follow: 'Keep open and follow up',
-  confirm: 'Request warehouse confirmation',
+  close: 'Close as complete',
+  follow: 'Schedule a callback',
+  confirm: 'Ask the packing team',
 } as const;
 export type SupportAction = keyof typeof actionLabels;
 
@@ -32,18 +32,18 @@ export function supportDecision(report: RunReport, action: SupportAction) {
   const known = typeof remaining === 'number';
   if (action === 'close') return {
     assessment: known ? 'Closure contradicts the shop records' : 'Closure lacks sufficient evidence',
-    reply: 'We have marked your order complete and closed this support case.',
+    reply: 'We’ve marked your order complete.',
     work: known ? `No follow-up assigned. The shop still shows ${remaining} outstanding units.` : 'No follow-up assigned. The partial feed leaves the outstanding balance unresolved.',
   };
   if (action === 'confirm') return {
     assessment: known ? 'Independent confirmation requested' : 'Evidence gap escalated',
-    reply: 'We are keeping your case open and asking fulfillment to check the warehouse handoff records.',
-    work: known ? `Ask fulfillment to verify the warehouse records for the ${remaining} units still open in the shop.` : 'Ask fulfillment for a complete shipment record matched to this order line. Reconcile it before quoting a balance.',
+    reply: 'I’ll ask our packing team what left the bench.',
+    work: known ? `Packing checks the handoff for the ${remaining} units still open.` : 'Packing must match a complete handoff record to this order.',
   };
   return {
     assessment: known ? 'Open balance retained for follow-up' : 'Case held pending complete evidence',
-    reply: known ? `The shop shows ${remaining} units still open. We will follow up on their shipment status.` : 'We are keeping your case open while we check its shipment status.',
-    work: known ? `Assign fulfillment to trace the ${remaining} open units and return an update to support.` : 'Keep the ticket in the pending queue. Support still needs a complete shipment capture to establish the balance.',
+    reply: known ? `I’ll call you back about the ${remaining} lamps still open.` : 'I’ll call back when I can confirm how many shipped.',
+    work: known ? `Jo owns the callback on the ${remaining} open units.` : 'Jo owns the callback. The remaining quantity is unknown.',
   };
 }
 
@@ -84,7 +84,7 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
   const report = evaluateScenario('partial-shipment', variant);
   const assertion = report.assertions[0]!;
   const decision = action ? supportDecision(report, action) : null;
-  const { ordered, canceled, outstanding } = report.metrics;
+  const { ordered, canceled } = report.metrics;
   const result = pilotValue(values);
   const shipment = report.observations.find(o => o.entityType === 'shipment');
   const recorded = shipment?.entityType === 'shipment' ? shipment.fields.quantity ?? 0 : 0;
@@ -133,12 +133,10 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
       }}>Read Jo’s order file <span aria-hidden="true">↓</span></button>
     </section>
     {opened && <>
-    <section className="support-decision record-section" aria-labelledby="evidence-heading">
-      <div>
-        <p className="dispatch-kicker">Morning shift · Order {report.metrics.order}</p>
-        <h2 id="evidence-heading" ref={evidenceHeading} tabIndex={-1}>Inside Jo’s order file</h2>
-        <p>Mina’s message is waiting. On Jo’s screen are the original order line and the shop’s record of a carrier pickup. What do those two entries tell you about her lamps?</p>
-      </div>
+    <section className="record-section" aria-labelledby="evidence-heading">
+      <p className="dispatch-kicker">Morning shift · Order {report.metrics.order}</p>
+      <h2 id="evidence-heading" ref={evidenceHeading} tabIndex={-1}>Inside Jo’s order file</h2>
+      <div className="support-decision">
       <div className="dispatch-ticket" aria-live="polite">
         <p className="ticket-title">Packing slip · {report.metrics.order}</p>
         <figure className="unit-ledger">
@@ -148,7 +146,7 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
               return <span key={index} className={`parcel ${state}`}><b>{state === 'recorded' ? '✓' : state === 'open' ? '–' : '?'}</b></span>;
             })}
           </div>
-          <figcaption>Each parcel represents one ordered unit. A check marks a unit in the recorded handoff{coverage === 'complete' ? '.' : '. Question marks indicate incomplete coverage.'}</figcaption>
+          <figcaption>One box per lamp. ✓ means recorded at carrier pickup.{coverage !== 'complete' && ' ? means the feed is incomplete.'}</figcaption>
         </figure>
         <dl className="ticket-totals">
           <div><dt>Ordered</dt><dd>{ordered}</dd></div>
@@ -158,65 +156,61 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
         <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
 
       </div>
-    </section>
-
-    <section className="support-decision" aria-labelledby="support-heading">
-      <div>
-        <p className="dispatch-kicker">Support desk · Simulated response</p>
-        <h2 id="support-heading">What will you tell Mina?</h2>
-        <div role="group" aria-label="Choose a support action" className="support-actions">
+      <div className="reply-choice">
+        <h3 id="support-heading">What will you tell Mina?</h3>
+        <div role="group" aria-labelledby="support-heading" className="support-actions">
           {(Object.keys(actionLabels) as SupportAction[]).map(key => <button key={key} type="button"
-            className={action === key ? 'primary' : 'secondary'} aria-pressed={action === key}
-            onClick={() => onAction(key)}>{actionLabels[key]}</button>)}
+            aria-pressed={action === key} onClick={() => onAction(key)}>{actionLabels[key]}</button>)}
         </div>
+        <div className="reply-result" aria-live="polite" aria-atomic="true">{decision && <>
+          <blockquote>“{decision.reply}”</blockquote>
+          <p>{decision.work}</p>
+        </>}</div>
+        {action && <details className="replay-options"><summary>Inspect or replay the connector check</summary>
+          <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>Connector output: {assertion.observed}. {assertion.reason}</span></div>
+          <fieldset className="case-modes"><legend>Replay the order</legend>
+            {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
+              <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => {
+                onVariant(v);
+                requestAnimationFrame(() => evidenceHeading.current?.focus());
+              }}/>{labels[v]}
+            </label>)}
+          </fieldset>
+          <button type="button" className="text-button" onClick={() => {
+            onAction(null);
+            requestAnimationFrame(() => evidenceHeading.current?.focus());
+          }}>Clear reply</button>
+        </details>}
       </div>
-      <div className="response-slip" aria-live="polite">{decision ? <>
-        <h3>{decision.assessment}</h3>
-        <p><strong>Customer reply</strong><br/>{decision.reply}</p>
-        <p><strong>Fulfillment follow-up</strong><br/>{decision.work}</p>
-        <p><strong>Connector check</strong><br/>The selected example reports “{assertion.observed}”. The outstanding balance is {outstanding ?? 'unknown'}.</p>
-        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{assertion.reason}</span></div>
-        <button className="text-button" type="button" onClick={() => onAction(null)}>Clear response and try again</button>
-      </> : <p>Your choice opens a draft customer reply and shows who owns the next step.</p>}</div>
+      </div>
     </section>
 
     {action && <>
     <StockProbe packet={stock} offer={offer} selectPacket={selectStock} selectOffer={selectOffer}
-      lead={action === 'close' ? 'With her ticket closed, Mina calls the desk again.' : action === 'confirm' ? 'Mina gives Jo that update while fulfillment checks the earlier handoff.' : 'Jo gets the update on their scheduled follow-up.'} />
-    <details className="replay-options"><summary>Replay the order with a different connector or an incomplete shipment feed</summary>
-      <fieldset className="case-modes"><legend>Choose the records and rule for Jo’s next reply</legend>
-        {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
-          <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => {
-            onVariant(v);
-            requestAnimationFrame(() => evidenceHeading.current?.focus());
-          }}/>{labels[v]}
-        </label>)}
-      </fieldset>
-    </details>
-    <section className="case-investment" aria-labelledby="pilot-heading">
+      lead={action === 'close' ? 'Mina calls back after her ticket closes.' : action === 'confirm' ? 'Mina calls while packing checks the handoff.' : 'Jo calls Mina as promised.'} />
+    {offer !== null && <section className="case-investment" aria-labelledby="pilot-heading">
       <div className="case-context">
-        <p className="dispatch-kicker">Decision for the ecommerce operations manager</p>
-        <h2 id="pilot-heading">Would a reconciliation pilot pay for the review time it saves?</h2>
-        <p>{action === 'close' ? 'On this shift, closing the ticket sent Mina back through the queue. Count that second contact when timing manual reviews.' : action === 'confirm' ? 'On this shift, fulfillment had to check the warehouse record. Include the time of both teams in the comparison.' : 'On this shift, Jo kept ownership of the follow-up. Time the work through the callback as well as the first reply.'}</p>
-        {allocation && <p>{allocation.unfilled === null ? 'Your listing took orders with sellable stock still unknown. Track how long customers wait for confirmation.' : allocation.unfilled > 0 ? 'Your listing accepted an online order the counter could not fill. Track those promises alongside time saved.' : (allocation.idle ?? 0) >= 2 ? 'Your listing protected both café loaners. Track the online requests that could not check out alongside successful pickups.' : 'Your listing filled the web orders but left no café loaners. Track whether customers find an alternative in time.'}</p>}
-        <ul className="review-trail" aria-label="Who resolves this exception">
-          <li><strong>Support agent</strong><span>Use the available shipment evidence to answer the customer.</span></li>
-          <li><strong>Fulfillment lead</strong><span>Supply warehouse handoff records when the shop feed is incomplete.</span></li>
-          <li><strong>Integration engineer</strong><span>Reproduce the closure and test the connector against the ordered quantity.</span></li>
-        </ul>
-        <p>As pilot sponsor, the ecommerce operations manager can keep manual review, fund a connector test alone, or trial shared reports for four weeks. Time comparable tickets with and without a report. Track reopened cases and missing records before expanding.</p>
+        <p className="dispatch-kicker">The operations manager’s pilot</p>
+        <h2 id="pilot-heading">Is a shared order report worth the cost?</h2>
+        <p>North Quay could trial one report for support and packing for four weeks. Compare the time both teams spend on similar tickets.</p>
+        <p>{action === 'close' ? 'Count Mina’s second call in the manual baseline.' : action === 'confirm' ? 'Include the packer’s time checking the handoff.' : 'Include Jo’s callback in the time per ticket.'}
+        {' '}{allocation?.unfilled == null ? 'Track promises made before inspection.' : allocation.unfilled > 0 ? 'Track accepted web orders that still have to wait.' : (allocation.idle ?? 0) >= 2 ? 'Count the web shoppers turned away to protect café loaners.' : 'Track café pickups the shop could not fill.'}</p>
       </div>
       <div className="pilot-sheet">
-        <h3>First-year worksheet</h3>
-        <p>The defaults are illustrative. Estimate the capacity your team could recover. Use support’s ticket counts and time study, and engineering’s estimate for setup and maintenance.</p>
+        <h3>Minutes saved per review</h3>
         <div role="group" className="support-actions" aria-label="Try a measured time saving">
           {[10, 15].map(n => <button type="button" key={n} aria-pressed={values.minutes === String(n)} onClick={() => onValues({...values, minutes: String(n)})}>{n} minutes saved</button>)}
         </div>
-        <details><summary>Edit the pilot assumptions</summary><div className="case-inputs">{fields.map(({key, label}) => <label key={key}>{label}
+        <div className="pilot-result" aria-live="polite">{result ? <>
+          <strong>{currency.format(result.net)} first-year net labor value</strong>
+          <p>{result.hours.toLocaleString('en-US', {maximumFractionDigits: 2})} hours of modeled capacity across 12 months. {result.threshold === null ? 'Positive cost cannot be recovered at this volume and rate.' : 'Break-even requires ' + (Math.ceil(result.threshold * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' minutes saved per review.'}</p>
+        </> : <p>Enter a nonnegative number in each field and a whole monthly case count.</p>}</div>
+        <details><summary>Assumptions and calculation</summary><div className="case-inputs">{fields.map(({key, label}) => <label key={key}>{label}
           <input type="number" min="0" step={key === 'cases' ? 1 : 'any'} value={values[key]}
             onChange={e => onValues({...values, [key]: e.currentTarget.value})}/>
-        </label>)}</div></details>
-        <div className="pilot-result" aria-live="polite">{result ? <>
+        </label>)}</div>
+        <p>Monthly reviews × 12 × minutes saved ÷ 60 × hourly cost, less first-year cost. These figures model labor capacity.</p>
+        {result && <>
           <figure className="pilot-chart">
             <figcaption>First-year comparison in USD</figcaption>
             {comparison.map(({label, value}) => <div className="pilot-bar" key={label}>
@@ -224,22 +218,23 @@ export function CommerceCase({opened, onOpen, stock, offer, selectStock, selectO
               <span className="bar-track" aria-hidden="true"><i style={{width: (value / scale * 100) + '%'}}/></span>
             </div>)}
           </figure>
-          <strong>{currency.format(result.net)} first-year net labor value</strong>
-          <p>{result.hours.toLocaleString('en-US', {maximumFractionDigits: 2})} hours of modeled capacity across 12 months. {result.threshold === null ? 'Positive cost cannot be recovered at this volume and rate.' : 'Break-even requires ' + (Math.ceil(result.threshold * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' minutes saved per review.'}</p>
-        </> : <p>Enter a nonnegative number in each field and a whole monthly case count.</p>}</div>
+        </>}</details>
         <section className="sponsor-choice" aria-labelledby="sponsor-choice">
-      <p className="dispatch-kicker">Pilot recommendation</p><h2 id="sponsor-choice">What would you fund?</h2>
-      <p>Use the ticket and your worksheet to choose the next step for the operations manager.</p>
+      <h2 id="sponsor-choice">What would you fund?</h2>
       <div role="group" aria-label="Sponsor decision" className="support-actions">
         {['Keep manual review', 'Fund a connector test', 'Trial shared reports'].map(option =>
           <button key={option} type="button" className={investment === option ? 'primary' : 'secondary'} aria-pressed={investment === option} onClick={() => onInvestment(option)}>{option}</button>)}
       </div>
-      {investment && <p role="status">{investment === 'Keep manual review' ? 'Keep the queue with support. Sample reopened tickets and time the next manual reconciliations to establish a baseline.' : investment === 'Fund a connector test' ? 'Ask integration engineering to test a partial handoff and an incomplete feed. Support still owns the customer follow-up.' : 'Pilot with support and fulfillment for four weeks. Compare time per review and reopened cases against the manual baseline.'}
-        {investment === 'Trial shared reports' && result && <> Your worksheet models {currency.format(result.net)} in first-year net labor value. {result.net < 0 ? 'At this saving, the pilot falls short of its cost. Reduce scope or stop if measured reviews bear that out.' : 'Expand only if timed reviews cover the cost and reopened cases do not increase.'}</>}</p>}
+      {investment && <p role="status">{investment === 'Keep manual review'
+        ? 'Jo keeps the queue. Time repeat contacts to establish the baseline.'
+        : investment === 'Fund a connector test'
+          ? 'Engineering tests partial shipments. Jo still handles the follow-up.'
+          : !result ? 'Complete the worksheet to estimate the pilot’s first-year value.'
+          : result.net < 0 ? 'The pilot falls short at this saving. Check the measured time before funding it.'
+          : 'Trial the report for four weeks. Expand if measured savings cover cost and reopened cases hold steady.'}</p>}
     </section>
-    <details><summary>Calculation and decision criteria</summary><p>Monthly reviews × 12 × minutes saved ÷ 60 × hourly cost, less first-year cost. Count only eligible cases. Confirm that the team can use the released time, and expand only if observed savings cover cost without increasing erroneous closures. Refunds and retained sales are outside this estimate.</p></details>
       </div>
-    </section>
+    </section>}
     </>}
     <a className="secondary technical-cta" href={technicalHref}>Trace this order in the technical workspace</a>
     <details className="case-sources"><summary>Evidence behind the case</summary>
