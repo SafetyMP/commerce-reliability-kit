@@ -19,12 +19,36 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   }
   return nextLoad(url, context);
 } });
+const { pilotValue, initialAssumptions } = await import('../src/CommerceCase.tsx');
 const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
-test('initial library markup has six named scenario actions and accessible native navigation/search', () => {
+test('default order case displays the actual fixture verdict and auditable worksheet', () => {
   const html = renderToStaticMarkup(createElement(App));
+  assert.match(html, /Can the desk close this order/);
+  assert.match(html, /Its shipment feed records one handoff of three/);
+  assert.match(html, /Selected example’s output/);
+  assert.match(html, /Inspect this run’s records/);
+  assert.match(html, /FAIL/);
+  assert.match(html, /\$960 first-year net labor value/);
+  assert.match(html, /12.5 minutes saved per review/);
+  assert.deepEqual(pilotValue(initialAssumptions), {hours:120, net:960, threshold:12.5});
+  assert.equal(pilotValue({...initialAssumptions,cases:'0'})?.threshold, null);
+  assert.equal(pilotValue({...initialAssumptions,rate:'0',cost:'0'})?.threshold, 0);
+  for (const cases of ['', '-1', '0.5', 'Infinity']) assert.equal(pilotValue({...initialAssumptions,cases}), null);
+});
+
+test('direct library markup has six named scenario actions and accessible native navigation/search', () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  let html: string;
+  try {
+    Object.defineProperty(globalThis, 'window', {configurable:true, value:{location:{hash:'#library'}}});
+    html = renderToStaticMarkup(createElement(App));
+  } finally {
+    if (original) Object.defineProperty(globalThis, 'window', original);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
   assert.match(html, /Synthetic demo · No connected accounts/);
   assert.match(html, /No production verification/);
   assert.match(html, /href="#main"/);

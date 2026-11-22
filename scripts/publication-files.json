@@ -29,6 +29,7 @@
   "apps/demo/package.json",
   "apps/demo/public/favicon.svg",
   "apps/demo/src/App.tsx",
+  "apps/demo/src/CommerceCase.tsx",
   "apps/demo/src/components.tsx",
   "apps/demo/src/evaluator.ts",
   "apps/demo/src/export.ts",

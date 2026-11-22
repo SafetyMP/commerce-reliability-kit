@@ -7,10 +7,11 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { initialView, observeHash, skipToMain, viewFromHash } from '../src/navigation.ts';
 
-test('four hash views and invalid/empty fallback are deterministic', () => {
-  for (const view of ['library', 'workbench', 'report', 'compare']) assert.equal(viewFromHash(`#${view}`), view);
-  for (const hash of ['', '#unknown', '#REPORT', '#/report', '#report/1', '#%72eport']) assert.equal(viewFromHash(hash), 'library');
-  assert.equal(initialView(), 'library');
+test('case entry, four technical views, and invalid fallback are deterministic', () => {
+  for (const view of ['case', 'library', 'workbench', 'report', 'compare']) assert.equal(viewFromHash(`#${view}`), view);
+  for (const hash of ['#unknown', '#REPORT', '#/report', '#report/1', '#%72eport']) assert.equal(viewFromHash(hash), 'library');
+  assert.equal(initialView(), 'case');
+  assert.equal(viewFromHash(''), 'case');
 });
 
 test('hash changes support navigation and cleanup without hijacking the skip link', () => {
@@ -28,7 +29,7 @@ test('hash changes support navigation and cleanup without hijacking the skip lin
 });
 
 test('skip link focuses main without replacing the route used by refresh and back', () => {
-  for (const view of ['library', 'workbench', 'report', 'compare']) {
+  for (const view of ['case', 'library', 'workbench', 'report', 'compare']) {
     const history = [`#${view}`];
     let focused = false;
     const main = { focus() { focused = true; } };

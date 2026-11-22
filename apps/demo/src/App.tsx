@@ -9,9 +9,11 @@ import { Empty, EvidencePanel, Icon, MetricFacts, PolicyFacts, ResultStrip, Stat
 import type { IconName } from './components.tsx';
 import type { Category, Policy, PolicyKey, RunReport, SavedRun, ScenarioId, Variant } from './types.ts';
 
+import { CommerceCase, initialAssumptions } from './CommerceCase.tsx';
 import { initialView, observeHash, skipToMain } from './navigation.ts';
 import type { View } from './navigation.ts';
 const navigation: { id: View; label: string; icon: IconName }[] = [
+  { id: 'case', label: 'Order case', icon: 'box' },
   { id: 'library', label: 'Library', icon: 'library' }, { id: 'workbench', label: 'Workbench', icon: 'workbench' },
   { id: 'report', label: 'Run report', icon: 'report' }, { id: 'compare', label: 'Compare', icon: 'compare' },
 ];
@@ -20,6 +22,8 @@ const message = (error: unknown) => error instanceof Error ? error.message : 'An
 
 export function App() {
   const [view, setView] = useState<View>(initialView);
+  const [caseVariant, setCaseVariant] = useState<Variant>('faulty');
+  const [caseValues, setCaseValues] = useState(initialAssumptions);
   const [scenarioId, setScenarioId] = useState<ScenarioId>('partial-shipment');
   const [variant, setVariant] = useState<Variant>('faulty');
   const [inputs, setInputs] = useState<Record<string, string>>({});
@@ -76,14 +80,17 @@ export function App() {
     setScenarioId(id); setVariant('faulty'); setInputs(policyStrings(getScenario(id).defaults));
     setRunError(''); navigate('workbench');
   }
+  function saveReport(result: RunReport) {
+    const number = sequence.current++;
+    setHistory(previous => saveRun(previous, result, number)); setSelectedRun(number);
+    setRunError(''); setAnnouncement(`Run ${number} saved. ${totalText(result)}.`); navigate('report');
+  }
   function run(event: FormEvent) {
     event.preventDefault();
     if (policyError) { setRunError(policyError); return; }
     try {
       const result = evaluateScenario(scenarioId, variant, policy);
-      const number = sequence.current++;
-      setHistory(previous => saveRun(previous, result, number)); setSelectedRun(number);
-      setRunError(''); setAnnouncement(`Run ${number} saved. ${totalText(result)}.`); navigate('report');
+      saveReport(result);
     } catch (error) { setRunError(message(error)); }
   }
   function editExample(source: RunReport, nextVariant: Variant) {
@@ -103,7 +110,8 @@ export function App() {
   function reset() {
     clearHistory(); setScenarioId('partial-shipment'); setVariant('faulty'); setInputs({});
     setQuery(''); setCategory('All'); setRunError(''); setAbout(false); sequence.current = 1;
-    setAnnouncement('Demo reset. Drafts and in-memory reports cleared.'); navigate('library');
+    setCaseValues(initialAssumptions); setCaseVariant('faulty');
+    setAnnouncement('Demo reset. Drafts and in-memory reports cleared.'); navigate('case');
   }
   function exportSelected(format: 'json' | 'html') {
     if (!report) return;
@@ -130,10 +138,12 @@ export function App() {
       <span className="rail-foot">LOCAL / 01</span>
     </aside>
     <div className="app-body">
-      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span><span>{view === 'library' ? 'Scenario library' : view === 'compare' ? 'Compare runs' : view === 'report' && report ? report.scenarioId : scenarioId}</span></div><span className="demo-label"><span aria-hidden="true">◉</span> Synthetic demo · No connected accounts</span></header>
+      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span><span>{view === 'case' ? 'Order case' : view === 'library' ? 'Scenario library' : view === 'compare' ? 'Compare runs' : view === 'report' && report ? report.scenarioId : scenarioId}</span></div><span className="demo-label"><span aria-hidden="true">◉</span> Synthetic demo · No connected accounts</span></header>
       <main id="main" tabIndex={-1}>
-        <div className="page-meta"><span className="eyebrow">{view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
+        <div className="page-meta"><span className="eyebrow">{view === 'case' ? 'Merchant support investigation' : view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
         {about && <section id="about-demo" className="notice about-panel"><h2>A local, synthetic workbench</h2><p>All records are synthetic. Runs use a small six-fixture evaluator, distinct from the full toolkit engine. No production integration has been tested. Matching records does not establish physical stock accuracy.</p><p>Nothing is uploaded or stored outside this session. Downloads happen only when you request them. Evaluation uses fixed fixture times. Reloading or resetting clears the session.</p><p><a href="https://github.com/SafetyMP/commerce-reliability-kit">Repository</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/demo-guide.md">Demo guide</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/limitations.md">Limitations</a></p></section>}
+        {view === 'case' && <CommerceCase heading={heading} variant={caseVariant} onVariant={setCaseVariant}
+          values={caseValues} onValues={setCaseValues} onInspect={saveReport}/>}
         {view === 'library' && <>
           <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Scenario library</h1><p>Reproduce an integration failure. Inspect the evidence. Test a better outcome.</p></div><span className="index-label">06 / LOCAL SCENARIOS</span></div>
           <div className="library-toolbar"><label className="search-field"><span className="sr-only">Search scenarios</span><Icon name="search"/><input type="search" placeholder="Search scenarios or evidence…" value={query} onChange={e => setQuery(e.target.value)}/></label><div className="filters" role="group" aria-label="Filter by category">{(['All', 'Orders', 'Fulfillment', 'Inventory', 'Data coverage'] as const).map(c => <button type="button" key={c} aria-pressed={category === c} className={category === c ? 'selected' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div></div>

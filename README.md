@@ -29,7 +29,9 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-Follow the partial-shipment example:
+At the support desk, the original connector has closed order DEMO-1042 after the shop’s shipment feed recorded a handoff of three of the five units ordered. Test the original rule, reconcile the shop’s order and shipment records, or try a partial capture. Inspect the exact records behind the result. A first-year worksheet lets the ecommerce operations manager test whether the time saved on comparable cases could cover a pilot. [Open the order case](https://safetymp.github.io/commerce-reliability-kit/#case).
+
+In the scenario library, follow the partial-shipment example:
 
 1. Run the faulty example: **5 ordered, 3 fulfilled, 2 outstanding**, but the example reports the order complete.
 2. Inspect the assertion and its exact supporting records.

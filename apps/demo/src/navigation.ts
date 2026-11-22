@@ -1,7 +1,8 @@
-export type View = 'library' | 'workbench' | 'report' | 'compare';
+export type View = 'case' | 'library' | 'workbench' | 'report' | 'compare';
 
 export function viewFromHash(hash: string): View {
   switch (hash) {
+    case '': case '#case': return 'case';
     case '#workbench': return 'workbench';
     case '#report': return 'report';
     case '#compare': return 'compare';
@@ -10,7 +11,7 @@ export function viewFromHash(hash: string): View {
 }
 
 export function initialView(): View {
-  return typeof window === 'undefined' ? 'library' : viewFromHash(window.location.hash);
+  return typeof window === 'undefined' ? 'case' : viewFromHash(window.location.hash);
 }
 
 // A fragment change would overwrite the route and add an ambiguous history
