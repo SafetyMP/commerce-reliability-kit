@@ -23,7 +23,7 @@ Push the reviewed change through the repository's permitted branch/PR process. R
 Build with the intended base, inspect it, and preview as in [development](development.md). In a browser, exercise the actual production output at the subpath, then repeat on the URL returned by Pages:
 
 - Open the desk at the project subpath, then open the technical reference through the navigation and an old workbench bookmark. Verify refresh and browser history.
-- Replay the inspection hold at listing limits six and four with three counter and eight online requests. Verify the two printed records keep their input settings. Replay the cycle count and verify unsupported quantities read Unknown.
+- Check that case packet and support action reach the selected trace, each comparison changes the visible assertion, and a bookmarked partial capture still shows an unknown balance. Verify the pilot worksheet and sponsor choice survive a visit to technical evidence.
 - Check local assets, console errors, keyboard navigation, and narrow and wide layouts. Inspect the production screenshot for synthetic records only.
 
 ## Failure diagnosis and rollback

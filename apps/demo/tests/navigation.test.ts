@@ -67,12 +67,12 @@ hook.deregister();
 test('technical bookmarks render only the short project reference', () => {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
   try {
-    for (const hash of ['#technical', '#workbench', '#report', '#compare', '#library']) {
+    for (const hash of ['#technical', '#technical?packet=insufficient&response=confirm', '#workbench', '#report', '#compare', '#library']) {
       Object.defineProperty(globalThis, 'window', { configurable:true, value:{location:{hash}} });
       const html = renderToStaticMarkup(createElement(App));
-      assert.match(html, /<h1>Technical reference/);
-      assert.match(html, /packages\/core\/index.ts/);
-      assert.doesNotMatch(html, /<select|<fieldset|Scenario library|The stock promise desk/);
+      assert.match(html, /<h1>Trace the partial shipment/);
+      assert.match(html, /apps\/demo\/src\/evaluator.ts/);
+      assert.doesNotMatch(html, /Scenario library|The stock promise desk/);
     }
   } finally {
     if (descriptor) Object.defineProperty(globalThis, 'window', descriptor); else Reflect.deleteProperty(globalThis, 'window');

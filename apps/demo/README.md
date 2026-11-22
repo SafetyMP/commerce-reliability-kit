@@ -1,6 +1,6 @@
-# Stock promise desk
+# Fulfillment case
 
-The offline React demo reads synthetic warehouse and storefront records from three project fixtures. An inventory planner sets a listing limit, replays counter pickups and online requests, and can compare the last two offers. The technical page links to the importers, rule engine and reporting package.
+The support desk reviews a synthetic partial shipment and an operations manager weighs a reconciliation pilot. A separate compact technical workspace follows the selected order through three stages and compares two saved runs. It also contains a warehouse stock probe for replacement availability.
 
 From the repository root:
 
@@ -12,4 +12,4 @@ npm --prefix apps/demo run build
 npm --prefix apps/demo run preview
 ```
 
-[Desk walkthrough](../../docs/demo-guide.md) · [Development checks](../../docs/development.md) · [Architecture](../../docs/architecture.md) · [Pages guide](../../docs/deployment.md)
+[Case walkthrough](../../docs/demo-guide.md) · [Development checks](../../docs/development.md) · [Architecture](../../docs/architecture.md) · [Pages guide](../../docs/deployment.md)
