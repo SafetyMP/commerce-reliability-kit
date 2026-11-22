@@ -20,7 +20,7 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   return nextLoad(url, context);
 } });
 const { CommerceCase, pilotValue, initialAssumptions, supportDecision } = await import('../src/CommerceCase.tsx');
-const { App } = await import('../src/App.tsx');
+const { App, updateDeskSession } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
@@ -57,6 +57,20 @@ test('connector grading appears only after a support choice for the selected evi
     assert(after.includes(grade));
     assert(after.includes(variant === 'insufficient' ? 'Closure lacks sufficient evidence' : 'Closure contradicts the shop records'));
   }
+});
+
+test('switching packets after a reply restores the decision before grading new evidence', () => {
+  const opened = updateDeskSession({variant:'faulty', action:null}, {reply:'close'});
+  assert.equal(opened.action, 'close');
+  const partial = updateDeskSession(opened, {packet:'insufficient'});
+  assert.deepEqual(partial, {variant:'insufficient', action:null});
+  const props = {heading:{current:null}, values:initialAssumptions, onVariant() {}, onAction() {}, onValues() {}, onInspect() {}};
+  const render = (session: typeof partial) => renderToStaticMarkup(createElement(CommerceCase, {...props, ...session}));
+  assert.doesNotMatch(render(partial), /ticket-verdict|Closure lacks sufficient evidence|Evidence gap escalated/);
+  const reviewed = updateDeskSession(partial, {reply:'confirm'});
+  assert.match(render(reviewed), /Evidence gap escalated/);
+  assert.match(render(reviewed), /INCONCLUSIVE/);
+  assert.doesNotMatch(render(updateDeskSession(reviewed, {packet:'corrected'})), /ticket-verdict/);
 });
 
 test('support action consequences use the evidence even when the connector declares completion', () => {
