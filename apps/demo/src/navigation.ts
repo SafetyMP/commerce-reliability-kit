@@ -2,7 +2,7 @@ export type View = 'case' | 'technical';
 
 export function viewFromHash(hash: string): View {
   const technical = ['#technical', '#workbench', '#library', '#report', '#compare'];
-  return technical.includes(hash) ? 'technical' : 'case';
+  return technical.includes(hash.split('?')[0] ?? '') ? 'technical' : 'case';
 }
 export function initialView(): View {
   return typeof window === 'undefined' ? 'case' : viewFromHash(window.location.hash);

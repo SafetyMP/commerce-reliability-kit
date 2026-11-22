@@ -52,3 +52,5 @@ coverage/
 /docs/assets/*
 !/docs/assets/demo-comparison.jpg
 !/docs/assets/stock-promise-desk.jpg
+
+!/docs/assets/fulfillment-case.jpg

@@ -10,7 +10,7 @@ An order is marked complete after one shipment, but units remain outstanding. Re
 
 **[Try the live demo](https://safetymp.github.io/commerce-reliability-kit/)** · [Source repository](https://github.com/SafetyMP/commerce-reliability-kit) · [Apache-2.0 license](LICENSE)
 
-> **Scope:** Early v0.1 toolkit and frontend demo. The Node CLI and library include 24 synthetic scenarios. The browser desk replays demand against three of the checked-in inventory fixtures. No merchant accounts are connected, and no production integration has been validated by the demo. No versioned package release is published.
+> **Scope:** Early v0.1 toolkit and frontend demo. The Node CLI and library include 24 synthetic scenarios. The browser case and its reference runs use synthetic order and shipment records. No merchant accounts are connected, and no production integration has been validated by the demo. No versioned package release is published.
 
 **Jump to:** [Who it helps](#who-it-helps) · [Demo](#demo) · [Integration testing](#test-your-integration) · [Quick start](#quick-start) · [Verification](#verification) · [Documentation](#documentation-map) · [Contributing](CONTRIBUTING.md)
 
@@ -29,12 +29,11 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-Act as the inventory planner for one store. Open a warehouse receiving packet, inspect the quantity definition, and decide how many units to offer online before counter pickups draw from the same stock. Run two offers and compare refused demand, units left available, and promises the store cannot fill. The cycle-count packet lets you see what a gross count leaves unknown. [Open the stock promise desk](https://safetymp.github.io/commerce-reliability-kit/#case).
+Five units were ordered and the shop records a handoff of three. The connector closed the order. Decide what support can tell the customer and who should take the next action. Then compare manual review, a connector-only test and a four-week shared-report pilot. Change the worksheet inputs before choosing what to fund. [Open the order case](https://safetymp.github.io/commerce-reliability-kit/#case).
 
-![Receiving record and storefront publication controls in the stock promise desk](docs/assets/stock-promise-desk.jpg)
+![Order DEMO-1042 and the shop handoff evidence for the fulfillment desk](docs/assets/fulfillment-case.jpg)
 
-The [technical reference](https://safetymp.github.io/commerce-reliability-kit/#technical) maps the importers, rule engine and reporting package to their source. The [demo walkthrough](docs/demo-guide.md) gives a reproducible comparison and describes the model.
-
+The [technical workspace](https://safetymp.github.io/commerce-reliability-kit/#technical) traces the selected order from capture to support handoff. Compare the current connector result with two saved runs, or inspect a separate stock capture before promising a replacement. [Case and technical walkthrough](docs/demo-guide.md).
 
 ## Test your integration
 
@@ -127,7 +126,7 @@ Original code, documentation, and synthetic fixtures are licensed under [Apache-
 
 | Topic | Start here |
 | --- | --- |
-| Stock promise desk and technical reference | [Demo walkthrough](docs/demo-guide.md) |
+| Fulfillment case and technical workspace | [Demo walkthrough](docs/demo-guide.md) |
 | CLI commands, library API, integration tests, and exit codes | [CLI and library guide](docs/cli-guide.md) |
 | Normalized captures and evidence declarations | [Import guide](docs/IMPORTS.md) |
 | Adding a reproducible synthetic case | [Scenario authoring](docs/SCENARIO-AUTHORING.md) |

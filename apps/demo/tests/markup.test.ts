@@ -19,22 +19,32 @@ const hook = registerHooks({ load(url, context, nextLoad) {
   }
   return nextLoad(url, context);
 } });
-const { captures, replay } = await import('../src/CommerceCase.tsx');
+const { captures, replay } = await import('../src/StockProbe.tsx');
 const { App } = await import('../src/App.tsx');
 const { EvidencePanel, MetricFacts, ResultStrip, StatusBadge } = await import('../src/components.tsx');
 hook.deregister();
 
-test('desk starts with source records, two demand controls and an empty dispatch tape', () => {
+test('original order evidence, response and sponsor worksheet open the demo', () => {
   const html = renderToStaticMarkup(createElement(App));
-  for (const label of ['The stock promise desk', 'Net sellable', 'Counter pickup requests', 'Online requests', 'Technical reference']) assert(html.includes(label));
-  assert(!html.includes('Online promises unfilled'));
+  for (const label of ['Can the desk close this order?', 'What will you tell the customer?', 'Would a reconciliation pilot pay', 'What would you fund?', '$960 first-year net labor value']) assert(html.includes(label));
+  assert(!html.includes('Closure contradicts the shop records'));
+});
+
+test('archived order trials can be reproduced by the browser evaluator', () => {
+  for (const [file,variant] of [['faulty','faulty'],['corrected','corrected']] as const) {
+    const actual = evaluateScenario('partial-shipment',variant);
+    const stored = JSON.parse(readFileSync(new URL('../examples/partial-shipment-'+file+'.json',import.meta.url),'utf8'));
+    assert.deepEqual(stored.assertions,actual.assertions);
+    assert.deepEqual(stored.metrics,actual.metrics);
+    assert.equal(stored.evidenceIdentity,actual.evidenceIdentity);
+  }
 });
 
 test('orders, rejected demand and unfilled promises follow independent limits', () => {
   assert.deepEqual(replay(captures[0]!, 6, 3, 8), {counterFilled:3, counterShort:0, orders:6, turnedAway:2, unfilled:1, idle:0, policy:6});
   assert.deepEqual(replay(captures[0]!, 4, 3, 8), {counterFilled:3, counterShort:0, orders:4, turnedAway:4, unfilled:0, idle:1, policy:6});
   assert.deepEqual(replay(captures[1]!, 6, 3, 8), {counterFilled:null, counterShort:null, orders:6, turnedAway:2, unfilled:null, idle:null, policy:null});
-  assert.deepEqual(replay(captures[2]!, 0, 16, 0), {counterFilled:12, counterShort:4, orders:0, turnedAway:0, unfilled:0, idle:0, policy:10});
+  assert.deepEqual(replay(captures[0]!, 0, 16, 0), {counterFilled:8, counterShort:8, orders:0, turnedAway:0, unfilled:0, idle:0, policy:6});
 });
 
 test('insufficient report components print Unknown rather than null, undefined, or invented zero totals', () => {
