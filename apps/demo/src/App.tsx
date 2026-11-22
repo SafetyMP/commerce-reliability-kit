@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { evaluateScenario, policyLabels, resolvePolicy } from './evaluator.ts';
 import { getScenario, scenarios, sourceFacts, variants } from './fixtures.ts';
@@ -9,17 +9,33 @@ import { Empty, EvidencePanel, Icon, MetricFacts, PolicyFacts, ResultStrip, Stat
 import type { IconName } from './components.tsx';
 import type { Category, Policy, PolicyKey, RunReport, SavedRun, ScenarioId, Variant } from './types.ts';
 
+import { CommerceCase, initialAssumptions, type SupportAction } from './CommerceCase.tsx';
 import { initialView, observeHash, skipToMain } from './navigation.ts';
 import type { View } from './navigation.ts';
 const navigation: { id: View; label: string; icon: IconName }[] = [
+  { id: 'case', label: 'Order case', icon: 'box' },
+  { id: 'technical', label: 'Technical workspace', icon: 'library' },
   { id: 'library', label: 'Library', icon: 'library' }, { id: 'workbench', label: 'Workbench', icon: 'workbench' },
   { id: 'report', label: 'Run report', icon: 'report' }, { id: 'compare', label: 'Compare', icon: 'compare' },
 ];
 const policyStrings = (policy: Policy) => Object.fromEntries(Object.entries(policy).map(([k, v]) => [k, String(v)]));
 const message = (error: unknown) => error instanceof Error ? error.message : 'An unexpected local error occurred.';
 
+interface DeskSession {
+  variant: Variant;
+  action: SupportAction | null;
+}
+type DeskEvent = { packet: Variant } | { reply: SupportAction | null };
+
+export function updateDeskSession(state: DeskSession, event: DeskEvent): DeskSession {
+  if ('packet' in event) return { variant: event.packet, action: null };
+  return { ...state, action: event.reply };
+}
+
 export function App() {
   const [view, setView] = useState<View>(initialView);
+  const [desk, updateDesk] = useReducer(updateDeskSession, { variant: 'faulty', action: null });
+  const [caseValues, setCaseValues] = useState(initialAssumptions);
   const [scenarioId, setScenarioId] = useState<ScenarioId>('partial-shipment');
   const [variant, setVariant] = useState<Variant>('faulty');
   const [inputs, setInputs] = useState<Record<string, string>>({});
@@ -76,14 +92,17 @@ export function App() {
     setScenarioId(id); setVariant('faulty'); setInputs(policyStrings(getScenario(id).defaults));
     setRunError(''); navigate('workbench');
   }
+  function saveReport(result: RunReport) {
+    const number = sequence.current++;
+    setHistory(previous => saveRun(previous, result, number)); setSelectedRun(number);
+    setRunError(''); setAnnouncement(`Run ${number} saved. ${totalText(result)}.`); navigate('report');
+  }
   function run(event: FormEvent) {
     event.preventDefault();
     if (policyError) { setRunError(policyError); return; }
     try {
       const result = evaluateScenario(scenarioId, variant, policy);
-      const number = sequence.current++;
-      setHistory(previous => saveRun(previous, result, number)); setSelectedRun(number);
-      setRunError(''); setAnnouncement(`Run ${number} saved. ${totalText(result)}.`); navigate('report');
+      saveReport(result);
     } catch (error) { setRunError(message(error)); }
   }
   function editExample(source: RunReport, nextVariant: Variant) {
@@ -103,7 +122,8 @@ export function App() {
   function reset() {
     clearHistory(); setScenarioId('partial-shipment'); setVariant('faulty'); setInputs({});
     setQuery(''); setCategory('All'); setRunError(''); setAbout(false); sequence.current = 1;
-    setAnnouncement('Demo reset. Drafts and in-memory reports cleared.'); navigate('library');
+    setCaseValues(initialAssumptions); updateDesk({ packet: 'faulty' });
+    setAnnouncement('Demo reset. Drafts and in-memory reports cleared.'); navigate('case');
   }
   function exportSelected(format: 'json' | 'html') {
     if (!report) return;
@@ -123,17 +143,37 @@ export function App() {
 
   return <div className="app-shell">
     <a className="skip-link" href="#main" onClick={event => skipToMain(event, document)}>Skip to main content</a>
-    <aside className="rail" aria-label="Application navigation">
+    {view !== 'case' && view !== 'technical' && <aside className="rail" aria-label="Technical workspace">
       <div className="brand-mark" aria-label="Commerce Reliability Kit">cr<span>k</span><i aria-hidden="true">.</i></div>
-      <nav aria-label="Main views">{navigation.map(n => <button key={n.id} type="button" aria-current={view === n.id ? 'page' : undefined} className={`nav-button ${view === n.id ? 'active' : ''}`} onClick={() => n.id === 'compare' ? openCompare() : navigate(n.id)}><Icon name={n.icon}/><span>{n.label}</span></button>)}</nav>
+      <nav aria-label="Technical workspace views">{navigation.filter(n => n.id !== 'case' && n.id !== 'technical').map(n => <button key={n.id} type="button" aria-current={view === n.id ? 'page' : undefined} className={`nav-button ${view === n.id ? 'active' : ''}`} onClick={() => n.id === 'compare' ? openCompare() : navigate(n.id)}><Icon name={n.icon}/><span>{n.label}</span></button>)}</nav>
       <button type="button" className="nav-button reset" onClick={reset}><Icon name="reset"/><span>Reset demo</span></button>
       <span className="rail-foot">LOCAL / 01</span>
-    </aside>
+    </aside>}
     <div className="app-body">
-      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span><span>{view === 'library' ? 'Scenario library' : view === 'compare' ? 'Compare runs' : view === 'report' && report ? report.scenarioId : scenarioId}</span></div><span className="demo-label"><span aria-hidden="true">◉</span> Synthetic demo · No connected accounts</span></header>
+      <header className="topbar"><div className="breadcrumb"><strong>Commerce Reliability Kit</strong><span aria-hidden="true">/</span>{view === 'case' ? <span>Order case</span> : view === 'technical' ? <span>Technical workspace</span> : <a href="#technical">Technical workspace</a>}</div><div className="workspace-switch"><span className="demo-label">Synthetic demo · No connected accounts</span>
+        {view === 'case' ? <a href="#technical">Technical workspace</a> : <a href="#case">Return to order case</a>}</div></header>
       <main id="main" tabIndex={-1}>
-        <div className="page-meta"><span className="eyebrow">{view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
+        <div className="page-meta"><span className="eyebrow">{view === 'case' ? 'Merchant support investigation' : view === 'library' ? 'Explore / Reproduce / Inspect' : 'Local fixture workspace'}</span><button className="text-button" type="button" aria-expanded={about} aria-controls="about-demo" onClick={() => setAbout(!about)}>About this demo <span aria-hidden="true">{about ? '−' : '+'}</span></button></div>
         {about && <section id="about-demo" className="notice about-panel"><h2>A local, synthetic workbench</h2><p>All records are synthetic. Runs use a small six-fixture evaluator, distinct from the full toolkit engine. No production integration has been tested. Matching records does not establish physical stock accuracy.</p><p>Nothing is uploaded or stored outside this session. Downloads happen only when you request them. Evaluation uses fixed fixture times. Reloading or resetting clears the session.</p><p><a href="https://github.com/SafetyMP/commerce-reliability-kit">Repository</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/demo-guide.md">Demo guide</a> · <a href="https://github.com/SafetyMP/commerce-reliability-kit/blob/main/docs/limitations.md">Limitations</a></p></section>}
+        {view === 'case' && <CommerceCase heading={heading} variant={desk.variant} onVariant={packet => updateDesk({ packet })}
+          action={desk.action} onAction={reply => updateDesk({ reply })} values={caseValues} onValues={setCaseValues} onInspect={saveReport}/>}
+        {view === 'technical' && <section className="technical-guide">
+          <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Technical workspace</h1>
+            <p>Trace the DEMO-1042 decision from the shop’s source records through the quantity check to a saved assertion.</p></div></div>
+          <div className="guide-evidence">
+            <h2>What the evidence supports</h2>
+            <p><b>Order line.</b> The order requests five units of DEMO-SKU-08. None were canceled.</p>
+            <p><b>Shipment feed.</b> DEMO-SHIP-01 records one three-unit handoff. A declared complete snapshot leaves two units outstanding. Partial coverage leaves the exact balance unknown.</p>
+            <p><b>Assertion.</b> Closing on the first shipment fails. Reconciling the same records passes. Customer delivery needs separate evidence.</p>
+          </div>
+          <h2>Inspect a technical tool</h2>
+          <ul className="guide-tools">
+            <li><a href="#library">Scenario library</a><span>Choose from six order, fulfillment and inventory fixtures.</span></li>
+            <li><a href="#workbench">Workbench</a><span>Evaluate the selected fixture with its rule and evidence coverage.</span></li>
+            <li><a href="#report">Run report</a><span>{history.length ? 'Inspect a saved run and its normalized records.' : 'Run an example to populate its report and downloads.'}</span></li>
+            <li><button className="text-button" type="button" onClick={openCompare}>Compare runs</button><span>Compare the assertion, policy and source evidence from two saved runs.</span></li>
+          </ul>
+        </section>}
         {view === 'library' && <>
           <div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>Scenario library</h1><p>Reproduce an integration failure. Inspect the evidence. Test a better outcome.</p></div><span className="index-label">06 / LOCAL SCENARIOS</span></div>
           <div className="library-toolbar"><label className="search-field"><span className="sr-only">Search scenarios</span><Icon name="search"/><input type="search" placeholder="Search scenarios or evidence…" value={query} onChange={e => setQuery(e.target.value)}/></label><div className="filters" role="group" aria-label="Filter by category">{(['All', 'Orders', 'Fulfillment', 'Inventory', 'Data coverage'] as const).map(c => <button type="button" key={c} aria-pressed={category === c} className={category === c ? 'selected' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div></div>
