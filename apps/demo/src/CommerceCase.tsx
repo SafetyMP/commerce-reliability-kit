@@ -1,180 +1,323 @@
-import type { RefObject } from 'react';
-import { evaluateScenario } from './evaluator.ts';
-import { StatusBadge } from './components.tsx';
-import type { RunReport, Variant } from './types.ts';
+import { useState } from "react";
+import quarantine from "../../../scenarios/damaged-quarantine.json" with { type: "json" };
+import gross from "../../../scenarios/gross-versus-net.json" with { type: "json" };
+import buffered from "../../../scenarios/publication-buffer.json" with { type: "json" };
 
-const fields = [
-  { key: 'cases', label: 'Cases reviewed per month' },
-  { key: 'minutes', label: 'Minutes saved per review' },
-  { key: 'rate', label: 'Loaded labor cost (USD/hour)' },
-  { key: 'cost', label: 'First-year pilot cost (USD)' },
-] as const;
-type Field = typeof fields[number]['key'];
-export type Assumptions = Record<Field, string>;
-export const initialAssumptions: Assumptions = { cases: '40', minutes: '15', rate: '48', cost: '4800' };
-const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-const labels: Record<Variant, string> = {
-  faulty: 'Close on first shipment',
-  corrected: 'Reconcile line quantities',
-  insufficient: 'Try a partial capture',
+export const captures = [
+  { label: "Inspection hold", fixture: quarantine },
+  { label: "Cycle count", fixture: gross },
+  { label: "Regular replenishment", fixture: buffered },
+];
+type Capture = (typeof captures)[number];
+
+function latest(capture: Capture, source: string) {
+  return capture.fixture.evidence.observations
+    .filter((row) => row.sourceId === source)
+    .sort((a, b) => b.observedAt.localeCompare(a.observedAt))[0]!;
+}
+
+export function replay(
+  capture: Capture,
+  cap: number,
+  counter: number,
+  online: number,
+) {
+  const warehouse = latest(capture, "warehouse").fields;
+  const net =
+    warehouse.semantics === "net_available" ? warehouse.quantity : null;
+  const orders = Math.min(cap, online);
+  const capacity = net === null ? null : Math.max(0, net - counter);
+  return {
+    counterFilled: net === null ? null : Math.min(counter, net),
+    counterShort: net === null ? null : Math.max(0, counter - net),
+    orders,
+    turnedAway: online - orders,
+    unfilled: capacity === null ? null : Math.max(0, orders - capacity),
+    idle: capacity === null ? null : Math.max(0, capacity - orders),
+    policy:
+      net === null
+        ? null
+        : Math.max(0, net - capture.fixture.evidence.policy.inventory.buffer),
+  };
+}
+
+function Shelf({ units, label }: { units: number; label: string }) {
+  return (
+    <figure className="shelf">
+      <div aria-hidden="true">
+        {Array.from({ length: units }, (_, i) => (
+          <i key={i} />
+        ))}
+      </div>
+      <figcaption>{label}</figcaption>
+    </figure>
+  );
+}
+
+type Ticket = {
+  label: string;
+  cap: number;
+  counter: number;
+  online: number;
+  result: ReturnType<typeof replay>;
 };
 
-const actionLabels = {
-  close: 'Close the case as complete',
-  follow: 'Keep open and follow up',
-  confirm: 'Request warehouse confirmation',
-} as const;
-export type SupportAction = keyof typeof actionLabels;
-
-export function supportDecision(report: RunReport, action: SupportAction) {
-  const remaining = report.metrics.outstanding;
-  const known = typeof remaining === 'number';
-  if (action === 'close') return {
-    assessment: known ? 'Closure contradicts the shop records' : 'Closure lacks sufficient evidence',
-    reply: 'We have marked your order complete and closed this support case.',
-    work: known ? `No follow-up assigned. The shop still shows ${remaining} outstanding units.` : 'No follow-up assigned. The partial feed leaves the outstanding balance unresolved.',
-  };
-  if (action === 'confirm') return {
-    assessment: known ? 'Independent confirmation requested' : 'Evidence gap escalated',
-    reply: 'We are keeping your case open and asking fulfillment to check the warehouse handoff records.',
-    work: known ? `Ask fulfillment to verify the warehouse records for the ${remaining} units still open in the shop.` : 'Ask fulfillment for a complete shipment record matched to this order line. Reconcile it before quoting a balance.',
-  };
+export function useStockDesk() {
+  const [index, setIndex] = useState(0);
+  const [cap, setCap] = useState(6);
+  const [counter, setCounter] = useState(3);
+  const [online, setOnline] = useState(8);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const capture = captures[index]!;
+  const warehouse = latest(capture, "warehouse");
+  const shop = latest(capture, "shop");
+  const buffer = capture.fixture.evidence.policy.inventory.buffer;
+  function selectCapture(value: number) {
+    const next = captures[value]!;
+    setIndex(value);
+    setCap(latest(next, "shop").fields.quantity);
+  }
+  function run() {
+    setTickets((current) =>
+      [
+        {
+          label: capture.label,
+          cap,
+          counter,
+          online,
+          result: replay(capture, cap, counter, online),
+        },
+        ...current,
+      ].slice(0, 2),
+    );
+  }
   return {
-    assessment: known ? 'Open balance retained for follow-up' : 'Case held pending complete evidence',
-    reply: known ? `The shop shows ${remaining} units still open. We will follow up on their shipment status.` : 'We are keeping your case open while we check its shipment status.',
-    work: known ? `Assign fulfillment to trace the ${remaining} open units and return an update to support.` : 'Keep the ticket in the pending queue. Support still needs a complete shipment capture to establish the balance.',
+    index,
+    cap,
+    setCap,
+    counter,
+    setCounter,
+    online,
+    setOnline,
+    tickets,
+    capture,
+    warehouse,
+    shop,
+    buffer,
+    selectCapture,
+    run,
   };
 }
 
-export function pilotValue(values: Assumptions) {
-  const numbers = fields.map(({key}) => Number(values[key]));
-  if (fields.some(({key}) => values[key].trim() === '') ||
-      numbers.some(n => !Number.isFinite(n) || n < 0) || !Number.isSafeInteger(numbers[0])) return null;
-  const [cases, minutes, rate, cost] = numbers as [number, number, number, number];
-  const hours = 12 * cases * minutes / 60;
-  const net = hours * rate - cost;
-  const threshold = cases > 0 && rate > 0 ? cost * 60 / (12 * cases * rate) : cost === 0 ? 0 : null;
-  if (!Number.isFinite(hours) || !Number.isFinite(net) || (threshold !== null && !Number.isFinite(threshold))) return null;
-  return { hours, net, threshold };
-}
-
-interface Props {
-  heading: RefObject<HTMLHeadingElement | null>;
-  variant: Variant;
-  onVariant: (variant: Variant) => void;
-  action: SupportAction | null;
-  onAction: (action: SupportAction | null) => void;
-  values: Assumptions;
-  onValues: (values: Assumptions) => void;
-  onInspect: (report: RunReport) => void;
-}
-
-export function CommerceCase({heading, variant, onVariant, action, onAction, values, onValues, onInspect}: Props) {
-  const report = evaluateScenario('partial-shipment', variant);
-  const assertion = report.assertions[0]!;
-  const decision = action ? supportDecision(report, action) : null;
-  const { ordered, canceled, outstanding } = report.metrics;
-  const result = pilotValue(values);
-  const shipment = report.observations.find(o => o.entityType === 'shipment');
-  const recorded = shipment?.entityType === 'shipment' ? shipment.fields.quantity ?? 0 : 0;
-  const coverage = report.coverage.find(c => c.resource === 'shipments')?.status;
-  const recordedUnits = Number(ordered);
-  const comparison = result ? [
-    { label: 'Recovered labor capacity', value: result.hours * Number(values.rate) },
-    { label: 'First-year pilot cost', value: Number(values.cost) },
-  ] : [];
-  const scale = Math.max(1, ...comparison.map(row => row.value));
-  return <div className="commerce-case">
-    <section className="dispatch" aria-labelledby="case-heading">
-      <div className="dispatch-brief">
-        <p className="dispatch-kicker">Fulfillment desk · Order {report.metrics.order}</p>
-        <h1 id="case-heading" ref={heading} tabIndex={-1}>Can the desk close this order?</h1>
-        <p>The shop’s order lists five units. Its shipment feed records one handoff of three. The original connector closed the order on that first shipment. What should support tell the customer?</p>
-        <fieldset className="case-modes">
-          <legend>Test the connector decision</legend>
-          {(Object.keys(labels) as Variant[]).map(v => <label key={v}>
-            <input type="radio" name="dispatch-rule" checked={variant === v} onChange={() => onVariant(v)}/>
-            {labels[v]}
-          </label>)}
-        </fieldset>
-      </div>
-      <div className="dispatch-ticket" aria-live="polite">
-        <p className="ticket-title">Shop records for this order</p>
-        <figure className="unit-ledger">
-          <div className="parcel-row" aria-hidden="true">
-            {Array.from({length: recordedUnits}, (_, index) => {
-              const state = index < recorded ? 'recorded' : coverage === 'complete' ? 'open' : 'uncertain';
-              return <span key={index} className={`parcel ${state}`}><b>{state === 'recorded' ? '✓' : state === 'open' ? '–' : '?'}</b></span>;
-            })}
+export function CommerceCase({
+  desk,
+}: {
+  desk: ReturnType<typeof useStockDesk>;
+}) {
+  const {
+    index,
+    cap,
+    setCap,
+    counter,
+    setCounter,
+    online,
+    setOnline,
+    tickets,
+    warehouse,
+    shop,
+    buffer,
+    selectCapture,
+    run,
+  } = desk;
+  return (
+    <>
+      <header className="lead">
+        <p className="overline">Retail operations / channel inventory</p>
+        <h1>The stock promise desk</h1>
+        <p>
+          Set the storefront limit before the next pickup rush. Two systems
+          describe the same shelf. Which number would you put in front of a
+          shopper?
+        </p>
+      </header>
+      <div className="workfloor">
+        <section className="evidence" aria-labelledby="source-label">
+          <div className="section-title">
+            <h2 id="source-label">Receiving records</h2>
+            <span>Dock 01</span>
           </div>
-          <figcaption>Each parcel represents one ordered unit. A check marks a unit in the recorded handoff{coverage === 'complete' ? '.' : '. Question marks indicate incomplete coverage.'}</figcaption>
-        </figure>
-        <dl className="ticket-totals">
-          <div><dt>Ordered</dt><dd>{ordered}</dd></div>
-          <div><dt>In this handoff</dt><dd>{recorded}</dd></div>
-          <div><dt>Canceled</dt><dd>{canceled}</dd></div>
-        </dl>
-        <p className="ticket-scope">Shop shipment snapshot · {coverage}</p>
-        <button type="button" className="secondary" onClick={() => onInspect(report)}>Inspect this run’s records in the technical workspace</button>
+          <label className="select-label">
+            Receiving packet
+            <select
+              value={index}
+              onChange={(e) => selectCapture(Number(e.target.value))}
+            >
+              {captures.map((c, i) => (
+                <option key={c.label} value={i}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <article className="stockcard">
+            <div className="stamp">
+              Warehouse extract{" "}
+              <time>{warehouse.observedAt.slice(11, 16)} UTC</time>
+            </div>
+            <div className="readout">
+              <strong>{warehouse.fields.quantity}</strong>
+              <span>
+                {warehouse.fields.semantics === "net_available"
+                  ? "Net sellable"
+                  : "On hand"}
+                <small>Each · Main location · {warehouse.fields.itemId}</small>
+              </span>
+            </div>
+            <Shelf
+              units={warehouse.fields.quantity}
+              label="One carton per unit in the warehouse extract."
+            />
+            <p>
+              {index === 0
+                ? "Inspection note: four quarantined units were excluded before this extract was issued."
+                : index === 1
+                  ? "Count sheet includes all stock at the location. The available, committed and held quantities were not supplied."
+                  : "This replenishment record reports units available after warehouse holds."}
+            </p>
+          </article>
+          <article className="shopcard">
+            <div className="stamp">
+              Storefront snapshot{" "}
+              <time>{shop.observedAt.slice(11, 16)} UTC</time>
+            </div>
+            <p>
+              <strong>{shop.fields.quantity}</strong> currently offered online ·{" "}
+              {shop.fields.itemId}
+            </p>
+          </article>
+          <details>
+            <summary>Check the mapping and publication rule</summary>
+            <p>
+              Warehouse P1 maps to storefront P2 at Main, one each for one each.
+              The fixture’s policy keeps a {buffer}-unit buffer on comparable
+              net sellable stock, with a floor of zero.
+            </p>
+          </details>
+        </section>
+        <section className="controls" aria-labelledby="release-label">
+          <div className="section-title">
+            <h2 id="release-label">Set the next offer</h2>
+            <span>Storefront</span>
+          </div>
+          <label className="cap" htmlFor="online-limit">
+            Online listing limit <span aria-hidden="true">{cap} units</span>
+            <input
+              id="online-limit"
+              type="range"
+              min="0"
+              max="16"
+              value={cap}
+              onChange={(e) => setCap(Number(e.target.value))}
+            />
+          </label>
+          <div className="scale">
+            <span>Pause online · 0</span>
+            <span>16 units</span>
+          </div>
+          <fieldset>
+            <legend>Replay a rush</legend>
+            <p>
+              The counter draws first. Online checkout then accepts orders up to
+              your listing limit.
+            </p>
+            <div className="demands">
+              {[
+                {
+                  label: "Counter pickup requests",
+                  value: counter,
+                  update: setCounter,
+                },
+                { label: "Online requests", value: online, update: setOnline },
+              ].map(({ label, value, update }) => (
+                <label key={label}>
+                  {label}
+                  <select
+                    value={value}
+                    onChange={(e) => update(Number(e.target.value))}
+                  >
+                    {Array.from({ length: 17 }, (_, n) => (
+                      <option key={n} value={n}>
+                        {n} units
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <button className="publish" type="button" onClick={run}>
+            Run this offer <span aria-hidden="true">→</span>
+          </button>
+          <p className="caption">
+            Illustrative demand replay. No inventory or orders are written.
+          </p>
+        </section>
       </div>
-    </section>
-
-    <section className="support-decision" aria-labelledby="support-heading">
-      <div>
-        <p className="dispatch-kicker">Support desk · Simulated response</p>
-        <h2 id="support-heading">What will you tell the customer?</h2>
-        <div role="group" aria-label="Choose a support action" className="support-actions">
-          {(Object.keys(actionLabels) as SupportAction[]).map(key => <button key={key} type="button"
-            className={action === key ? 'primary' : 'secondary'} aria-pressed={action === key}
-            onClick={() => onAction(key)}>{actionLabels[key]}</button>)}
+      <section className="tape" aria-labelledby="tape-label">
+        <div className="section-title">
+          <h2 id="tape-label">Dispatch tape</h2>
+          <span>Last two runs</span>
         </div>
-      </div>
-      <div className="response-slip" aria-live="polite">{decision ? <>
-        <h3>{decision.assessment}</h3>
-        <p><strong>Customer reply</strong><br/>{decision.reply}</p>
-        <p><strong>Fulfillment follow-up</strong><br/>{decision.work}</p>
-        <p><strong>Connector check</strong><br/>The selected example reports “{assertion.observed}”. The outstanding balance is {outstanding ?? 'unknown'}.</p>
-        <div className="ticket-verdict"><StatusBadge status={assertion.status}/><span>{assertion.reason}</span></div>
-        <button className="text-button" type="button" onClick={() => onAction(null)}>Clear response and try again</button>
-      </> : <p>Your choice opens a draft customer reply and shows who owns the next step.</p>}</div>
-    </section>
-
-    <section className="case-investment" aria-labelledby="pilot-heading">
-      <div className="case-context">
-        <p className="dispatch-kicker">Decision for the ecommerce operations manager</p>
-        <h2 id="pilot-heading">Would a reconciliation pilot pay for the review time it saves?</h2>
-        <ul className="review-trail" aria-label="Who resolves this exception">
-          <li><strong>Support agent</strong><span>Use the available shipment evidence to answer the customer.</span></li>
-          <li><strong>Fulfillment lead</strong><span>Supply warehouse handoff records when the shop feed is incomplete.</span></li>
-          <li><strong>Integration engineer</strong><span>Reproduce the closure and test the connector against the ordered quantity.</span></li>
-        </ul>
-        <p>As pilot sponsor, the ecommerce operations manager can keep manual review, fund a connector test alone, or trial shared reports for four weeks. Time comparable tickets with and without a report. Track reopened cases and missing records before expanding.</p>
-      </div>
-      <div className="pilot-sheet">
-        <h3>First-year worksheet</h3>
-        <p>The defaults are illustrative. Estimate the capacity your team could recover. Use support’s ticket counts and time study, and engineering’s estimate for setup and maintenance.</p>
-        <div className="case-inputs">{fields.map(({key, label}) => <label key={key}>{label}
-          <input type="number" min="0" step={key === 'cases' ? 1 : 'any'} value={values[key]}
-            onChange={e => onValues({...values, [key]: e.currentTarget.value})}/>
-        </label>)}</div>
-        <div className="pilot-result" aria-live="polite">{result ? <>
-          <figure className="pilot-chart">
-            <figcaption>First-year comparison in USD</figcaption>
-            {comparison.map(({label, value}) => <div className="pilot-bar" key={label}>
-              <div><span>{label}</span><b>{currency.format(value)}</b></div>
-              <span className="bar-track" aria-hidden="true"><i style={{width: (value / scale * 100) + '%'}}/></span>
-            </div>)}
-          </figure>
-          <strong>{currency.format(result.net)} first-year net labor value</strong>
-          <p>{result.hours.toLocaleString('en-US', {maximumFractionDigits: 2})} hours of modeled capacity across 12 months. {result.threshold === null ? 'Positive cost cannot be recovered at this volume and rate.' : 'Break-even requires ' + (Math.ceil(result.threshold * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' minutes saved per review.'}</p>
-        </> : <p>Enter a nonnegative number in each field and a whole monthly case count.</p>}</div>
-        <details><summary>Calculation and decision criteria</summary><p>Monthly reviews × 12 × minutes saved ÷ 60 × hourly cost, less first-year cost. Count only eligible cases. Confirm that the team can use the released time, and expand only if observed savings cover cost without increasing erroneous closures. Refunds and retained sales are outside this estimate.</p></details>
-      </div>
-    </section>
-    <details className="case-sources"><summary>Evidence behind the case</summary>
-      <p>Both the order line and shipment record come from the synthetic shop feed. The handoff is a recorded shipping milestone. Independent confirmation from the warehouse or proof of customer delivery would require separate records.</p>
-      <p>Shopify models total and remaining quantities for each fulfillment-order line. Its guidance also describes out-of-order or missed webhook deliveries and periodic reconciliation. These sources inform the business problem. The example uses the kit’s own records. <a href="https://shopify.dev/docs/api/admin-graphql/latest/objects/FulfillmentOrderLineItem">Line quantities</a> · <a href="https://shopify.dev/docs/apps/build/webhooks">Webhook behavior</a></p>
-      <p>Shopify places order access with customer support and picking, packing and shipping with fulfillment staff. Its developer guide covers fulfillment integrations. We propose the ecommerce operations manager as sponsor because that role coordinates fulfillment and customer service. <a href="https://help.shopify.com/en/manual/your-account/users/roles/predefined-roles">Support roles</a> · <a href="https://help.shopify.com/en/manual/your-account/users/roles/role-examples">Fulfillment roles</a> · <a href="https://shopify.dev/docs/apps/build/orders-fulfillment/fulfillment-service-apps/build-for-fulfillment-services">Integration guide</a> · <a href="https://www.shopify.com/enterprise/blog/how-to-overcome-your-daily-operational-frustrations-to-focus-on-future-growth">Ecommerce operations responsibilities</a></p>
-    </details>
-  </div>;
+        <div aria-live="polite">
+          {tickets.length === 0 ? (
+            <p>
+              Run an offer to print its dispatch record. Change one setting and
+              run again to compare.
+            </p>
+          ) : (
+            tickets.map((t, i) => (
+              <article className="receipt" key={i}>
+                <div>
+                  <b>
+                    {i === 0 ? "Latest run" : "Previous run"} · {t.label}
+                  </b>
+                  <p>
+                    Limit {t.cap} · Counter {t.counter} · Online {t.online}
+                  </p>
+                </div>
+                <dl>
+                  {[
+                    ["Counter pickups filled", t.result.counterFilled],
+                    ["Counter requests short", t.result.counterShort],
+                    ["Online orders accepted", t.result.orders],
+                    ["Online requests declined", t.result.turnedAway],
+                    ["Online promises unfilled", t.result.unfilled],
+                    ["Sellable units left", t.result.idle],
+                  ].map(([label, value]) => (
+                    <div key={String(label)}>
+                      <dt>{label}</dt>
+                      <dd>{value ?? "Unknown"}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p>
+                  {t.result.policy === null
+                    ? "Reconciliation open. Request a net sellable extract before confirming what can ship."
+                    : "The fixture’s publication rule supports " +
+                      t.result.policy +
+                      " units before pickups. Your offer is " +
+                      (t.cap === t.result.policy
+                        ? "at that limit."
+                        : Math.abs(t.cap - t.result.policy) +
+                          " units " +
+                          (t.cap > t.result.policy ? "above" : "below") +
+                          " it.")}
+                </p>
+              </article>
+            ))
+          )}
+        </div>
+      </section>
+    </>
+  );
 }

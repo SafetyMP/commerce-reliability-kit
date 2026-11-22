@@ -10,7 +10,7 @@ An order is marked complete after one shipment, but units remain outstanding. Re
 
 **[Try the live demo](https://safetymp.github.io/commerce-reliability-kit/)** · [Source repository](https://github.com/SafetyMP/commerce-reliability-kit) · [Apache-2.0 license](LICENSE)
 
-> **Scope:** Early v0.1 toolkit and frontend demo. The Node CLI and library include 24 synthetic scenarios. The browser demo uses a separate six-fixture evaluator. No merchant accounts are connected, and no production integration has been validated by the demo. No versioned package release is published.
+> **Scope:** Early v0.1 toolkit and frontend demo. The Node CLI and library include 24 synthetic scenarios. The browser desk replays demand against three of the checked-in inventory fixtures. No merchant accounts are connected, and no production integration has been validated by the demo. No versioned package release is published.
 
 **Jump to:** [Who it helps](#who-it-helps) · [Demo](#demo) · [Integration testing](#test-your-integration) · [Quick start](#quick-start) · [Verification](#verification) · [Documentation](#documentation-map) · [Contributing](CONTRIBUTING.md)
 
@@ -29,20 +29,12 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-At the support desk, the original connector has closed order DEMO-1042 after the shop’s shipment feed recorded a handoff of three of the five units ordered. Test the original rule, reconcile the shop’s order and shipment records, or try a partial capture. Inspect the exact records behind the result. A first-year worksheet lets the ecommerce operations manager test whether the time saved on comparable cases could cover a pilot. [Open the order case](https://safetymp.github.io/commerce-reliability-kit/#case).
+Act as the inventory planner for one store. Open a warehouse receiving packet, inspect the quantity definition, and decide how many units to offer online before counter pickups draw from the same stock. Run two offers and compare refused demand, units left available, and promises the store cannot fill. The cycle-count packet lets you see what a gross count leaves unknown. [Open the stock promise desk](https://safetymp.github.io/commerce-reliability-kit/#case).
 
-Open **Technical workspace** for the evidence guide, then choose **Scenario library** and follow the partial-shipment example:
+![Receiving record and storefront publication controls in the stock promise desk](docs/assets/stock-promise-desk.jpg)
 
-1. Run the faulty example: **5 ordered, 3 fulfilled, 2 outstanding**, but the example reports the order complete.
-2. Inspect the assertion and its exact supporting records.
-3. Run the corrected example against the same evidence and policy.
-4. Compare **FAIL → PASS**, then download JSON or a standalone HTML report.
+The [technical reference](https://safetymp.github.io/commerce-reliability-kit/#technical) maps the importers, rule engine and reporting package to their source. The [demo walkthrough](docs/demo-guide.md) gives a reproducible comparison and describes the model.
 
-![Live synthetic demo comparing faulty and corrected partial-shipment runs, with a FAIL-to-PASS assertion transition and unchanged evidence](docs/assets/demo-comparison.jpg)
-
-Also explore normal synchronization delay, persistent missing orders, an inventory publication buffer, stale warehouse evidence, and duplicate shipment events. Search and category filters help you find a case; policy controls show how assumptions affect a result. See the [demo walkthrough](docs/demo-guide.md).
-
-The demo holds up to 12 reports in memory. Refresh clears those reports; downloads preserve the selected run. Browser examples and CLI scenarios are separate fixtures, so their quantities and coverage can differ.
 
 ## Test your integration
 
@@ -135,7 +127,7 @@ Original code, documentation, and synthetic fixtures are licensed under [Apache-
 
 | Topic | Start here |
 | --- | --- |
-| Browser scenarios and report comparison | [Demo walkthrough](docs/demo-guide.md) |
+| Stock promise desk and technical reference | [Demo walkthrough](docs/demo-guide.md) |
 | CLI commands, library API, integration tests, and exit codes | [CLI and library guide](docs/cli-guide.md) |
 | Normalized captures and evidence declarations | [Import guide](docs/IMPORTS.md) |
 | Adding a reproducible synthetic case | [Scenario authoring](docs/SCENARIO-AUTHORING.md) |
