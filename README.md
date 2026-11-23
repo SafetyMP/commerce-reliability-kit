@@ -1,14 +1,14 @@
 # Commerce Reliability Kit: Order and Inventory Integration Testing
 
-Open-source tools for reproducing, diagnosing, and testing **order, fulfillment, and inventory integration failures** using explicit evidence and deterministic scenarios.
+Mina needs five lamps before her café opens tonight. North Quay’s checkout shows the order, packing knows what went into the carton, and Jo at the service desk has one shipping notice. What can Jo promise without interrupting the packing bench?
 
-An order is marked complete after one shipment, but units remain outstanding. Reproduce the failure, inspect the supporting records, test corrected behavior, and share a report that explains the result.
+The kit gives Jo and a connector engineer a common piece of evidence. It matches shipment quantities to the ordered line and records how much of the shipment feed was captured. Jo can explain what the records cover. The engineer can replay the same order against a changed completion rule, including a version with a missing page. [Follow the order into the code](#follow-jos-order-into-the-code)
 
-**SafetyMP reliability thesis — automation depends on dependable operations.** AI-enabled decisions inherit risk from the records and integrations beneath them. This kit explores how reproducible scenarios, explicit evidence, and inconclusive verdicts can surface order, fulfillment, and inventory discrepancies before teams rely on faulty signals. It tests integrations, not AI models or live merchant systems. See the [portfolio thesis](https://github.com/SafetyMP/SafetyMP).
+An ecommerce operations manager could compare four weeks of similar inquiries handled manually, with a connector test, or with the shared report. Time the desk and packing work, count reopened tickets, and include the cost of maintaining the check before funding a rollout. [Open Jo’s case](https://safetymp.github.io/commerce-reliability-kit/#case)
 
 [![Validation and Pages deployment](https://github.com/SafetyMP/commerce-reliability-kit/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/SafetyMP/commerce-reliability-kit/actions/workflows/pages.yml)
 
-**[Try the live demo](https://safetymp.github.io/commerce-reliability-kit/)** · [Source repository](https://github.com/SafetyMP/commerce-reliability-kit) · [Apache-2.0 license](LICENSE)
+[Portfolio thesis](https://github.com/SafetyMP/SafetyMP) · [Source repository](https://github.com/SafetyMP/commerce-reliability-kit) · [Apache-2.0 license](LICENSE)
 
 > **Scope:** Early v0.1 toolkit and frontend demo. The Node CLI and library include 24 synthetic scenarios. The browser case and its reference runs use synthetic order and shipment records. No merchant accounts are connected, and no production integration has been validated by the demo. No versioned package release is published.
 
@@ -29,7 +29,7 @@ Start with a synthetic case before adapting a test to your own normalized eviden
 
 The [browser demo](https://safetymp.github.io/commerce-reliability-kit/) needs no installation, account, API key, or backend. Its records are synthetic, and it has no telemetry or analytics.
 
-Mina is opening a café with five tables tonight. She has one shipping notice for the lamps she ordered. Join Jo at the merchant’s service desk, read the order file and decide what to tell her. Replay the same order to see how the kit tests the connector’s status against the shipment records, then try a missing page. At the pickup counter, try different online listing limits to see who gets the available loaners. Use that shift to weigh a manual process, a connector test and a four-week pilot. [Open the case](https://safetymp.github.io/commerce-reliability-kit/#case).
+Open Jo’s order file, choose a reply and replay it with a missing shipment page. Later, the pickup desk must decide how many loaner lamps to list online while the café and other shoppers compete for the same stock. Try another listing and inspect who can collect. [Try the case](https://safetymp.github.io/commerce-reliability-kit/#case) · [Loaner inventory replay](apps/demo/src/StockProbe.tsx)
 
 ![Mina’s opening-night request and the five café tables](docs/assets/fulfillment-case.jpg)
 
