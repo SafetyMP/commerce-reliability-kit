@@ -35,6 +35,12 @@ Mina is opening a café with five tables tonight. She has one shipping notice fo
 
 The technical workspace carries the same order, response and loaner listing through capture, reconciliation and support handoff. Change shipment coverage, inspect the normalized records and compare two saved runs. [Open the technical workspace](https://safetymp.github.io/commerce-reliability-kit/#technical) · [Walk through the case](docs/demo-guide.md).
 
+### Follow Jo’s order into the code
+
+- **What did the shop capture?** The case pairs the order line and carton records with a declaration of which shipment pages the shop collected. Inspect the evidence that changes when Jo reopens the same order with a page missing. [Fixture records and coverage](apps/demo/src/fixtures.ts)
+- **What can the connector claim?** The browser evaluator compares the observed completion status with the quantities supported by the capture at a fixed time. The technical trace shows the finding beside Jo’s selected reply. Its saved runs use synthetic evidence. [Browser evaluator](apps/demo/src/evaluator.ts) · [Selected-order trace](apps/demo/src/TechnicalTrace.tsx)
+- **How would an engineer test another connector?** Supply normalized records and their coverage to the Node toolkit. Its fulfillment rules check the evidence and retain an inconclusive result when required facts are missing. The caller collects the merchant records. [Capture example](examples/run-capture-integration.ts) · [Toolkit rules](packages/core/rules.ts)
+
 ## Test your integration
 
 The CLI and library support three workflows:
